@@ -3,9 +3,7 @@ using StatsBB.MVVM;
 using StatsBB.Services;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -22,29 +20,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public ICommand SelectActionCommand { get; }
 
-    // Action button styles
-    public Style MadeButtonStyle => GetActionStyle("MADE");
-    public Style MissedButtonStyle => GetActionStyle("MISSED");
-    public Style FoulButtonStyle => GetActionStyle("FOUL");
-    public Style TurnoverButtonStyle => GetActionStyle("TURNOVER");
-
-    private Style GetActionStyle(string action)
-    {
-        if (!IsActionSelectionActive)
-            return (Style)_resources["ActionDisabledButtonStyle"];
-
-        if (SelectedAction == action)
-        {
-            return action switch
-            {
-                "MADE" => (Style)_resources["ActionSelectedMadeStyle"],
-                "MISS" or "MISSED" or "FOUL" or "TURNOVER" => (Style)_resources["ActionSelectedFailedStyle"],
-                _ => (Style)_resources["ActionSelectableButtonStyle"],
-            };
-        }
-
-        return (Style)_resources["ActionSelectableButtonStyle"];
-    }
+    public event Action<Point, Brush, bool>? MarkerRequested;
+    public event Action? TempMarkerRemoved;
 
     public MainWindowViewModel(ResourceDictionary resources)
     {
@@ -52,7 +29,7 @@ public class MainWindowViewModel : ViewModelBase
 
         SelectActionCommand = new RelayCommand(
             param => SelectAction(param?.ToString()),
-            param => IsActionSelectionActive // Only allow command if a point is selected
+            param => IsActionSelectionActive
         );
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -79,29 +56,65 @@ public class MainWindowViewModel : ViewModelBase
         TeamAPlayers.Clear();
         TeamBPlayers.Clear();
 
-        var teamA = PlayerLayoutService.CreatePositionedPlayers(Players.Where(p => p.IsTeamA), _resources, OnPlayerSelected);
-        var teamB = PlayerLayoutService.CreatePositionedPlayers(Players.Where(p => !p.IsTeamA), _resources, OnPlayerSelected);
+        var teamA = PlayerLayoutService.CreatePositionedPlayers(
+            Players.Where(p => p.IsTeamA),
+            _resources,
+            OnPlayerSelected
+        );
+        var teamB = PlayerLayoutService.CreatePositionedPlayers(
+            Players.Where(p => !p.IsTeamA),
+            _resources,
+            OnPlayerSelected
+        );
 
-        foreach (var pvm in teamA)
-            TeamAPlayers.Add(pvm);
-
-        foreach (var pvm in teamB)
-            TeamBPlayers.Add(pvm);
+        foreach (var p in teamA) TeamAPlayers.Add(p);
+        foreach (var p in teamB) TeamBPlayers.Add(p);
     }
 
     private void OnPlayerSelected(Player player)
     {
-        if (!IsPlayerSelectionActive)
+        if (!IsPlayerSelectionActive || SelectedPoint == null || SelectedAction == null)
             return;
-        var playerStatus = player.IsActive ? "ON COURT" : "ON BENCH";
-        Debug.WriteLine($"Action '{SelectedAction}' by {player.Number}.{player.Name} - {playerStatus} at point {SelectedPoint}");
 
-        // TODO: Save event/stat here
+        var actionType = GetActionType(SelectedAction);
+        var position = SelectedPoint.Point;
 
-        // Reset
+        TempMarkerRemoved?.Invoke();
+
+        if (actionType == ActionType.Other)
+        {
+            // Remove final marker
+            MarkerRequested?.Invoke(position, Brushes.Transparent, false);
+        }
+        else
+        {
+            Brush teamColor = GetTeamColorFromPlayer(player);
+            bool isFilled = actionType == ActionType.Made;
+
+            MarkerRequested?.Invoke(position, teamColor, isFilled);
+        }
+
+        Debug.WriteLine($"Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
+
+        // Reset state
         SelectedAction = null;
         SelectedPoint = null;
     }
+
+
+    private Brush GetTeamColorFromPlayer(Player player)
+    {
+        return player.IsTeamA
+            ? (Brush)_resources["CourtAColor"]
+            : (Brush)_resources["CourtBColor"];
+    }
+
+    private ActionType GetActionType(string action) => action.ToUpperInvariant() switch
+    {
+        "MADE" => ActionType.Made,
+        "MISSED" => ActionType.Missed,
+        _ => ActionType.Other
+    };
 
     private CourtPointData? _selectedPoint;
     public CourtPointData? SelectedPoint
@@ -115,7 +128,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsActionSelectionActive));
             UpdatePlayerStyles();
             UpdateActionButtonStyles();
-            CommandManager.InvalidateRequerySuggested(); // Refresh command can-execute
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -138,9 +151,9 @@ public class MainWindowViewModel : ViewModelBase
 
     private void UpdatePlayerStyles()
     {
-        foreach (var playerVm in TeamAPlayers.Concat(TeamBPlayers))
+        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            playerVm.UpdateButtonStyle(IsActionSelectionActive, IsPlayerSelectionActive, GetTeamColor(playerVm));
+            vm.UpdateButtonStyle(IsActionSelectionActive, IsPlayerSelectionActive, GetTeamColor(vm));
         }
     }
 
@@ -157,5 +170,29 @@ public class MainWindowViewModel : ViewModelBase
         return vm.Player.IsTeamA
             ? (Brush)_resources["CourtAColor"]
             : (Brush)_resources["CourtBColor"];
+    }
+
+    // Action button styles
+    public Style MadeButtonStyle => GetActionStyle("MADE");
+    public Style MissedButtonStyle => GetActionStyle("MISSED");
+    public Style FoulButtonStyle => GetActionStyle("FOUL");
+    public Style TurnoverButtonStyle => GetActionStyle("TURNOVER");
+
+    private Style GetActionStyle(string action)
+    {
+        if (!IsActionSelectionActive)
+            return (Style)_resources["ActionDisabledButtonStyle"];
+
+        if (SelectedAction == action)
+        {
+            return action switch
+            {
+                "MADE" => (Style)_resources["ActionSelectedMadeStyle"],
+                "MISSED" or "FOUL" or "TURNOVER" => (Style)_resources["ActionSelectedFailedStyle"],
+                _ => (Style)_resources["ActionSelectableButtonStyle"]
+            };
+        }
+
+        return (Style)_resources["ActionSelectableButtonStyle"];
     }
 }

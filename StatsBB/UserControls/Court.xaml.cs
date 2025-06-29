@@ -6,103 +6,138 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace StatsBB.UserControls;
-
-public partial class Court : UserControl
+namespace StatsBB.UserControls
 {
-    public event EventHandler<CourtPointData> CourtClick;
-    public Court()
+    public partial class Court : UserControl
     {
-        InitializeComponent();
-    }
+        public event EventHandler<CourtPointData>? CourtClick;
 
-    private void CourtCanvas_MouseDown(object sender, MouseButtonEventArgs e)
-    {
-        Point clickPosition = e.GetPosition(CourtCanvas);
-        double x = clickPosition.X;
-        double y = clickPosition.Y;
-        bool isLeftHalfOfCourt = false;
-        bool isBehindThreePointLine = false;
-
-        if (x <= 14)
+        // Store markers to enable removal if needed
+        private readonly List<UIElement> _markerElements = new();
+        private double MarkerSize = 0.4;
+        public Court()
         {
-            isLeftHalfOfCourt = true;
-            if (x < 4 && (y < 0.9 || y > 14.1))
+            InitializeComponent();
+        }
+
+        // Called when user clicks on the court
+        private void CourtCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Point clickPosition = e.GetPosition(CourtCanvas);
+
+            bool isLeftHalf = IsLeftHalfOfCourt(clickPosition.X);
+            bool isThreePointer = IsThreePointer(clickPosition.X, clickPosition.Y);
+
+            var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf);
+            Debug.WriteLine($"Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
+
+            CourtClick?.Invoke(this, dataPoint); // Notify VM
+        }
+
+        public void SetMarker(Point position, Brush color, bool isFilled)
+        {
+            RemoveMarkerAtPosition(position);
+
+            if (color == Brushes.Transparent)
+                return; // interpreted as "delete"
+
+            var marker = new Ellipse
             {
-                isBehindThreePointLine = true;
+                Width = MarkerSize,
+                Height = MarkerSize,
+                Stroke = color,
+                StrokeThickness = 0.1,
+                Fill = isFilled ? color : Brushes.Transparent
+            };
+
+            Canvas.SetLeft(marker, position.X - MarkerSize / 2);
+            Canvas.SetTop(marker, position.Y - MarkerSize / 2);
+
+            CourtCanvas.Children.Add(marker);
+            _markerElements.Add(marker);
+        }
+
+        public void ClearAllMarkers()
+        {
+            foreach (var element in _markerElements)
+            {
+                CourtCanvas.Children.Remove(element);
+            }
+            _markerElements.Clear();
+        }
+
+        private void RemoveMarkerAtPosition(Point position)
+        {
+            double tolerance = 0.1;
+            var elementsToRemove = _markerElements
+                .Where(el =>
+                {
+                    double left = Canvas.GetLeft(el);
+                    double top = Canvas.GetTop(el);
+                    return Math.Abs(left + 0.5 - position.X) < tolerance &&
+                           Math.Abs(top + 0.5 - position.Y) < tolerance;
+                })
+                .ToList();
+
+            foreach (var el in elementsToRemove)
+            {
+                CourtCanvas.Children.Remove(el);
+                _markerElements.Remove(el);
+            }
+        }
+
+        private bool IsLeftHalfOfCourt(double x) => x <= 14;
+
+        private bool IsThreePointer(double x, double y)
+        {
+            if (x <= 14)
+            {
+                if (x < 4 && (y < 0.9 || y > 14.1))
+                    return true;
+
+                double dx = x - 2.585;
+                double dy = y - 7.5;
+                return dx * dx + dy * dy >= 6.75 * 6.75 && x >= 0;
             }
             else
             {
-                double basketCenterX = 2.585;
-                double basketCenterY = 7.5;
-                double threePointRadius = 6.75;
+                if (x > 24 && (y < 0.9 || y > 14.1))
+                    return true;
 
-                double distSq = (x - basketCenterX) * (x - basketCenterX) + (y - basketCenterY) * (y - basketCenterY);
-                double threePtRadiusSq = threePointRadius * threePointRadius;
-
-                if (distSq >= threePtRadiusSq && x >= 0)
-                {
-                    isBehindThreePointLine = true;
-                }
+                double dx = x - 25.415;
+                double dy = y - 7.5;
+                return dx * dx + dy * dy >= 6.75 * 6.75 && x <= 28;
             }
         }
-        else
+        private UIElement? _tempMarker;
+
+        public void ShowTemporaryMarker(Point point)
         {
-            if (x > 24 && (y < 0.9 || y > 14.1))
-            {
-                isBehindThreePointLine = true;
-            }
-            else
-            {
-                double basketCenterX = 25.415;
-                double basketCenterY = 7.5;
-                double threePointRadius = 6.75;
+            RemoveTemporaryMarker();
 
-                double distSq = (x - basketCenterX) * (x - basketCenterX) + (y - basketCenterY) * (y - basketCenterY);
-                double threePtRadiusSq = threePointRadius * threePointRadius;
+            var marker = new Ellipse
+            {
+                Width = MarkerSize,
+                Height = MarkerSize,
+                Stroke = Brushes.White,
+                StrokeThickness = 0.1,
+                Fill = Brushes.White
+            };
 
-                if (distSq >= threePtRadiusSq && x <= 28)
-                {
-                    isBehindThreePointLine = true;
-                }
-            }
+            Canvas.SetLeft(marker, point.X - MarkerSize / 2);
+            Canvas.SetTop(marker, point.Y - MarkerSize / 2);
+
+            CourtCanvas.Children.Add(marker);
+            _tempMarker = marker;
         }
 
-        double markerSize = 1.0;
-        Ellipse markerCircle = new Ellipse
+        public void RemoveTemporaryMarker()
         {
-            Width = markerSize,
-            Height = markerSize,
-            Stroke = isLeftHalfOfCourt ? Brushes.Orange : Brushes.Green,
-            StrokeThickness = 0.05,
-            Fill = isLeftHalfOfCourt ? Brushes.Orange : Brushes.Green,
-        };
-        Canvas.SetLeft(markerCircle, clickPosition.X - markerSize / 2);
-        Canvas.SetTop(markerCircle, clickPosition.Y - markerSize / 2);
-
-        TextBlock markerText = new TextBlock
-        {
-            Text = isBehindThreePointLine ? "3" : "2",
-            FontSize = 0.8,
-            Foreground = Brushes.White,
-            FontWeight = FontWeights.Bold,
-            Width = markerSize,
-            Height = markerSize,
-            TextAlignment = TextAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center
-        };
-
-        Canvas.SetLeft(markerText, clickPosition.X - markerSize / 2);
-        Canvas.SetTop(markerText, clickPosition.Y - markerSize / 2 - 0.1);
-
-        CourtCanvas.Children.Add(markerCircle);
-        CourtCanvas.Children.Add(markerText);
-
-        CourtPointData DataPoint = new(clickPosition, isBehindThreePointLine, isLeftHalfOfCourt);
-        string position = "(" + clickPosition.X.ToString("F2") + " : " + clickPosition.Y.ToString("F2") + ")";
-        string team = isLeftHalfOfCourt ? "Team A" : "Team B";
-        string points = isBehindThreePointLine ? "3" : "2";
-        Debug.WriteLine($"{position} {team} {points}PT");
-        CourtClick?.Invoke(this, DataPoint);
+            if (_tempMarker != null)
+            {
+                CourtCanvas.Children.Remove(_tempMarker);
+                _tempMarker = null;
+            }
+        }
     }
 }

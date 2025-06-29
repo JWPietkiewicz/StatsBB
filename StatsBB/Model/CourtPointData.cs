@@ -9,18 +9,16 @@ namespace StatsBB.Model
 {
     public class CourtPointData
     {
-        Point Point { get; set; }
-        public bool IsBehind3 {  get; set; }
-        public bool IsLeft { get; set; }
+        public Point Point { get; }
+        public bool IsThreePoint { get; }
+        public bool IsLeftSide { get; }
 
-        public CourtPointData(Point p, bool is3, bool isLeft)
+        public CourtPointData(Point point, bool isThreePoint, bool isLeftSide)
         {
-            Point = p;
-            IsBehind3 = is3;
-            IsLeft = isLeft;
+            Point = point;
+            IsThreePoint = isThreePoint;
+            IsLeftSide = isLeftSide;
         }
-
-
         override public string ToString()
         {
             /*
@@ -35,7 +33,7 @@ namespace StatsBB.Model
                 output += " rzucila za 2";
             return output;*/
 
-            return "x: " + Point.X + " y: " + Point.Y + " isBehind3: " + IsBehind3 + " isLeft: " + IsLeft + "\n";
+            return "x: " + Point.X + " y: " + Point.Y + " isBehind3: " + IsThreePoint + " isLeft: " + IsLeftSide + "\n";
         }
     }
 }
