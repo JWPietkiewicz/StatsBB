@@ -4,6 +4,8 @@
     {
         Made,
         Missed,
+        Turnover,
+        Foul,
         Other
     }
 }
