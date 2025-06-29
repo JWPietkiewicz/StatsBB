@@ -1,0 +1,70 @@
+﻿<UserControl x:Class="StatsBB.UserControls.TeamPanelRight"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" Height="520">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="TeamBackground" Color="White"/>
+        <SolidColorBrush x:Key="TeamColor" Color="Green"/>
+        <SolidColorBrush x:Key="CourtColor" Color="Green"/>
+        <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
+        
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="24"/>
+        </Style>
+        <Style x:Key="BasePlayerButtonStyle" BasedOn="{StaticResource BaseButtonStyle}" TargetType="Button">
+            <Setter Property="Width" Value="64" />
+            <Setter Property="Height" Value="64" />
+        </Style>
+        <Style x:Key="BenchPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource BenchColor}"/>
+        </Style>
+        <Style x:Key="Court" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource CourtColor}"/>
+        </Style>
+        <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+
+        </Style>
+
+        <sys:String x:Key="C1">18</sys:String>
+        <sys:String x:Key="C2">29</sys:String>
+        <sys:String x:Key="C3">46</sys:String>
+        <sys:String x:Key="C4">14</sys:String>
+        <sys:String x:Key="C5">50</sys:String>
+        <sys:String x:Key="B1">9</sys:String>
+        <sys:String x:Key="B2">34</sys:String>
+        <sys:String x:Key="B3">22</sys:String>
+        <sys:String x:Key="B4">55</sys:String>
+        <sys:String x:Key="B5">19</sys:String>
+        <sys:String x:Key="B6">38</sys:String>
+        <sys:String x:Key="B7">45</sys:String>
+        <sys:String x:Key="B8">27</sys:String>
+        <sys:String x:Key="B9">11</sys:String>
+        <sys:String x:Key="B10">53</sys:String>
+
+    </UserControl.Resources>
+    <Border BorderThickness="2" BorderBrush="#888" HorizontalAlignment="Left">
+        <Grid VerticalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="80"/>
+                <RowDefinition Height="80"/>
+            </Grid.RowDefinitions>
+            <Button Style="{StaticResource BenchButton}" Content="BENCH" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Margin="8,8,3,8"/>
+            <Button Style="{StaticResource BenchPlayerButtonStyle}" Content="C" Grid.Column="2" Grid.Row="5" />
+        </Grid>
+    </Border>
+</UserControl>

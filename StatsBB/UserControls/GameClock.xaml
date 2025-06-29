@@ -1,0 +1,46 @@
+﻿<UserControl x:Class="StatsBB.UserControls.GameClock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="125" d:DesignWidth="320">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="ButtonColor" Color="Green"/>
+        <sys:String x:Key="Period">Q1 - In Progress</sys:String>
+        <sys:String x:Key="Time">10:00</sys:String>
+        <sys:String x:Key="Button">STOP</sys:String>
+    </UserControl.Resources>
+    
+    <Border Grid.Column="1" CornerRadius="8" BorderBrush="#888" BorderThickness="2" Background="White" Width="300">
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="{StaticResource Period}" Foreground="Black" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="5" />
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Right">
+                    <Button Content="▲" Width="25" Height="25" Background="White" BorderThickness="0" />
+                    <Button Content="▼" Width="25" Height="25" Background="White" BorderThickness="0" />
+                </StackPanel>
+                <Border Grid.Column="1"  Padding="0" Margin="0,0">
+                    <TextBlock Text="{StaticResource Time}" Foreground="black" FontSize="36" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <Button Content="▲" Width="25" Height="25" Background="White" BorderThickness="0" />
+                    <Button Content="▼" Width="25" Height="25" Background="White" BorderThickness="0" />
+                </StackPanel>
+                <Button Grid.Column="3" Content="{StaticResource Button}" Width="70" Height="50" Background="{StaticResource ButtonColor}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+            </Grid>
+        </Grid>
+    </Border>
+
+</UserControl>

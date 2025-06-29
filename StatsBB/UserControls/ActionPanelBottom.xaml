@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="StatsBB.UserControls.ActionPanelBottom"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <Style x:Key="BaseButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="Gray"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="4"/>
+            </Style>
+
+        <Style x:Key="Sub" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        </Style>
+        <Style x:Key="JumpBall" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        </Style>
+        <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+        </Style>
+    </UserControl.Resources>
+    <Grid VerticalAlignment="Top" HorizontalAlignment="Center">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="100"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
+        <Button Grid.Column="1" Style="{StaticResource Sub}" Content="SUB" />
+        <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT" />
+        
+    </Grid>
+</UserControl>
