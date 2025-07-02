@@ -17,6 +17,33 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> TeamAPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamBPlayers { get; } = new();
     public ObservableCollection<FreeThrowResult> FreeThrowResultRows { get; } = new();
+    public ObservableCollection<Player> TeamASubIn { get; } = new();
+    public ObservableCollection<Player> TeamASubOut { get; } = new();
+    public ObservableCollection<Player> TeamBSubIn { get; } = new();
+    public ObservableCollection<Player> TeamBSubOut { get; } = new();
+
+    public ObservableCollection<Player> TeamACourtPlayers =>
+        new(Players.Where(p => p.IsTeamA && p.IsActive));
+    public ObservableCollection<Player> TeamBCourtPlayers =>
+        new(Players.Where(p => !p.IsTeamA && p.IsActive));
+    public ObservableCollection<Player> TeamABenchPlayers =>
+        new(Players.Where(p => p.IsTeamA && !p.IsActive));
+    public ObservableCollection<Player> TeamBBenchPlayers =>
+        new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+
+    private bool _isSubstitutionPanelVisible;
+    public bool IsSubstitutionPanelVisible
+    {
+        get => _isSubstitutionPanelVisible;
+        set
+        {
+            _isSubstitutionPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SubstitutionPanelVisibility));
+        }
+    }
+    public Visibility SubstitutionPanelVisibility =>
+        IsSubstitutionPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
     private readonly ResourceDictionary _resources;
 
@@ -32,6 +59,11 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
 
+    public ICommand StartSubstitutionCommand { get; }
+    public ICommand ConfirmSubstitutionCommand { get; }
+    public ICommand ToggleSubInCommand { get; }
+    public ICommand ToggleSubOutCommand { get; }
+
 
     public event Action<Point, Brush, bool>? MarkerRequested;
     public event Action? TempMarkerRemoved;
@@ -39,6 +71,7 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(ResourceDictionary resources)
     {
         _resources = resources;
+        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
         SelectActionCommand = new RelayCommand(
             param => SelectAction(param?.ToString()),
@@ -72,11 +105,25 @@ public class MainWindowViewModel : ViewModelBase
         TurnoverTeamACommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamA"), _ => IsTurnoverSelectionActive);
         TurnoverTeamBCommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamB"), _ => IsTurnoverSelectionActive);
 
+        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
+        ConfirmSubstitutionCommand = new RelayCommand(_ => ConfirmSubstitution(), _ => IsSubstitutionConfirmEnabled);
+        ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
+        ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+
 
         Players.CollectionChanged += Players_CollectionChanged;
 
         PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
+    }
+    private void BeginSubstitution()
+    {
+        TeamASubIn.Clear();
+        TeamASubOut.Clear();
+        TeamBSubIn.Clear();
+        TeamBSubOut.Clear();
+
+        IsSubstitutionPanelVisible = true;
     }
 
     private void SelectAction(string? action)
@@ -752,6 +799,57 @@ public class MainWindowViewModel : ViewModelBase
 
     public Visibility NoAssistButtonVisibility =>
         IsAssistSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
+    private void ToggleSubIn(Player? player)
+    {
+        if (player == null) return;
+        var list = player.IsTeamA ? TeamASubIn : TeamBSubIn;
+
+        if (list.Contains(player))
+            list.Remove(player);
+        else if (list.Count < 5)
+            list.Add(player);
+
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
+    }
+
+    private void ToggleSubOut(Player? player)
+    {
+        if (player == null) return;
+        var list = player.IsTeamA ? TeamASubOut : TeamBSubOut;
+
+        if (list.Contains(player))
+            list.Remove(player);
+        else if (list.Count < 5)
+            list.Add(player);
+
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
+    }
+
+
+    public bool IsSubstitutionConfirmEnabled =>
+    TeamASubIn.Count == TeamASubOut.Count && TeamASubIn.Count <= 5 &&
+    TeamBSubIn.Count == TeamBSubOut.Count && TeamBSubIn.Count <= 5;
+
+    private void ConfirmSubstitution()
+    {
+        ApplySubstitution(TeamASubIn, TeamASubOut);
+        ApplySubstitution(TeamBSubIn, TeamBSubOut);
+
+        RegenerateTeams();
+        IsSubstitutionPanelVisible = false;
+    }
+
+    private void ApplySubstitution(IEnumerable<Player> subIn, IEnumerable<Player> subOut)
+    {
+        foreach (var p in subOut)
+            p.IsActive = false;
+
+        foreach (var p in subIn)
+            p.IsActive = true;
+    }
+
+
 
 
 }

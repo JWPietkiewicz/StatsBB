@@ -1,10 +1,13 @@
 ﻿<Window x:Class="StatsBB.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:StatsBB.UserControls" xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:controls="clr-namespace:StatsBB.UserControls" 
+        xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         Title="Basketball Stats Map" Height="1080" Width="1920">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        
 
         <SolidColorBrush x:Key="CourtAColor" Color="Orange"/>
         <SolidColorBrush x:Key="CourtBColor" Color="Green"/>
@@ -125,6 +128,11 @@
             </Style>
             <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             </Style>
+
+        <Style x:Key="SubButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
     </Window.Resources>
 
     <Grid x:Name="___No_Name_" Background="#F9F9F9">
@@ -435,6 +443,150 @@
                         </ItemsControl>
                     </StackPanel>
                 </Grid>
+                <!-- Substitution Panel -->
+                <Grid Visibility="{Binding SubstitutionPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                    <StackPanel HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Background="White"
+                Opacity="0.95"
+                Width="Auto">
+
+                        <TextBlock Text="Substitution Panel"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   HorizontalAlignment="Center"
+                   Margin="0 0 0 20"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Team A Bench -->
+                            <ItemsControl Grid.Column="0" ItemsSource="{Binding TeamABenchPlayers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtAPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team A Sub In -->
+                            <ItemsControl Grid.Column="1" ItemsSource="{Binding TeamASubIn}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtAPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team A Sub Out -->
+                            <ItemsControl Grid.Column="2" ItemsSource="{Binding TeamASubOut}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtAPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team A Court -->
+                            <ItemsControl Grid.Column="3" ItemsSource="{Binding TeamACourtPlayers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtAPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team B Court -->
+                            <ItemsControl Grid.Column="4" ItemsSource="{Binding TeamBCourtPlayers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtBPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team B Sub Out -->
+                            <ItemsControl Grid.Column="5" ItemsSource="{Binding TeamBSubOut}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtBPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team B Sub In -->
+                            <ItemsControl Grid.Column="6" ItemsSource="{Binding TeamBSubIn}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtBPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Team B Bench -->
+                            <ItemsControl Grid.Column="7" ItemsSource="{Binding TeamBBenchPlayers}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding Number}"
+                                Style="{StaticResource CourtBPlayerButtonStyle}"
+                                Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}"
+                                Margin="4" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+
+                        <!-- Confirm Button -->
+                        <Button Content="CONFIRM SUBSTITUTIONS"
+                Margin="20"
+                Padding="10,6"
+                FontSize="16"
+                FontWeight="Bold"
+                Background="DarkGreen"
+                Foreground="White"
+                Command="{Binding ConfirmSubstitutionCommand}"
+                IsEnabled="{Binding IsSubstitutionConfirmEnabled}"/>
+                    </StackPanel>
+                </Grid>
+
 
             </Grid>
 
@@ -525,11 +677,11 @@ Grid.Column="4" />
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <Grid VerticalAlignment="Center">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="80"/>
-                        <ColumnDefinition Width="70"/>
-                        <ColumnDefinition Width="70"/>
-                    </Grid.ColumnDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="70"/>
+                                    <ColumnDefinition Width="70"/>
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="80"/>
                                     <RowDefinition Height="80"/>
@@ -557,7 +709,23 @@ Grid.Column="4" />
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Border>
-            <controls:ActionPanelBottom Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="top" HorizontalAlignment="Center"/>
+            <Grid  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="top" HorizontalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="90" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
+                <Button Grid.Column="1"
+            Style="{StaticResource Sub}"
+            Content="SUB"
+            Command="{Binding StartSubstitutionCommand}" />
+                <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT" />
+
+            </Grid>
         </Grid>
         <!-- Play‐by‐Play Log -->
         <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="#F9F9F9" BorderBrush="LightGray" BorderThickness="2">

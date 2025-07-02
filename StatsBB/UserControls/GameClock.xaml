@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="125" d:DesignWidth="320">
     <UserControl.Resources>
-        <SolidColorBrush x:Key="ButtonColor" Color="Green"/>
+        <SolidColorBrush x:Key="StartStopButtonColor" Color="Green"/>
         <sys:String x:Key="Period">Q1 - In Progress</sys:String>
         <sys:String x:Key="Time">10:00</sys:String>
         <sys:String x:Key="Button">STOP</sys:String>
@@ -38,7 +38,7 @@
                     <Button Content="▲" Width="25" Height="25" Background="White" BorderThickness="0" />
                     <Button Content="▼" Width="25" Height="25" Background="White" BorderThickness="0" />
                 </StackPanel>
-                <Button Grid.Column="3" Content="{StaticResource Button}" Width="70" Height="50" Background="{StaticResource ButtonColor}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                <Button Grid.Column="3" Content="{StaticResource Button}" Width="70" Height="50" Background="{StaticResource StartStopButtonColor}" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" Margin="10,0,0,0"/>
             </Grid>
         </Grid>
     </Border>
