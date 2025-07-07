@@ -21,6 +21,14 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamASubOut { get; } = new();
     public ObservableCollection<Player> TeamBSubIn { get; } = new();
     public ObservableCollection<Player> TeamBSubOut { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleCourtAssistPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleBenchAssistPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtReboundPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchReboundPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtReboundPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchReboundPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleBlockCourtPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleBlockBenchPlayers { get; } = new();
 
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
@@ -58,7 +66,6 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
-
     public ICommand StartSubstitutionCommand { get; }
     public ICommand ConfirmSubstitutionCommand { get; }
     public ICommand ToggleSubInCommand { get; }
@@ -330,6 +337,9 @@ public class MainWindowViewModel : ViewModelBase
             vm.SetFouledPlayerSelectionMode(isSelectable);
         }
     }
+
+
+
     private void ResetSelectionState()
     {
         SelectedAction = null;
@@ -386,41 +396,58 @@ public class MainWindowViewModel : ViewModelBase
 
         ResetSelectionState();
     }
+
     private void CompleteBlockSelection(Player blocker)
     {
-        if (_pendingShooter == null)
-            return;
-
-        if (blocker.IsTeamA == _pendingShooter.IsTeamA)
+        if (_pendingShooter != null && blocker != null)
         {
-            Debug.WriteLine("Invalid block: player is on the same team as the shooter. Ignored.");
-            return;
+            Debug.WriteLine($"Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
         }
 
-        Debug.WriteLine($"Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
-
+        // Reset block selection state
         IsBlockerSelectionActive = false;
-        IsReboundSelectionActive = true; // resume rebound selection
+
+        // Go to rebound selection next
+        IsReboundSelectionActive = true;
+        UpdateReboundPlayerStyles(); // if needed to populate rebound UI
     }
 
     private void UpdateBlockerPlayerStyles()
     {
+        EligibleBlockCourtPlayers.Clear();
+        EligibleBlockBenchPlayers.Clear();
+
+        if (_pendingShooter == null)
+            return;
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            bool isSelectable = false;
+            var isEligible = IsBlockerSelectionActive && vm.Player.IsTeamA != _pendingShooter.IsTeamA;
 
-            if (IsBlockerSelectionActive && _pendingShooter != null)
+            vm.SetBlockerSelectionMode(isEligible);
+
+            if (isEligible)
             {
-                isSelectable = vm.Player.IsTeamA != _pendingShooter.IsTeamA;
+                if (vm.Player.IsActive)
+                    EligibleBlockCourtPlayers.Add(vm);
+                else
+                    EligibleBlockBenchPlayers.Add(vm);
             }
-
-            vm.SetBlockerSelectionMode(isSelectable);
         }
+
+        OnPropertyChanged(nameof(EligibleBlockCourtPlayers));
+        OnPropertyChanged(nameof(EligibleBlockBenchPlayers));
     }
+
+
     private void EnterBlockerSelection()
     {
+        IsAssistSelectionActive = false;
         IsReboundSelectionActive = false;
+
         IsBlockerSelectionActive = true;
+
+        UpdateBlockerPlayerStyles();
     }
 
 
@@ -534,6 +561,9 @@ public class MainWindowViewModel : ViewModelBase
 
     private void UpdateAssistPlayerStyles()
     {
+        EligibleCourtAssistPlayers.Clear();
+        EligibleBenchAssistPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
             bool isSelectable = false;
@@ -545,8 +575,20 @@ public class MainWindowViewModel : ViewModelBase
             }
 
             vm.SetAssistSelectionMode(isSelectable);
+
+            if (isSelectable)
+            {
+                if (vm.Player.IsActive)
+                    EligibleCourtAssistPlayers.Add(vm);
+                else
+                    EligibleBenchAssistPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
+        OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
     }
+
 
     private bool _isReboundSelectionActive;
     public bool IsReboundSelectionActive
@@ -562,10 +604,46 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void UpdateReboundPlayerStyles()
     {
+        EligibleTeamACourtReboundPlayers.Clear();
+        EligibleTeamABenchReboundPlayers.Clear();
+        EligibleTeamBCourtReboundPlayers.Clear();
+        EligibleTeamBBenchReboundPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            vm.SetReboundSelectionMode(IsReboundSelectionActive);
+            bool isSelectable = IsReboundSelectionActive;
+            vm.SetReboundSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtReboundPlayers.Add(vm);
+                else
+                    EligibleTeamABenchReboundPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtReboundPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchReboundPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtReboundPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchReboundPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtReboundPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchReboundPlayers));
+    }
+
+    private void UpdateBlockPlayerStyles()
+    {
+        EligibleBlockCourtPlayers.Clear();
+        EligibleBlockBenchPlayers.Clear();
+
+
     }
 
     public Visibility ReboundPanelVisibility =>

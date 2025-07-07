@@ -13,5 +13,10 @@ namespace StatsBB.Model
         public int Number {  get; set; }
         public bool IsActive { get; set; }
         public bool IsTeamA { get; set; }
+
+        public string DisplayName
+        {
+            get { return Number.ToString(); }
+        }
     }
 }

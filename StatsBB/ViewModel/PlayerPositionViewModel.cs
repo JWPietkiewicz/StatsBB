@@ -29,7 +29,8 @@ namespace StatsBB.ViewModel
             }
         }
 
-        public string DisplayName => Player.Number.ToString();
+        public string DisplayName => Player.DisplayName;
+        public bool IsTeamA => Player.IsTeamA;
 
         public ICommand SelectPlayerCommand { get; }
 
@@ -160,6 +161,12 @@ namespace StatsBB.ViewModel
         public void SetFouledPlayerSelectionMode(bool isSelectable)
         {
             IsSelectableForFouled = isSelectable;
+        }
+
+        public PlayerPositionViewModel(Player player, ICommand selectCommand)
+        {
+            Player = player;
+            SelectPlayerCommand = new RelayCommand(_ => selectCommand.Execute(player));
         }
 
 
