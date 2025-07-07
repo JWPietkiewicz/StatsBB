@@ -4,7 +4,8 @@
         xmlns:controls="clr-namespace:StatsBB.UserControls" 
         xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:converters="clr-namespace:StatsBB.Converters"
-        Title="Basketball Stats Map" Height="1080" Width="1920">
+        Title="Basketball Stats Map" Height="1080" Width="1920"
+        PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
@@ -372,6 +373,104 @@
                 <controls:Court x:Name="CourtControl"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch" />
+
+                <!-- Quick Shot Panel -->
+                <Grid Visibility="{Binding QuickShotPanelVisibility}"
+      Background="#ccFFFFFF"
+      Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- TEAM A BENCH -->
+                        <Border Background="#ccd3d3d3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamABenchShotPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource BenchAPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- TEAM A COURT -->
+                        <Border Background="#cceeeeee" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamACourtShotPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- TEAM B COURT -->
+                        <Border Background="#cceeeeee" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBCourtShotPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- TEAM B BENCH -->
+                        <Border Background="#ccd3d3d3" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBBenchShotPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource BenchBPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
 
                 <!-- Assist Panel -->
                 <Grid Visibility="{Binding NoAssistButtonVisibility}"

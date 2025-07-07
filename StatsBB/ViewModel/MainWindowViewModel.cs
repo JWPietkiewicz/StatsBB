@@ -37,6 +37,11 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleStealCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealBenchPlayers { get; } = new();
 
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchShotPlayers { get; } = new();
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -167,6 +172,23 @@ public class MainWindowViewModel : ViewModelBase
         IsTimeOutSelectionActive = true;
     }
 
+    public void HandleCourtClick(CourtPointData data)
+    {
+        ResetSelectionState();
+        SelectedPoint = data;
+
+        if (data.MouseButton == MouseButton.Left)
+        {
+            SelectedAction = "MADE";
+            IsQuickShotSelectionActive = true;
+        }
+        else if (data.MouseButton == MouseButton.Right)
+        {
+            SelectedAction = "MISSED";
+            IsQuickShotSelectionActive = true;
+        }
+    }
+
     private void BeginTurnover()
     {
         ResetSelectionState();
@@ -223,6 +245,10 @@ public class MainWindowViewModel : ViewModelBase
 
     private void OnPlayerSelected(Player player)
     {
+        if (IsQuickShotSelectionActive)
+        {
+            IsQuickShotSelectionActive = false;
+        }
         if (IsFoulCommiterSelectionActive)
         {
             _foulCommiter = player;
@@ -395,6 +421,13 @@ public class MainWindowViewModel : ViewModelBase
         IsReboundSelectionActive = false;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
+        IsQuickShotSelectionActive = false;
+    }
+
+    public void CancelCurrentAction()
+    {
+        TempMarkerRemoved?.Invoke();
+        ResetSelectionState();
     }
 
 
@@ -771,6 +804,22 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StealPanelVisibility =>
         IsStealSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isQuickShotSelectionActive;
+    public bool IsQuickShotSelectionActive
+    {
+        get => _isQuickShotSelectionActive;
+        set
+        {
+            _isQuickShotSelectionActive = value;
+            OnPropertyChanged();
+            UpdateQuickShotPlayerStyles();
+            OnPropertyChanged(nameof(QuickShotPanelVisibility));
+        }
+    }
+
+    public Visibility QuickShotPanelVisibility =>
+        IsQuickShotSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private void UpdateStealPlayerStyles()
     {
         EligibleStealCourtPlayers.Clear();
@@ -798,6 +847,39 @@ public class MainWindowViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(EligibleStealCourtPlayers));
         OnPropertyChanged(nameof(EligibleStealBenchPlayers));
+    }
+
+    private void UpdateQuickShotPlayerStyles()
+    {
+        EligibleTeamACourtShotPlayers.Clear();
+        EligibleTeamABenchShotPlayers.Clear();
+        EligibleTeamBCourtShotPlayers.Clear();
+        EligibleTeamBBenchShotPlayers.Clear();
+
+        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        {
+            if (!IsQuickShotSelectionActive) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtShotPlayers.Add(vm);
+                else
+                    EligibleTeamABenchShotPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtShotPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchShotPlayers.Add(vm);
+            }
+        }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchShotPlayers));
     }
 
     private bool _isFoulCommiterSelectionActive;

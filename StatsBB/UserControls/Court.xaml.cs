@@ -28,7 +28,7 @@ namespace StatsBB.UserControls
             bool isLeftHalf = IsLeftHalfOfCourt(clickPosition.X);
             bool isThreePointer = IsThreePointer(clickPosition.X, clickPosition.Y);
 
-            var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf);
+            var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf, e.ChangedButton);
             Debug.WriteLine($"Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
 
             CourtClick?.Invoke(this, dataPoint); // Notify VM
@@ -49,6 +49,9 @@ namespace StatsBB.UserControls
                 StrokeThickness = 0.1,
                 Fill = isFilled ? color : Brushes.Transparent
             };
+
+            // Ensure markers appear above overlays such as the quick-shot panel
+            Panel.SetZIndex(marker, 20);
 
             Canvas.SetLeft(marker, position.X - MarkerSize / 2);
             Canvas.SetTop(marker, position.Y - MarkerSize / 2);
@@ -123,6 +126,9 @@ namespace StatsBB.UserControls
                 StrokeThickness = 0.1,
                 Fill = Brushes.White
             };
+
+            // Ensure temp marker is visible above overlays
+            Panel.SetZIndex(marker, 20);
 
             Canvas.SetLeft(marker, point.X - MarkerSize / 2);
             Canvas.SetTop(marker, point.Y - MarkerSize / 2);

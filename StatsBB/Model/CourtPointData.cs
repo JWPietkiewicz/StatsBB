@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace StatsBB.Model
 {
@@ -12,12 +13,14 @@ namespace StatsBB.Model
         public Point Point { get; }
         public bool IsThreePoint { get; }
         public bool IsLeftSide { get; }
+        public MouseButton MouseButton { get; }
 
-        public CourtPointData(Point point, bool isThreePoint, bool isLeftSide)
+        public CourtPointData(Point point, bool isThreePoint, bool isLeftSide, MouseButton mouseButton)
         {
             Point = point;
             IsThreePoint = isThreePoint;
             IsLeftSide = isLeftSide;
+            MouseButton = mouseButton;
         }
         override public string ToString()
         {
