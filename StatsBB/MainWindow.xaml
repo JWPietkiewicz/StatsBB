@@ -186,8 +186,7 @@
             <Setter Property="Background" Value="{StaticResource CourtAColor}" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="100" />
-            <Setter Property="Height" Value="60" />
+            <Setter Property="Height" Value="30" />
         </Style>
 
         <!-- TEAM B TURNOVER BUTTON -->
@@ -195,8 +194,7 @@
             <Setter Property="Background" Value="{StaticResource CourtBColor}" />
             <Setter Property="Foreground" Value="White" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="100" />
-            <Setter Property="Height" Value="60" />
+            <Setter Property="Height" Value="30" />
         </Style>
 
         <!-- BLOCK BUTTON -->
@@ -612,13 +610,16 @@ Margin="4" />
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="220"/>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
 
                         <!-- TEAM A BENCH -->
-                        <Border Background="#ccd3d3d3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                        <Border Background="#ccd3d3d3" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding EligibleTeamABenchTurnoverPlayers}">
                                     <ItemsControl.ItemsPanel>
@@ -639,7 +640,7 @@ Margin="4" />
                         </Border>
 
                         <!-- TEAM A COURT -->
-                        <Border Background="#cceeeeee" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                        <Border Background="#cceeeeee" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding EligibleTeamACourtTurnoverPlayers}">
                                     <ItemsControl.ItemsPanel>
@@ -658,17 +659,16 @@ Margin="4" />
                                 </ItemsControl>
                             </StackPanel>
                         </Border>
-
-                        <!-- CENTER TURNOVER BUTTONS -->
-                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Button Content="Team A" Command="{Binding TurnoverTeamACommand}" Style="{StaticResource TeamATurnoverStyle}" />
-                                <Button Content="Team B" Command="{Binding TurnoverTeamBCommand}" Style="{StaticResource TeamBTurnoverStyle}" />
-                            </StackPanel>
-                        </StackPanel>
+                        
+                        <Border Background="#ccd3d3d3" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                            <Button Content="Team" Command="{Binding TurnoverTeamACommand}" Style="{StaticResource TeamATurnoverStyle}" />
+                        </Border>
+                        <Border Background="#ccd3d3d3" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="2">
+                            <Button Content="Team" Command="{Binding TurnoverTeamBCommand}" Style="{StaticResource TeamBTurnoverStyle}" />
+                        </Border>
 
                         <!-- TEAM B COURT -->
-                        <Border Background="#cceeeeee" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                        <Border Background="#cceeeeee" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding EligibleTeamBCourtTurnoverPlayers}">
                                     <ItemsControl.ItemsPanel>
@@ -689,7 +689,7 @@ Margin="4" />
                         </Border>
 
                         <!-- TEAM B BENCH -->
-                        <Border Background="#ccd3d3d3" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                        <Border Background="#ccd3d3d3" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <ItemsControl ItemsSource="{Binding EligibleTeamBBenchTurnoverPlayers}">
                                     <ItemsControl.ItemsPanel>
