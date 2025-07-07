@@ -231,6 +231,12 @@
             <Setter Property="Background" Value="{StaticResource SelectedMadeColor}" />
         </Style>
 
+        <!-- FREE THROW RESULT BUTTON -->
+        <Style x:Key="FreeThrowResultButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionSelectableButtonStyle}">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="40" />
+        </Style>
+
         <Style x:Key="ShooterCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
@@ -1005,8 +1011,8 @@ Margin="4" />
                 <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="160"/>
-                            <ColumnDefinition Width="160"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0 0 10 0">
                             <TextBlock Text="Free Throw Results" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 20"/>
@@ -1017,11 +1023,13 @@ Margin="4" />
                                             <TextBlock Text="{Binding Label}" FontWeight="Bold" Margin="0 0 0 6"/>
                                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <Button Content="MADE"
+                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MADE"
                                                         Background="{Binding MadeButtonBackground}"
                                                         Margin="6"/>
                                                 <Button Content="MISSED"
+                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MISSED"
                                                         Background="{Binding MissedButtonBackground}"
@@ -1035,28 +1043,28 @@ Margin="4" />
                         <StackPanel Grid.Column="1">
                             <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="70"/>
-                                </Grid.ColumnDefinitions>
-                                <Border Background="#cceeeeee" Grid.Column="0" Padding="6" Margin="2">
-                                <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Horizontal"/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <Button Content="{Binding DisplayName}"
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
+                                    <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding DisplayName}"
                                                         Style="{StaticResource ShooterCourtPlayerStyle}"
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Margin="2"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Border>
-                                <Border Background="#ccd3d3d3" Grid.Column="1" Padding="6" Margin="2">
+                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -1076,11 +1084,11 @@ Margin="4" />
                             </Grid>
                             <TextBlock Text="Assist" FontWeight="Bold" Margin="10 0 0 6" HorizontalAlignment="Center"/>
                             <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="70"/>
-                                    <ColumnDefinition Width="70"/>
-                                </Grid.ColumnDefinitions>
-                                <Border Background="#cceeeeee" Grid.Column="0" Padding="6" Margin="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -1097,7 +1105,7 @@ Margin="4" />
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </Border>
-                                <Border Background="#ccd3d3d3" Grid.Column="1" Padding="6" Margin="2">
+                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>

@@ -554,6 +554,16 @@ public class MainWindowViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(EligibleFreeThrowCourtPlayers));
         OnPropertyChanged(nameof(EligibleFreeThrowBenchPlayers));
+
+        UpdateFreeThrowShooterStyles();
+    }
+
+    private void UpdateFreeThrowShooterStyles()
+    {
+        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        {
+            vm.IsSelectedAsFreeThrowShooter = vm.Player == SelectedFreeThrowShooter;
+        }
     }
 
     private void BeginFreeThrowsAwardedSelection()
@@ -1094,10 +1104,7 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _selectedFreeThrowShooter = value;
-            foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
-            {
-                vm.IsSelectedAsFreeThrowShooter = vm.Player == value;
-            }
+            UpdateFreeThrowShooterStyles();
             OnPropertyChanged();
         }
     }
