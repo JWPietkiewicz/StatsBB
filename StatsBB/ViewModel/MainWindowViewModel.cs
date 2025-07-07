@@ -51,6 +51,102 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
 
+    private string _teamAName = "Team A";
+    public string TeamAName
+    {
+        get => _teamAName;
+        set
+        {
+            _teamAName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _teamBName = "Team B";
+    public string TeamBName
+    {
+        get => _teamBName;
+        set
+        {
+            _teamBName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamAScore;
+    public int TeamAScore
+    {
+        get => _teamAScore;
+        set
+        {
+            _teamAScore = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamBScore;
+    public int TeamBScore
+    {
+        get => _teamBScore;
+        set
+        {
+            _teamBScore = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamATimeOutsLeft = 3;
+    public int TeamATimeOutsLeft
+    {
+        get => _teamATimeOutsLeft;
+        set
+        {
+            _teamATimeOutsLeft = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamATimeoutsText));
+        }
+    }
+
+    private int _teamATotalTimeouts = 3;
+    public int TeamATotalTimeouts
+    {
+        get => _teamATotalTimeouts;
+        set
+        {
+            _teamATotalTimeouts = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamATimeoutsText));
+        }
+    }
+
+    public string TeamATimeoutsText => $"{TeamATimeOutsLeft}/{TeamATotalTimeouts}";
+
+    private int _teamBTimeOutsLeft = 3;
+    public int TeamBTimeOutsLeft
+    {
+        get => _teamBTimeOutsLeft;
+        set
+        {
+            _teamBTimeOutsLeft = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamBTimeoutsText));
+        }
+    }
+
+    private int _teamBTotalTimeouts = 3;
+    public int TeamBTotalTimeouts
+    {
+        get => _teamBTotalTimeouts;
+        set
+        {
+            _teamBTotalTimeouts = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamBTimeoutsText));
+        }
+    }
+
+    public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
+
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
     {
