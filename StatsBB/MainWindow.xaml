@@ -141,6 +141,23 @@
         </Style>
         <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
         </Style>
+        <!-- TEAM A TIMEOUT BUTTON -->
+        <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource CourtAColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Height" Value="80" />
+        </Style>
+
+        <!-- TEAM B TIMEOUT BUTTON -->
+        <Style x:Key="TeamBTimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource CourtBColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="120" />
+            <Setter Property="Height" Value="80" />
+        </Style>
 
         <Style x:Key="SubButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
             <Setter Property="Background" Value="White"/>
@@ -701,6 +718,16 @@ Margin="4" />
                         </ItemsControl>
                     </StackPanel>
                 </Grid>
+                <!-- Timeout Panel -->
+                <Grid Visibility="{Binding TimeOutPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                        <TextBlock Text="Select Team for Timeout" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <Button Content="Team A" Style="{StaticResource TeamATimeoutStyle}" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
+                            <Button Content="Team B" Style="{StaticResource TeamBTimeoutStyle}" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
                 <!-- Substitution Panel -->
                 <Grid Visibility="{Binding SubstitutionPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center"
@@ -981,7 +1008,8 @@ Grid.Column="4" />
             Style="{StaticResource Sub}"
             Content="SUB"
             Command="{Binding StartSubstitutionCommand}" />
-                <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT" />
+                <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT"
+                        Command="{Binding StartTimeoutCommand}" />
 
             </Grid>
         </Grid>
