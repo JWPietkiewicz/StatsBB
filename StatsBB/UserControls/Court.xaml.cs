@@ -28,7 +28,7 @@ namespace StatsBB.UserControls
             bool isLeftHalf = IsLeftHalfOfCourt(clickPosition.X);
             bool isThreePointer = IsThreePointer(clickPosition.X, clickPosition.Y);
 
-            var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf);
+            var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf, e.ChangedButton);
             Debug.WriteLine($"Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
 
             CourtClick?.Invoke(this, dataPoint); // Notify VM
