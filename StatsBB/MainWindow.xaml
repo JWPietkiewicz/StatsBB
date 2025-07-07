@@ -354,11 +354,8 @@
 
                 <!-- Overlay for Assist Selection -->
                 <Grid Visibility="{Binding NoAssistButtonVisibility}"
-      Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
-                Background="#ccFFFFFF"
-                Width="980"
-                Height="520">
+      Panel.ZIndex="10" Background="#ccFFFFFF">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
                         <!-- COURT PLAYERS -->
                         <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
@@ -388,9 +385,10 @@
                 BorderBrush="Black"
                 BorderThickness="1"
                 Margin="20" />
-
+                        <Border Background="#ccd3d3d3" Padding="10">
+                            
                         <!-- BENCH PLAYERS -->
-                        <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
+                            <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel HorizontalAlignment="Center" />
@@ -405,6 +403,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                        </Border>
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{Binding ReboundPanelVisibility}"
