@@ -186,8 +186,6 @@
         <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="140" />
-            <Setter Property="Height" Value="60" />
         </Style>
 
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
