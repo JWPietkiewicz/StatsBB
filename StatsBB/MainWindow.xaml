@@ -287,9 +287,102 @@
 
     <TabControl>
         <TabItem Header="GAME SETTINGS">
-            <TextBlock Text="Game settings go here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Border Background="White" BorderBrush="#888" CornerRadius="5" BorderThickness="2" Padding="20" Margin="20">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="120" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Text="Periods" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="4" Grid.Row="0" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Period time" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="10" Grid.Row="1" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Max player foul" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="5" Grid.Row="2" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Team foul limit before bonus" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="4" Grid.Row="3" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Overtime" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <CheckBox Grid.Row="4" Grid.Column="1" Margin="5"/>
+
+                        <TextBlock Text="Overtime time" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="5" Grid.Row="5" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Jump ball" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <CheckBox Grid.Row="6" Grid.Column="1" Margin="5"/>
+
+                        <TextBlock Text="Max technical fouls" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="2" Grid.Row="7" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Players on court" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="5" Grid.Row="8" Grid.Column="1" Width="80" Margin="5"/>
+
+                        <TextBlock Text="Timeouts per period" Grid.Row="9" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <CheckBox x:Name="TimeoutsPerPeriodCheckBox" Grid.Row="9" Grid.Column="1" Margin="5"/>
+
+                        <TextBlock Text="Timeouts in period 1" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="1" Grid.Row="10" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts in period 2" Grid.Row="11" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="1" Grid.Row="11" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts in period 3" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="1" Grid.Row="12" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts in period 4" Grid.Row="13" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="1" Grid.Row="13" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts per half" Grid.Row="14" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <CheckBox x:Name="TimeoutsPerHalfCheckBox" Grid.Row="14" Grid.Column="1" IsChecked="True" Margin="5"/>
+
+                        <TextBlock Text="Timeouts first half" Grid.Row="15" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="2" Grid.Row="15" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts second half" Grid.Row="16" Grid.Column="0" VerticalAlignment="Center" Margin="5"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Text="3" Grid.Row="16" Grid.Column="1" Width="80" Margin="5"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Text="Timeouts per overtime" Grid.Row="17" Grid.Column="0" VerticalAlignment="Center" Margin="5"/>
+                        <TextBox Text="0" Grid.Row="17" Grid.Column="1" Width="80" Margin="5"/>
+                    </Grid>
+                </Border>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="TEAM INFO">
             <TextBlock Text="Team info goes here." 
