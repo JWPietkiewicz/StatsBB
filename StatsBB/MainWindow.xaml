@@ -346,7 +346,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!-- Row 2: Court (28×15) -->
-            <Grid Grid.Column="1" Grid.Row="1" Height="520">
+            <Grid Grid.Column="1" Grid.Row="1" Height="520" Width="980">
                 <!-- Base Court Control -->
                 <controls:Court x:Name="CourtControl"
                     VerticalAlignment="Stretch"
@@ -354,13 +354,11 @@
 
                 <!-- Overlay for Assist Selection -->
                 <Grid Visibility="{Binding NoAssistButtonVisibility}"
-      Background="#ccFFFFFF"
       Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                Width="Auto"
-                MaxWidth="1000">
+                Background="#ccFFFFFF"
+                Width="980"
+                Height="520">
 
                         <!-- COURT PLAYERS -->
                         <TextBlock Text="COURT PLAYERS"
@@ -721,7 +719,7 @@ Margin="4" />
                 <!-- Timeout Panel -->
                 <Grid Visibility="{Binding TimeOutPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="Select Team for Timeout" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                        <TextBlock Text="timeout for:" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button Content="Team A" Style="{StaticResource TeamATimeoutStyle}" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
                             <Button Content="Team B" Style="{StaticResource TeamBTimeoutStyle}" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
@@ -733,21 +731,14 @@ Margin="4" />
                     <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Background="White"
-                Opacity="0.95"
                 Width="Auto">
-
-                        <TextBlock Text="Substitution Panel"
-                   FontSize="20"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 0 0 20"/>
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="160"/>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
                                 <ColumnDefinition Width="80"/>
@@ -755,7 +746,7 @@ Margin="4" />
                             </Grid.ColumnDefinitions>
 
                             <!-- Team A Bench -->
-                            <ItemsControl Grid.Column="0" ItemsSource="{Binding TeamABenchPlayers}">
+                            <ItemsControl Grid.Column="0" Background="LightGray" ItemsSource="{Binding TeamABenchPlayers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding DisplayName}"
@@ -806,8 +797,13 @@ Margin="4" />
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
 
+                            <WrapPanel Grid.Column="4" VerticalAlignment="Center">
+                                <!-- Confirm Button -->
+                                <Button Content="CONFIRM" Margin="20" Padding="10,6" FontSize="16" FontWeight="Bold" Background="DarkGreen" Foreground="White" Command="{Binding ConfirmSubstitutionCommand}" IsEnabled="{Binding IsSubstitutionConfirmEnabled}"/>
+                            </WrapPanel>
+
                             <!-- Team B Court -->
-                            <ItemsControl Grid.Column="4" ItemsSource="{Binding TeamBCourtPlayers}">
+                            <ItemsControl Grid.Column="5" ItemsSource="{Binding TeamBCourtPlayers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding DisplayName}"
@@ -820,7 +816,7 @@ Margin="4" />
                             </ItemsControl>
 
                             <!-- Team B Sub Out -->
-                            <ItemsControl Grid.Column="5" ItemsSource="{Binding TeamBSubOut}">
+                            <ItemsControl Grid.Column="6" ItemsSource="{Binding TeamBSubOut}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding DisplayName}"
@@ -833,7 +829,7 @@ Margin="4" />
                             </ItemsControl>
 
                             <!-- Team B Sub In -->
-                            <ItemsControl Grid.Column="6" ItemsSource="{Binding TeamBSubIn}">
+                            <ItemsControl Grid.Column="7" ItemsSource="{Binding TeamBSubIn}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding DisplayName}"
@@ -846,7 +842,7 @@ Margin="4" />
                             </ItemsControl>
 
                             <!-- Team B Bench -->
-                            <ItemsControl Grid.Column="7" ItemsSource="{Binding TeamBBenchPlayers}">
+                            <ItemsControl Grid.Column="8" ItemsSource="{Binding TeamBBenchPlayers}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <Button Content="{Binding DisplayName}"
@@ -858,17 +854,6 @@ Margin="4" />
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </Grid>
-
-                        <!-- Confirm Button -->
-                        <Button Content="CONFIRM SUBSTITUTIONS"
-                Margin="20"
-                Padding="10,6"
-                FontSize="16"
-                FontWeight="Bold"
-                Background="DarkGreen"
-                Foreground="White"
-                Command="{Binding ConfirmSubstitutionCommand}"
-                IsEnabled="{Binding IsSubstitutionConfirmEnabled}"/>
                     </StackPanel>
                 </Grid>
 
