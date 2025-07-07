@@ -343,9 +343,14 @@
                 VerticalAlignment="Center"
                 Background="White"
                 Width="Auto"
-                MaxWidth="800">
+                MaxWidth="1000">
 
-                        <!-- Court Players -->
+                        <!-- COURT PLAYERS -->
+                        <TextBlock Text="COURT PLAYERS"
+                   FontWeight="Bold"
+                   FontSize="16"
+                   Margin="0 0 0 10"
+                   HorizontalAlignment="Center"/>
                         <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -355,9 +360,9 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                            Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
                             Command="{Binding SelectPlayerCommand}"
-                            Margin="6" />
+                            Margin="4" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -374,7 +379,12 @@
                 BorderThickness="1"
                 Margin="20" />
 
-                        <!-- Bench Players -->
+                        <!-- BENCH PLAYERS -->
+                        <TextBlock Text="BENCH PLAYERS"
+                   FontWeight="Bold"
+                   FontSize="16"
+                   Margin="20 10 0 10"
+                   HorizontalAlignment="Center"/>
                         <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -384,9 +394,9 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource BenchAPlayerButtonStyle}"
+                            Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
                             Command="{Binding SelectPlayerCommand}"
-                            Margin="6" />
+                            Margin="4" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
