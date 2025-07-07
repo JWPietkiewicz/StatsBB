@@ -84,6 +84,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ShotClockCommand { get; }
     public ICommand TurnoverTeamACommand { get; }
     public ICommand TurnoverTeamBCommand { get; }
+    public ICommand StartTurnoverCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
@@ -143,6 +144,7 @@ public class MainWindowViewModel : ViewModelBase
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
+        StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
 
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -163,6 +165,12 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginTimeout()
     {
         IsTimeOutSelectionActive = true;
+    }
+
+    private void BeginTurnover()
+    {
+        ResetSelectionState();
+        IsTurnoverSelectionActive = true;
     }
 
     private void CompleteTimeoutSelection(string team)

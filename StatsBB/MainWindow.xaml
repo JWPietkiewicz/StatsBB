@@ -248,10 +248,9 @@
                 Command="{Binding SelectActionCommand}"
                 CommandParameter="FOUL" />
 
-        <!-- Action: TURNOVER (T) -->
+        <!-- Turnover Selection (R) -->
         <KeyBinding Key="R" Modifiers="Shift"
-                Command="{Binding SelectActionCommand}"
-                CommandParameter="TURNOVER" />
+                Command="{Binding StartTurnoverCommand}" />
     </Window.InputBindings>
 
     <Grid x:Name="___No_Name_" Background="#F9F9F9">
@@ -1026,10 +1025,8 @@ IsEnabled="{Binding IsActionSelectionActive}"
 Grid.Column="3" />
                 <!--  <Button Style="{StaticResource Turnover}" Content="TURNOVER" Grid.Column="4"/>-->
                 <Button Content="TURNOVER (R)"
-Style="{Binding TurnoverButtonStyle}"
-Command="{Binding SelectActionCommand}"
-CommandParameter="TURNOVER"
-IsEnabled="{Binding IsActionSelectionActive}"
+Style="{StaticResource Turnover}"
+Command="{Binding StartTurnoverCommand}"
 Grid.Column="4" />
 
 
@@ -1117,6 +1114,7 @@ Grid.Column="4" />
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
                 <Button Grid.Column="1"
@@ -1125,6 +1123,8 @@ Grid.Column="4" />
             Command="{Binding StartSubstitutionCommand}" />
                 <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT"
                         Command="{Binding StartTimeoutCommand}" />
+                <Button Grid.Column="3" Style="{StaticResource Turnover}" Content="TURNOVER"
+                        Command="{Binding StartTurnoverCommand}" />
 
             </Grid>
         </Grid>
