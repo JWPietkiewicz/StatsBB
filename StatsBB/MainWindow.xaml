@@ -218,8 +218,41 @@
 
         <!-- FOUL TYPE BUTTON -->
         <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <!-- FREE THROW COUNT BUTTON -->
+        <Style x:Key="FreeThrowCountButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="60" />
+        </Style>
+        <Style x:Key="FreeThrowCountSelectedStyle" TargetType="Button" BasedOn="{StaticResource FreeThrowCountButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource SelectedMadeColor}" />
+        </Style>
+
+        <!-- FREE THROW RESULT BUTTON -->
+        <Style x:Key="FreeThrowResultButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionSelectableButtonStyle}">
+            <Setter Property="Width" Value="80" />
+            <Setter Property="Height" Value="40" />
+        </Style>
+
+        <Style x:Key="ShooterCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ShooterBenchPlayerStyle" TargetType="Button" BasedOn="{StaticResource BenchPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
 
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
@@ -866,83 +899,339 @@ Margin="4" />
                         </Border>
                     </StackPanel>
                 </Grid>
+                <Grid Visibility="{Binding FoulCommiterPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="#ccd3d3d3" Grid.Column="0" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamABenchFoulCommitterPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource BenchAPlayerButtonStyle}"
+                                                    Command="{Binding SelectPlayerCommand}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#cceeeeee" Grid.Column="1" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamACourtFoulCommitterPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                    Command="{Binding SelectPlayerCommand}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Button Content="Coach" Command="{Binding CoachTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Coach" Command="{Binding CoachTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Bench" Command="{Binding BenchTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Bench" Command="{Binding BenchTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border Background="#cceeeeee" Grid.Column="3" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBCourtFoulCommitterPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                    Command="{Binding SelectPlayerCommand}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#ccd3d3d3" Grid.Column="4" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBBenchFoulCommitterPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource BenchBPlayerButtonStyle}"
+                                                    Command="{Binding SelectPlayerCommand}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
                 <Grid Visibility="{Binding FoulTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="Select Foul Type" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Background="White">
+                        <TextBlock Text="Select Foul Type" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center">
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Offensive" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Technical" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="SHOOTING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="OFFENSIVE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="TECHNICAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DOUBLE PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="4"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="4"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE (W T/O)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike turnover"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="85"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING (W T/O)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying turnover"/>
                         </WrapPanel>
                     </StackPanel>
                 </Grid>
-                <Grid Visibility="{Binding FreeThrowPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="How many free throws?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
-                        <WrapPanel HorizontalAlignment="Center">
-                            <Button Content="0" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5"/>
-                            <Button Content="1" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5"/>
-                            <Button Content="2" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5"/>
-                            <Button Content="3" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5"/>
+                        <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                        <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
+                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
+                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
+                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
+                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
                         </WrapPanel>
+                        <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center" Visibility="{Binding FreeThrowShooterVisibility}"/>
+                        <Grid Visibility="{Binding FreeThrowShooterVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
+                                <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource ShooterCourtPlayerStyle}"
+                                                    Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                            <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
+                                <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource ShooterBenchPlayerStyle}"
+                                                    Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Border>
+                        </Grid>
+                        <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{Binding IsFouledPlayerSelectionActive, Converter={StaticResource BooleanToVisibilityConverter}}"
-      Background="#33FFFFFF"
-      Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                Opacity="0.95">
-                        <TextBlock Text="Who was fouled?"
-                   FontSize="18"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 0 0 10"/>
-                        <TextBlock Text="(Select from opposing team)"
-                   FontSize="14"
-                   HorizontalAlignment="Center"
-                   Foreground="Gray"
-                   Margin="0 0 0 10"/>
-                    </StackPanel>
-                </Grid>
-                <Grid Visibility="{Binding FreeThrowResultPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                Width="340"
-                Opacity="0.95">
-                        <TextBlock Text="Free Throw Results"
-                   FontSize="18"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 0 0 20"/>
+      Background="#33FFFFFF" Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Opacity="0.95">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <ItemsControl ItemsSource="{Binding FreeThrowResultRows}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Vertical" Margin="0 10">
-                                        <TextBlock Text="{Binding Label}" FontWeight="Bold" Margin="0 0 0 6"/>
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                            <Button Content="MADE"
-                                    Command="{Binding SelectResultCommand}"
-                                    CommandParameter="MADE"
-                                    Background="{Binding MadeButtonBackground}"
-                                    Margin="6"/>
-                                            <Button Content="MISSED"
-                                    Command="{Binding SelectResultCommand}"
-                                    CommandParameter="MISSED"
-                                    Background="{Binding MissedButtonBackground}"
-                                    Margin="6"/>
+                        <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
+                            <ItemsControl ItemsSource="{Binding EligibleFoulOnCourtPlayers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding DisplayName}" Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+
+                        <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
+                            <ItemsControl ItemsSource="{Binding EligibleFoulOnBenchPlayers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding DisplayName}" Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
+                    </Grid>
+                </Grid>
+                <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0 0 10 0">
+                            <TextBlock Text="Free Throw Results" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 20"/>
+                            <ItemsControl ItemsSource="{Binding FreeThrowResultRows}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" Margin="0 10">
+                                            <TextBlock Text="{Binding Label}" FontWeight="Bold" Margin="0 0 0 6"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                <Button Content="MADE"
+                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
+                                                        Command="{Binding SelectResultCommand}"
+                                                        CommandParameter="MADE"
+                                                        Background="{Binding MadeButtonBackground}"
+                                                        Margin="6"/>
+                                                <Button Content="MISSED"
+                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
+                                                        Command="{Binding SelectResultCommand}"
+                                                        CommandParameter="MISSED"
+                                                        Background="{Binding MissedButtonBackground}"
+                                                        Margin="6"/>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
+                                    <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding DisplayName}"
+                                                        Style="{StaticResource ShooterCourtPlayerStyle}"
+                                                        Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        Margin="2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
+                                    <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding DisplayName}"
+                                                        Style="{StaticResource ShooterBenchPlayerStyle}"
+                                                        Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        Margin="2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Grid>
+                            <TextBlock Text="Assist" FontWeight="Bold" Margin="10 0 0 6" HorizontalAlignment="Center"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
+                                    <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding DisplayName}"
+                                                        Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                                                        Command="{Binding SelectPlayerCommand}"
+                                                        Margin="2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
+                                    <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal"/>
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding DisplayName}"
+                                                        Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                                                        Command="{Binding SelectPlayerCommand}"
+                                                        Margin="2"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
                 <!-- Timeout Panel -->
                 <Grid Visibility="{Binding TimeOutPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
@@ -1145,7 +1434,6 @@ Margin="4" />
 Style="{Binding FoulButtonStyle}"
 Command="{Binding SelectActionCommand}"
 CommandParameter="Foul"
-IsEnabled="{Binding IsActionSelectionActive}"
 Grid.Column="3" />
                 <!--  <Button Style="{StaticResource Turnover}" Content="TURNOVER" Grid.Column="4"/>-->
                 <Button Content="TURNOVER (R)"

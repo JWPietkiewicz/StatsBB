@@ -163,6 +163,17 @@ namespace StatsBB.ViewModel
             IsSelectableForFouled = isSelectable;
         }
 
+        private bool _isSelectedAsFreeThrowShooter;
+        public bool IsSelectedAsFreeThrowShooter
+        {
+            get => _isSelectedAsFreeThrowShooter;
+            set
+            {
+                _isSelectedAsFreeThrowShooter = value;
+                OnPropertyChanged();
+            }
+        }
+
         public PlayerPositionViewModel(Player player, ICommand selectCommand)
         {
             Player = player;

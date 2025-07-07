@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Numerics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -36,11 +37,18 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchTurnoverPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealBenchPlayers { get; } = new();
-
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtShotPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchShotPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtShotPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnCourtPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnBenchPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowCourtPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowBenchPlayers { get; } = new();
 
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
@@ -196,6 +204,12 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
+    public ICommand CoachTechnicalTeamACommand { get; }
+    public ICommand CoachTechnicalTeamBCommand { get; }
+    public ICommand BenchTechnicalTeamACommand { get; }
+    public ICommand BenchTechnicalTeamBCommand { get; }
+    public ICommand ConfirmFreeThrowsAwardedCommand { get; }
+    public ICommand SelectFreeThrowShooterCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -209,7 +223,9 @@ public class MainWindowViewModel : ViewModelBase
 
         SelectActionCommand = new RelayCommand(
             param => SelectAction(param?.ToString()),
-            param => IsActionSelectionActive
+            param => IsActionSelectionActive ||
+                     (param?.ToString()?.Equals("Foul",
+                         StringComparison.InvariantCultureIgnoreCase) ?? false)
         );
 
         NoAssistCommand = new RelayCommand(
@@ -226,7 +242,7 @@ public class MainWindowViewModel : ViewModelBase
         );
 
         SelectFreeThrowCountCommand = new RelayCommand(
-            param => OnFreeThrowSelected(Convert.ToInt32(param))
+            param => SelectedFreeThrowCount = Convert.ToInt32(param)
         );
 
         ReboundTeamACommand = new RelayCommand(_ => CompleteReboundSelection("TeamA"), _ => IsReboundSelectionActive);
@@ -247,6 +263,13 @@ public class MainWindowViewModel : ViewModelBase
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
+
+        CoachTechnicalTeamACommand = new RelayCommand(_ => OnCoachTechnical("Team A"));
+        CoachTechnicalTeamBCommand = new RelayCommand(_ => OnCoachTechnical("Team B"));
+        BenchTechnicalTeamACommand = new RelayCommand(_ => OnBenchTechnical("Team A"));
+        BenchTechnicalTeamBCommand = new RelayCommand(_ => OnBenchTechnical("Team B"));
+        ConfirmFreeThrowsAwardedCommand = new RelayCommand(_ => OnConfirmFreeThrowsAwarded());
+        SelectFreeThrowShooterCommand = new RelayCommand(p => SelectFreeThrowShooter(p as Player));
 
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -298,6 +321,22 @@ public class MainWindowViewModel : ViewModelBase
         IsTimeOutSelectionActive = false;
     }
 
+    private void OnCoachTechnical(string team)
+    {
+        Debug.WriteLine($"Coach Technical on {team}");
+        _defaultFreeThrows = 1;
+        _freeThrowTeamIsTeamA = team != "Team A";
+        BeginFreeThrowsAwardedSelection();
+    }
+
+    private void OnBenchTechnical(string team)
+    {
+        Debug.WriteLine($"Bench Technical on {team}");
+        _defaultFreeThrows = 1;
+        _freeThrowTeamIsTeamA = team != "Team A";
+        BeginFreeThrowsAwardedSelection();
+    }
+
     private void SelectAction(string? action)
     {
         if (string.IsNullOrWhiteSpace(action))
@@ -339,6 +378,10 @@ public class MainWindowViewModel : ViewModelBase
     private Player? _foulCommiter;
     private Player? _fouledPlayer;
     private string? _foulType;
+    private int _defaultFreeThrows;
+    private bool _freeThrowTeamIsTeamA;
+    private int _selectedFreeThrowCount;
+    private Player? _selectedFreeThrowShooter;
 
     private void OnPlayerSelected(Player player)
     {
@@ -372,9 +415,22 @@ public class MainWindowViewModel : ViewModelBase
             }
             else
             {
-                IsFreeThrowSelectionActive = true;
+                BeginFreeThrowsAwardedSelection();
             }
 
+            return;
+        }
+
+        if (IsFreeThrowsAwardedSelectionActive)
+        {
+            SelectedFreeThrowShooter = player;
+            return;
+        }
+
+        if (IsFreeThrowsSelectionActive)
+        {
+            _pendingShooter = player;
+            UpdateAssistPlayerStyles();
             return;
         }
 
@@ -460,14 +516,55 @@ public class MainWindowViewModel : ViewModelBase
         IsFoulTypeSelectionActive = false;
 
         var lowerType = foulType.ToLowerInvariant();
+        _defaultFreeThrows = 0;
 
-        if (lowerType == "technical")
+        switch (lowerType)
         {
-            IsFreeThrowSelectionActive = true;
-        }
-        else
-        {
-            IsFouledPlayerSelectionActive = true;
+            case "personal":
+                Debug.WriteLine($"Personal foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "shooting":
+                Debug.WriteLine($"Shooting foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "offensive":
+                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "double personal":
+                Debug.WriteLine($"Double personal foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "unsportsmanlike":
+                Debug.WriteLine($"Unsportsmanlike foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "unsportsmanlike turnover":
+                Debug.WriteLine($"Unsportsmanlike foul with turnover by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "disqualifying":
+                Debug.WriteLine($"Disqualifying foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "disqualifying turnover":
+                Debug.WriteLine($"Disqualifying foul with turnover by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "technical":
+                Debug.WriteLine($"Technical foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 1;
+                BeginFreeThrowsAwardedSelection();
+                break;
+            default:
+                IsFouledPlayerSelectionActive = true;
+                break;
         }
     }
 
@@ -480,22 +577,64 @@ public class MainWindowViewModel : ViewModelBase
         IsFoulCommiterSelectionActive = false;
         IsFoulTypeSelectionActive = false;
         IsFouledPlayerSelectionActive = false;
-        IsFreeThrowSelectionActive = false;
+        IsFreeThrowsAwardedSelectionActive = false;
         FreeThrowResultRows.Clear();
-        IsFreeThrowResultSelectionActive = false;
+        IsFreeThrowsSelectionActive = false;
+        SelectedFreeThrowCount = 0;
+        SelectedFreeThrowShooter = null;
+        _defaultFreeThrows = 0;
+        EligibleFreeThrowCourtPlayers.Clear();
+        EligibleFreeThrowBenchPlayers.Clear();
+        EligibleTeamACourtFoulCommitterPlayers.Clear();
+        EligibleTeamABenchFoulCommitterPlayers.Clear();
+        EligibleTeamBCourtFoulCommitterPlayers.Clear();
+        EligibleTeamBBenchFoulCommitterPlayers.Clear();
+        EligibleFoulOnCourtPlayers.Clear();
+        EligibleFoulOnBenchPlayers.Clear();
         ResetSelectionState();
     }
 
     private void UpdateFoulCommiterPlayerStyles()
     {
+        EligibleTeamACourtFoulCommitterPlayers.Clear();
+        EligibleTeamABenchFoulCommitterPlayers.Clear();
+        EligibleTeamBCourtFoulCommitterPlayers.Clear();
+        EligibleTeamBBenchFoulCommitterPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            vm.SetFoulCommiterSelectionMode(IsFoulCommiterSelectionActive);
+            bool isSelectable = IsFoulCommiterSelectionActive;
+            vm.SetFoulCommiterSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtFoulCommitterPlayers.Add(vm);
+                else
+                    EligibleTeamABenchFoulCommitterPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtFoulCommitterPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchFoulCommitterPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchFoulCommitterPlayers));
     }
 
     private void UpdateFouledPlayerStyles()
     {
+        EligibleFoulOnCourtPlayers.Clear();
+        EligibleFoulOnBenchPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
             bool isSelectable = false;
@@ -506,6 +645,73 @@ public class MainWindowViewModel : ViewModelBase
             }
 
             vm.SetFouledPlayerSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsActive)
+                EligibleFoulOnCourtPlayers.Add(vm);
+            else
+                EligibleFoulOnBenchPlayers.Add(vm);
+        }
+
+        OnPropertyChanged(nameof(EligibleFoulOnCourtPlayers));
+        OnPropertyChanged(nameof(EligibleFoulOnBenchPlayers));
+    }
+
+    private void UpdateFreeThrowPlayerStyles()
+    {
+        EligibleFreeThrowCourtPlayers.Clear();
+        EligibleFreeThrowBenchPlayers.Clear();
+
+        var players = _freeThrowTeamIsTeamA ? TeamAPlayers : TeamBPlayers;
+
+        foreach (var vm in players)
+        {
+            if (vm.Player.IsActive)
+                EligibleFreeThrowCourtPlayers.Add(vm);
+            else
+                EligibleFreeThrowBenchPlayers.Add(vm);
+        }
+
+        OnPropertyChanged(nameof(EligibleFreeThrowCourtPlayers));
+        OnPropertyChanged(nameof(EligibleFreeThrowBenchPlayers));
+
+        UpdateFreeThrowShooterStyles();
+    }
+
+    private void UpdateFreeThrowShooterStyles()
+    {
+        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        {
+            vm.IsSelectedAsFreeThrowShooter = vm.Player == SelectedFreeThrowShooter;
+        }
+    }
+
+    private void BeginFreeThrowsAwardedSelection()
+    {
+        _freeThrowTeamIsTeamA = _fouledPlayer?.IsTeamA ?? _freeThrowTeamIsTeamA;
+        SelectedFreeThrowCount = _defaultFreeThrows;
+        SelectedFreeThrowShooter = _fouledPlayer;
+        UpdateFreeThrowPlayerStyles();
+        UpdateFreeThrowCountButtonStyles();
+        IsFreeThrowsAwardedSelectionActive = true;
+    }
+
+    private void OnConfirmFreeThrowsAwarded()
+    {
+        FreeThrowCount = SelectedFreeThrowCount;
+        _pendingShooter = SelectedFreeThrowShooter;
+        StartFreeThrows(FreeThrowCount);
+    }
+
+    private void SelectFreeThrowShooter(Player? player)
+    {
+        if (player == null) return;
+        SelectedFreeThrowShooter = player;
+        if (IsFreeThrowsSelectionActive)
+        {
+            _pendingShooter = player;
+            UpdateAssistPlayerStyles();
         }
     }
 
@@ -770,25 +976,28 @@ public class MainWindowViewModel : ViewModelBase
         EligibleCourtAssistPlayers.Clear();
         EligibleBenchAssistPlayers.Clear();
 
-        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        if (_pendingShooter == null)
         {
-            bool isSelectable = false;
+            OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
+            OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
+            return;
+        }
 
-            if (IsAssistSelectionActive && _pendingShooter != null)
-            {
-                isSelectable = vm.Player.IsTeamA == _pendingShooter.IsTeamA &&
+        var players = _pendingShooter.IsTeamA ? TeamAPlayers : TeamBPlayers;
+
+        foreach (var vm in players)
+        {
+            bool isSelectable = IsAssistSelectionActive &&
                                vm.Player.Number != _pendingShooter.Number;
-            }
 
             vm.SetAssistSelectionMode(isSelectable);
 
-            if (isSelectable)
-            {
-                if (vm.Player.IsActive)
-                    EligibleCourtAssistPlayers.Add(vm);
-                else
-                    EligibleBenchAssistPlayers.Add(vm);
-            }
+            if (vm.Player.Number == _pendingShooter.Number) continue;
+
+            if (vm.Player.IsActive)
+                EligibleCourtAssistPlayers.Add(vm);
+            else
+                EligibleBenchAssistPlayers.Add(vm);
         }
 
         OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
@@ -990,8 +1199,23 @@ public class MainWindowViewModel : ViewModelBase
             _isFoulCommiterSelectionActive = value;
             OnPropertyChanged();
             UpdateFoulCommiterPlayerStyles();
+            OnPropertyChanged(nameof(FoulCommiterPanelVisibility));
+            if (!value)
+            {
+                EligibleTeamACourtFoulCommitterPlayers.Clear();
+                EligibleTeamABenchFoulCommitterPlayers.Clear();
+                EligibleTeamBCourtFoulCommitterPlayers.Clear();
+                EligibleTeamBBenchFoulCommitterPlayers.Clear();
+                OnPropertyChanged(nameof(EligibleTeamACourtFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamABenchFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamBCourtFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamBBenchFoulCommitterPlayers));
+            }
         }
     }
+
+    public Visibility FoulCommiterPanelVisibility =>
+        IsFoulCommiterSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     private bool _isFoulTypeSelectionActive;
     public bool IsFoulTypeSelectionActive
@@ -1014,48 +1238,91 @@ public class MainWindowViewModel : ViewModelBase
             _isFouledPlayerSelectionActive = value;
             OnPropertyChanged();
             UpdateFouledPlayerStyles();
+            if (!value)
+            {
+                EligibleFoulOnCourtPlayers.Clear();
+                EligibleFoulOnBenchPlayers.Clear();
+                OnPropertyChanged(nameof(EligibleFoulOnCourtPlayers));
+                OnPropertyChanged(nameof(EligibleFoulOnBenchPlayers));
+            }
         }
     }
 
-    private bool _isFreeThrowSelectionActive;
-    public bool IsFreeThrowSelectionActive
+    private bool _isFreeThrowsAwardedSelectionActive;
+    public bool IsFreeThrowsAwardedSelectionActive
     {
-        get => _isFreeThrowSelectionActive;
+        get => _isFreeThrowsAwardedSelectionActive;
         set
         {
-            _isFreeThrowSelectionActive = value;
+            _isFreeThrowsAwardedSelectionActive = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(FreeThrowPanelVisibility));
+            if (value)
+                UpdateFreeThrowPlayerStyles();
+            OnPropertyChanged(nameof(FreeThrowsAwardedPanelVisibility));
         }
     }
 
     public Visibility FoulTypePanelVisibility =>
     IsFoulTypeSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
-    public Visibility FreeThrowPanelVisibility =>
-        IsFreeThrowSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility FreeThrowsAwardedPanelVisibility =>
+        IsFreeThrowsAwardedSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     public int FreeThrowCount { get; private set; } = 0;
-
-    private bool _isFreeThrowResultSelectionActive;
-    public bool IsFreeThrowResultSelectionActive
+    public int SelectedFreeThrowCount
     {
-        get => _isFreeThrowResultSelectionActive;
+        get => _selectedFreeThrowCount;
         set
         {
-            _isFreeThrowResultSelectionActive = value;
+            _selectedFreeThrowCount = value;
+            if (value == 0)
+                SelectedFreeThrowShooter = null;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(FreeThrowResultPanelVisibility));
+            UpdateFreeThrowCountButtonStyles();
+            OnPropertyChanged(nameof(FreeThrowShooterVisibility));
+        }
+    }
+
+    public Player? SelectedFreeThrowShooter
+    {
+        get => _selectedFreeThrowShooter;
+        set
+        {
+            _selectedFreeThrowShooter = value;
+            UpdateFreeThrowShooterStyles();
+            if (IsFreeThrowsSelectionActive)
+            {
+                _pendingShooter = value;
+                UpdateAssistPlayerStyles();
+            }
+            OnPropertyChanged();
+        }
+    }
+
+    public Visibility FreeThrowShooterVisibility =>
+        SelectedFreeThrowCount == 0 ? Visibility.Collapsed : Visibility.Visible;
+
+    private bool _isFreeThrowsSelectionActive;
+    public bool IsFreeThrowsSelectionActive
+    {
+        get => _isFreeThrowsSelectionActive;
+        set
+        {
+            _isFreeThrowsSelectionActive = value;
+            OnPropertyChanged();
+            if (value)
+                UpdateFreeThrowPlayerStyles();
+            OnPropertyChanged(nameof(FreeThrowsPanelVisibility));
             OnPropertyChanged(nameof(FreeThrowResultRows));
         }
     }
 
-    public Visibility FreeThrowResultPanelVisibility =>
-    IsFreeThrowResultSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+    public Visibility FreeThrowsPanelVisibility =>
+        IsFreeThrowsSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
-    private void OnFreeThrowSelected(int count)
+    private void StartFreeThrows(int count)
     {
-        IsFreeThrowSelectionActive = false;
+        IsFreeThrowsAwardedSelectionActive = false;
 
         if (count <= 0)
         {
@@ -1071,7 +1338,9 @@ public class MainWindowViewModel : ViewModelBase
             FreeThrowResultRows.Add(item);
         }
 
-        IsFreeThrowResultSelectionActive = true;
+        UpdateAssistPlayerStyles();
+
+        IsFreeThrowsSelectionActive = true;
     }
 
     private void OnFreeThrowResultSelected(int index, string result)
@@ -1118,6 +1387,14 @@ public class MainWindowViewModel : ViewModelBase
             : (Brush)_resources["CourtBColor"];
     }
 
+    private void UpdateFreeThrowCountButtonStyles()
+    {
+        OnPropertyChanged(nameof(FreeThrowCount0Style));
+        OnPropertyChanged(nameof(FreeThrowCount1Style));
+        OnPropertyChanged(nameof(FreeThrowCount2Style));
+        OnPropertyChanged(nameof(FreeThrowCount3Style));
+    }
+
 
 
     // Action button styles
@@ -1125,10 +1402,14 @@ public class MainWindowViewModel : ViewModelBase
     public Style MissedButtonStyle => GetActionStyle("MISSED");
     public Style FoulButtonStyle => GetActionStyle("FOUL");
     public Style TurnoverButtonStyle => GetActionStyle("TURNOVER");
+    public Style FreeThrowCount0Style => GetFreeThrowCountStyle(0);
+    public Style FreeThrowCount1Style => GetFreeThrowCountStyle(1);
+    public Style FreeThrowCount2Style => GetFreeThrowCountStyle(2);
+    public Style FreeThrowCount3Style => GetFreeThrowCountStyle(3);
 
     private Style GetActionStyle(string action)
     {
-        if (!IsActionSelectionActive)
+        if (!IsActionSelectionActive && action != "FOUL")
             return (Style)_resources["ActionDisabledButtonStyle"];
 
         if (SelectedAction == action)
@@ -1142,6 +1423,13 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         return (Style)_resources["ActionSelectableButtonStyle"];
+    }
+
+    private Style GetFreeThrowCountStyle(int count)
+    {
+        return SelectedFreeThrowCount == count
+            ? (Style)_resources["FreeThrowCountSelectedStyle"]
+            : (Style)_resources["FreeThrowCountButtonStyle"];
     }
 
     public Visibility NoAssistButtonVisibility =>
@@ -1224,11 +1512,11 @@ public class FreeThrowResult : ViewModelBase
 
     public string MadeButtonBackground =>
         Result == "MADE" ? "Green" :
-        Result == "MISSED" ? "LightGray" : "White";
+        Result == "MISSED" ? "LightGray" : "DarkGray";
 
     public string MissedButtonBackground =>
         Result == "MISSED" ? "Red" :
-        Result == "MADE" ? "LightGray" : "White";
+        Result == "MADE" ? "LightGray" : "DarkGray";
 
     public ICommand SelectResultCommand { get; }
 
