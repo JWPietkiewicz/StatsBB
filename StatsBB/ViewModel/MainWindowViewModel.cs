@@ -848,25 +848,28 @@ public class MainWindowViewModel : ViewModelBase
         EligibleCourtAssistPlayers.Clear();
         EligibleBenchAssistPlayers.Clear();
 
-        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        if (_pendingShooter == null)
         {
-            bool isSelectable = false;
+            OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
+            OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
+            return;
+        }
 
-            if (IsAssistSelectionActive && _pendingShooter != null)
-            {
-                isSelectable = vm.Player.IsTeamA == _pendingShooter.IsTeamA &&
+        var players = _pendingShooter.IsTeamA ? TeamAPlayers : TeamBPlayers;
+
+        foreach (var vm in players)
+        {
+            bool isSelectable = IsAssistSelectionActive &&
                                vm.Player.Number != _pendingShooter.Number;
-            }
 
             vm.SetAssistSelectionMode(isSelectable);
 
-            if (isSelectable)
-            {
-                if (vm.Player.IsActive)
-                    EligibleCourtAssistPlayers.Add(vm);
-                else
-                    EligibleBenchAssistPlayers.Add(vm);
-            }
+            if (vm.Player.Number == _pendingShooter.Number) continue;
+
+            if (vm.Player.IsActive)
+                EligibleCourtAssistPlayers.Add(vm);
+            else
+                EligibleBenchAssistPlayers.Add(vm);
         }
 
         OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
