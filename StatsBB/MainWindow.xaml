@@ -947,7 +947,7 @@ Margin="4" />
                 <!-- Timeout Panel -->
                 <Grid Visibility="{Binding TimeOutPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="timeout for:" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                        <TextBlock Text="Who called for time out?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <Button Content="Team A" Style="{StaticResource TeamATimeoutStyle}" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
                             <Button Content="Team B" Style="{StaticResource TeamBTimeoutStyle}" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
