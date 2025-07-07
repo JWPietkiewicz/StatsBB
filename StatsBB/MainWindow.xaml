@@ -199,6 +199,12 @@
             <Setter Property="Height" Value="40" />
         </Style>
 
+        <!-- FOUL TYPE BUTTON -->
+        <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
                                      TeamAStyle="{StaticResource CourtAPlayerButtonStyle}"
                                      TeamBStyle="{StaticResource CourtBPlayerButtonStyle}" />
@@ -644,12 +650,12 @@ Margin="4" />
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <TextBlock Text="Select Foul Type" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center">
-                            <Button Content="Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal" Margin="5"/>
-                            <Button Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
-                            <Button Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
-                            <Button Content="Offensive" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive" Margin="5"/>
-                            <Button Content="Disqualifying" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying" Margin="5"/>
-                            <Button Content="Technical" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Offensive" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Technical" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical" Margin="5"/>
                         </WrapPanel>
                     </StackPanel>
                 </Grid>
