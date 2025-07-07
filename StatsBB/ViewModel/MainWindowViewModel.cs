@@ -37,6 +37,14 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleStealCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealBenchPlayers { get; } = new();
 
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtFoulCommitterPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchFoulCommitterPlayers { get; } = new();
+
+    public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnCourtPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnBenchPlayers { get; } = new();
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -428,19 +436,56 @@ public class MainWindowViewModel : ViewModelBase
         FreeThrowResultRows.Clear();
         IsFreeThrowResultSelectionActive = false;
         _defaultFreeThrows = 0;
+        EligibleTeamACourtFoulCommitterPlayers.Clear();
+        EligibleTeamABenchFoulCommitterPlayers.Clear();
+        EligibleTeamBCourtFoulCommitterPlayers.Clear();
+        EligibleTeamBBenchFoulCommitterPlayers.Clear();
+        EligibleFoulOnCourtPlayers.Clear();
+        EligibleFoulOnBenchPlayers.Clear();
         ResetSelectionState();
     }
 
     private void UpdateFoulCommiterPlayerStyles()
     {
+        EligibleTeamACourtFoulCommitterPlayers.Clear();
+        EligibleTeamABenchFoulCommitterPlayers.Clear();
+        EligibleTeamBCourtFoulCommitterPlayers.Clear();
+        EligibleTeamBBenchFoulCommitterPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            vm.SetFoulCommiterSelectionMode(IsFoulCommiterSelectionActive);
+            bool isSelectable = IsFoulCommiterSelectionActive;
+            vm.SetFoulCommiterSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtFoulCommitterPlayers.Add(vm);
+                else
+                    EligibleTeamABenchFoulCommitterPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtFoulCommitterPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchFoulCommitterPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtFoulCommitterPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchFoulCommitterPlayers));
     }
 
     private void UpdateFouledPlayerStyles()
     {
+        EligibleFoulOnCourtPlayers.Clear();
+        EligibleFoulOnBenchPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
             bool isSelectable = false;
@@ -451,7 +496,17 @@ public class MainWindowViewModel : ViewModelBase
             }
 
             vm.SetFouledPlayerSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsActive)
+                EligibleFoulOnCourtPlayers.Add(vm);
+            else
+                EligibleFoulOnBenchPlayers.Add(vm);
         }
+
+        OnPropertyChanged(nameof(EligibleFoulOnCourtPlayers));
+        OnPropertyChanged(nameof(EligibleFoulOnBenchPlayers));
     }
 
 
@@ -880,6 +935,17 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateFoulCommiterPlayerStyles();
             OnPropertyChanged(nameof(FoulCommiterPanelVisibility));
+            if (!value)
+            {
+                EligibleTeamACourtFoulCommitterPlayers.Clear();
+                EligibleTeamABenchFoulCommitterPlayers.Clear();
+                EligibleTeamBCourtFoulCommitterPlayers.Clear();
+                EligibleTeamBBenchFoulCommitterPlayers.Clear();
+                OnPropertyChanged(nameof(EligibleTeamACourtFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamABenchFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamBCourtFoulCommitterPlayers));
+                OnPropertyChanged(nameof(EligibleTeamBBenchFoulCommitterPlayers));
+            }
         }
     }
 
@@ -907,6 +973,13 @@ public class MainWindowViewModel : ViewModelBase
             _isFouledPlayerSelectionActive = value;
             OnPropertyChanged();
             UpdateFouledPlayerStyles();
+            if (!value)
+            {
+                EligibleFoulOnCourtPlayers.Clear();
+                EligibleFoulOnBenchPlayers.Clear();
+                OnPropertyChanged(nameof(EligibleFoulOnCourtPlayers));
+                OnPropertyChanged(nameof(EligibleFoulOnBenchPlayers));
+            }
         }
     }
 
