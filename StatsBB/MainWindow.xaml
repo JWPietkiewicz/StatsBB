@@ -285,6 +285,18 @@
                 Command="{Binding StartTurnoverCommand}" />
     </Window.InputBindings>
 
+    <TabControl>
+        <TabItem Header="GAME SETTINGS">
+            <TextBlock Text="Game settings go here." 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+        </TabItem>
+        <TabItem Header="TEAM INFO">
+            <TextBlock Text="Team info goes here." 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+        </TabItem>
+        <TabItem Header="MAIN">
     <Grid x:Name="___No_Name_" Background="#F9F9F9">
         <!-- Layout: Header, Event Buttons, Main Content -->
         <Grid.RowDefinitions>
@@ -1545,4 +1557,11 @@ Grid.Column="4" />
 
         </Border>
     </Grid>
+        </TabItem>
+        <TabItem Header="STATS">
+            <TextBlock Text="Stats go here." 
+                       VerticalAlignment="Center" 
+                       HorizontalAlignment="Center"/>
+        </TabItem>
+    </TabControl>
 </Window>
