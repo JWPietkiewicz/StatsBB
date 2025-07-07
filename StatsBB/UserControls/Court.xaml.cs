@@ -123,9 +123,9 @@ namespace StatsBB.UserControls
             {
                 Width = MarkerSize,
                 Height = MarkerSize,
-                Stroke = Brushes.White,
+                Stroke = Brushes.Black,
                 StrokeThickness = 0.1,
-                Fill = Brushes.White
+                Fill = Brushes.Black
             };
 
             // Ensure temp marker is visible above overlays

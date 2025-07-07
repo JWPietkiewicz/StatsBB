@@ -19,6 +19,7 @@ namespace StatsBB
 
             // 🔗 Connect view model to view
             vm.MarkerRequested += (pos, color, filled) => CourtControl.SetMarker(pos, color, filled);
+            vm.TempMarkerRequested += (pos) => CourtControl.ShowTemporaryMarker(pos);
             vm.TempMarkerRemoved += () => CourtControl.RemoveTemporaryMarker();
 
             // 📍 On canvas click: set point + show temp white marker

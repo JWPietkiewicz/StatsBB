@@ -199,6 +199,7 @@ public class MainWindowViewModel : ViewModelBase
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
+    public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
 
     public MainWindowViewModel(ResourceDictionary resources)
@@ -411,8 +412,9 @@ public class MainWindowViewModel : ViewModelBase
 
         var actionType = GetActionType(SelectedAction);
         var position = SelectedPoint.Point;
+        TempMarkerRequested?.Invoke(position);
 
-        TempMarkerRemoved?.Invoke();
+
 
         if (actionType == ActionType.Other)
         {
@@ -420,6 +422,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         else
         {
+            TempMarkerRemoved?.Invoke();
             Brush teamColor = GetTeamColorFromPlayer(player);
             bool isFilled = actionType == ActionType.Made;
 
