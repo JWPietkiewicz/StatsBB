@@ -30,7 +30,7 @@ namespace StatsBB.UserControls
             bool isThreePointer = IsThreePointer(clickPosition.X, clickPosition.Y);
 
             var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf, e.ChangedButton);
-            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
 
             CourtClick?.Invoke(this, dataPoint); // Notify VM
         }

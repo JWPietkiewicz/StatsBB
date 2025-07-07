@@ -14,7 +14,7 @@ public static class GameClockService
     }
 
     public static TimeSpan TimeLeft { get; private set; } = TimeSpan.FromMinutes(10);
-
+    public static string Period { get; private set; } = "Q1";
     public static bool IsRunning => _timer.IsEnabled;
 
     public static event Action? TimeUpdated;
@@ -52,11 +52,12 @@ public static class GameClockService
             Start();
     }
 
-    public static void Reset(TimeSpan? periodLength = null)
+    public static void Reset(TimeSpan? periodLength = null, String? periodName = null)
     {
+        Period = periodName ?? "=Q1";
         TimeLeft = periodLength ?? TimeSpan.FromMinutes(10);
         TimeUpdated?.Invoke();
     }
 
-    public static string TimeLeftString => $"{(int)TimeLeft.TotalMinutes:D2}:{TimeLeft.Seconds:D2}";
+    public static string TimeLeftString => $"{Period} {(int)TimeLeft.TotalMinutes:D2}:{TimeLeft.Seconds:D2}";
 }
