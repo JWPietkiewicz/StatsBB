@@ -181,6 +181,24 @@
             <Setter Property="Height" Value="60" />
         </Style>
 
+        <!-- TEAM A TURNOVER BUTTON -->
+        <Style x:Key="TeamATurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource CourtAColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="60" />
+        </Style>
+
+        <!-- TEAM B TURNOVER BUTTON -->
+        <Style x:Key="TeamBTurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource CourtBColor}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="60" />
+        </Style>
+
         <!-- BLOCK BUTTON -->
         <Style x:Key="BlockStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             <Setter Property="Background" Value="Gray" />
@@ -230,10 +248,9 @@
                 Command="{Binding SelectActionCommand}"
                 CommandParameter="FOUL" />
 
-        <!-- Action: TURNOVER (T) -->
+        <!-- Turnover Selection (R) -->
         <KeyBinding Key="R" Modifiers="Shift"
-                Command="{Binding SelectActionCommand}"
-                CommandParameter="TURNOVER" />
+                Command="{Binding StartTurnoverCommand}" />
     </Window.InputBindings>
 
     <Grid x:Name="___No_Name_" Background="#F9F9F9">
@@ -589,45 +606,165 @@ Margin="4" />
                 </Grid>
 
                 <Grid Visibility="{Binding TurnoverPanelVisibility}"
-      Background="#33FFFFFF"
+      Background="#ccFFFFFF"
       Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                        <TextBlock Text="Select Team for Turnover"
-                   FontSize="18"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 0 0 10"/>
+                        <!-- TEAM A BENCH -->
+                        <Border Background="#ccd3d3d3" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamABenchTurnoverPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource BenchAPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
 
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <Button Content="Team A"
-                    Command="{Binding TurnoverTeamACommand}"
-                    Margin="5"/>
-                            <Button Content="Team B"
-                    Command="{Binding TurnoverTeamBCommand}"
-                    Margin="5"/>
+                        <!-- TEAM A COURT -->
+                        <Border Background="#cceeeeee" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamACourtTurnoverPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- CENTER TURNOVER BUTTONS -->
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Button Content="Team A" Command="{Binding TurnoverTeamACommand}" Style="{StaticResource TeamATurnoverStyle}" />
+                                <Button Content="Team B" Command="{Binding TurnoverTeamBCommand}" Style="{StaticResource TeamBTurnoverStyle}" />
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
+
+                        <!-- TEAM B COURT -->
+                        <Border Background="#cceeeeee" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBCourtTurnoverPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- TEAM B BENCH -->
+                        <Border Background="#ccd3d3d3" Grid.Column="4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding EligibleTeamBBenchTurnoverPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                            Style="{StaticResource BenchBPlayerButtonStyle}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
                 </Grid>
                 <Grid Visibility="{Binding StealPanelVisibility}"
       Background="#33FFFFFF"
       Panel.ZIndex="10">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Opacity="0.95">
+                        <!-- COURT PLAYERS -->
+                        <Border Background="#cceeeeee" Padding="10" Margin="2">
+                            <ItemsControl ItemsSource="{Binding EligibleStealCourtPlayers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel HorizontalAlignment="Center"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding DisplayName}"
+                            Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
 
-                    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White">
-                        <TextBlock Text="Award Steal?"
-                   FontSize="18"
-                   FontWeight="Bold"
-                   HorizontalAlignment="Center"
-                   Margin="0 0 0 10"/>
-
-                        <Button Content="NO STEAL"
+                        <!-- NO STEAL -->
+                        <Border Padding="10">
+                            <Button Content="NO STEAL"
                 Command="{Binding NoStealCommand}"
                 HorizontalAlignment="Center"
-                Padding="10"
-                Margin="10"/>
+                Padding="40,20"
+                FontWeight="Bold"
+                Background="White"
+                Foreground="Black"
+                BorderBrush="Black"
+                BorderThickness="1"
+                Margin="20" />
+                        </Border>
+
+                        <!-- BENCH PLAYERS -->
+                        <Border Background="#ccd3d3d3" Padding="10" Margin="2">
+                            <ItemsControl ItemsSource="{Binding EligibleStealBenchPlayers}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel HorizontalAlignment="Center"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding DisplayName}"
+                            Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                            Command="{Binding SelectPlayerCommand}"
+                            Margin="4"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{Binding FoulTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
@@ -888,10 +1025,8 @@ IsEnabled="{Binding IsActionSelectionActive}"
 Grid.Column="3" />
                 <!--  <Button Style="{StaticResource Turnover}" Content="TURNOVER" Grid.Column="4"/>-->
                 <Button Content="TURNOVER (R)"
-Style="{Binding TurnoverButtonStyle}"
-Command="{Binding SelectActionCommand}"
-CommandParameter="TURNOVER"
-IsEnabled="{Binding IsActionSelectionActive}"
+Style="{StaticResource Turnover}"
+Command="{Binding StartTurnoverCommand}"
 Grid.Column="4" />
 
 
@@ -979,6 +1114,7 @@ Grid.Column="4" />
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
                 <Button Grid.Column="1"
@@ -987,6 +1123,8 @@ Grid.Column="4" />
             Command="{Binding StartSubstitutionCommand}" />
                 <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT"
                         Command="{Binding StartTimeoutCommand}" />
+                <Button Grid.Column="3" Style="{StaticResource Turnover}" Content="TURNOVER"
+                        Command="{Binding StartTurnoverCommand}" />
 
             </Grid>
         </Grid>

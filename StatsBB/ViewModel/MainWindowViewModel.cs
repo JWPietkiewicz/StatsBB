@@ -30,6 +30,13 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleBlockCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleBlockBenchPlayers { get; } = new();
 
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtTurnoverPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchTurnoverPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtTurnoverPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchTurnoverPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleStealCourtPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleStealBenchPlayers { get; } = new();
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -77,6 +84,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ShotClockCommand { get; }
     public ICommand TurnoverTeamACommand { get; }
     public ICommand TurnoverTeamBCommand { get; }
+    public ICommand StartTurnoverCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
@@ -136,6 +144,7 @@ public class MainWindowViewModel : ViewModelBase
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
+        StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
 
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -156,6 +165,12 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginTimeout()
     {
         IsTimeOutSelectionActive = true;
+    }
+
+    private void BeginTurnover()
+    {
+        ResetSelectionState();
+        IsTurnoverSelectionActive = true;
     }
 
     private void CompleteTimeoutSelection(string team)
@@ -499,10 +514,38 @@ public class MainWindowViewModel : ViewModelBase
     }
     private void UpdateTurnoverPlayerStyles()
     {
+        EligibleTeamACourtTurnoverPlayers.Clear();
+        EligibleTeamABenchTurnoverPlayers.Clear();
+        EligibleTeamBCourtTurnoverPlayers.Clear();
+        EligibleTeamBBenchTurnoverPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            vm.SetTurnoverSelectionMode(IsTurnoverSelectionActive);
+            bool isSelectable = IsTurnoverSelectionActive;
+            vm.SetTurnoverSelectionMode(isSelectable);
+
+            if (!isSelectable) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtTurnoverPlayers.Add(vm);
+                else
+                    EligibleTeamABenchTurnoverPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtTurnoverPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchTurnoverPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtTurnoverPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchTurnoverPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtTurnoverPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchTurnoverPlayers));
     }
 
     private void CompleteStealSelection(Player? stealer)
@@ -730,6 +773,9 @@ public class MainWindowViewModel : ViewModelBase
 
     private void UpdateStealPlayerStyles()
     {
+        EligibleStealCourtPlayers.Clear();
+        EligibleStealBenchPlayers.Clear();
+
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
             bool isSelectable = false;
@@ -740,7 +786,18 @@ public class MainWindowViewModel : ViewModelBase
             }
 
             vm.SetStealSelectionMode(isSelectable);
+
+            if (isSelectable)
+            {
+                if (vm.Player.IsActive)
+                    EligibleStealCourtPlayers.Add(vm);
+                else
+                    EligibleStealBenchPlayers.Add(vm);
+            }
         }
+
+        OnPropertyChanged(nameof(EligibleStealCourtPlayers));
+        OnPropertyChanged(nameof(EligibleStealBenchPlayers));
     }
 
     private bool _isFoulCommiterSelectionActive;
