@@ -355,17 +355,12 @@
                 <!-- Overlay for Assist Selection -->
                 <Grid Visibility="{Binding NoAssistButtonVisibility}"
       Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center"
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
                 Background="#ccFFFFFF"
                 Width="980"
                 Height="520">
 
                         <!-- COURT PLAYERS -->
-                        <TextBlock Text="COURT PLAYERS"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   Margin="0 0 0 10"
-                   HorizontalAlignment="Center"/>
                         <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -395,11 +390,6 @@
                 Margin="20" />
 
                         <!-- BENCH PLAYERS -->
-                        <TextBlock Text="BENCH PLAYERS"
-                   FontWeight="Bold"
-                   FontSize="16"
-                   Margin="20 10 0 10"
-                   HorizontalAlignment="Center"/>
                         <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
