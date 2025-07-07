@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Numerics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -1093,6 +1094,10 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _selectedFreeThrowShooter = value;
+            foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+            {
+                vm.IsSelectedAsFreeThrowShooter = vm.Player == value;
+            }
             OnPropertyChanged();
         }
     }
@@ -1226,7 +1231,7 @@ public class MainWindowViewModel : ViewModelBase
     private Style GetFreeThrowCountStyle(int count)
     {
         return SelectedFreeThrowCount == count
-            ? (Style)_resources["ActionSelectedMadeStyle"]
+            ? (Style)_resources["FreeThrowCountSelectedStyle"]
             : (Style)_resources["FreeThrowCountButtonStyle"];
     }
 

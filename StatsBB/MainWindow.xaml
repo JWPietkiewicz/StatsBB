@@ -227,6 +227,26 @@
             <Setter Property="Width" Value="60" />
             <Setter Property="Height" Value="60" />
         </Style>
+        <Style x:Key="FreeThrowCountSelectedStyle" TargetType="Button" BasedOn="{StaticResource FreeThrowCountButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource SelectedMadeColor}" />
+        </Style>
+
+        <Style x:Key="ShooterCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ShooterBenchPlayerStyle" TargetType="Button" BasedOn="{StaticResource BenchPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
                                      TeamAStyle="{StaticResource CourtAPlayerButtonStyle}"
@@ -891,7 +911,7 @@ Margin="4" />
                     </StackPanel>
                 </Grid>
                 <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Width="340">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
                             <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5"/>
@@ -915,7 +935,7 @@ Margin="4" />
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Button Content="{Binding DisplayName}"
-                                                    Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                                                    Style="{StaticResource ShooterCourtPlayerStyle}"
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     Margin="4" />
                                         </DataTemplate>
@@ -932,7 +952,7 @@ Margin="4" />
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <Button Content="{Binding DisplayName}"
-                                                    Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                                                    Style="{StaticResource ShooterBenchPlayerStyle}"
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     Margin="4" />
                                         </DataTemplate>
@@ -983,7 +1003,7 @@ Margin="4" />
                     </Grid>
                 </Grid>
                 <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Width="340" Opacity="0.95">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="160"/>
                             <ColumnDefinition Width="160"/>
@@ -1020,33 +1040,33 @@ Margin="4" />
                                     <ColumnDefinition Width="70"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Background="#cceeeeee" Grid.Column="0" Padding="6" Margin="2">
-                                    <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Vertical"/>
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Button Content="{Binding DisplayName}"
-                                                        Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                                <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                        Style="{StaticResource ShooterCourtPlayerStyle}"
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Margin="2"/>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                                 </Border>
                                 <Border Background="#ccd3d3d3" Grid.Column="1" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Vertical"/>
+                                                <WrapPanel Orientation="Horizontal"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                                                        Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                                                        Style="{StaticResource ShooterBenchPlayerStyle}"
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         Margin="2"/>
                                             </DataTemplate>
@@ -1064,7 +1084,7 @@ Margin="4" />
                                     <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Vertical"/>
+                                                <WrapPanel Orientation="Horizontal"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
@@ -1081,7 +1101,7 @@ Margin="4" />
                                     <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Vertical"/>
+                                                <WrapPanel Orientation="Horizontal"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
