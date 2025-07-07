@@ -458,6 +458,8 @@ public class MainWindowViewModel : ViewModelBase
         IsFreeThrowsAwardedSelectionActive = false;
         FreeThrowResultRows.Clear();
         IsFreeThrowsSelectionActive = false;
+        SelectedFreeThrowCount = 0;
+        SelectedFreeThrowShooter = null;
         _defaultFreeThrows = 0;
         EligibleFreeThrowCourtPlayers.Clear();
         EligibleFreeThrowBenchPlayers.Clear();
@@ -559,6 +561,7 @@ public class MainWindowViewModel : ViewModelBase
         SelectedFreeThrowCount = _defaultFreeThrows;
         SelectedFreeThrowShooter = _fouledPlayer;
         UpdateFreeThrowPlayerStyles();
+        UpdateFreeThrowCountButtonStyles();
         IsFreeThrowsAwardedSelectionActive = true;
     }
 
@@ -1076,7 +1079,11 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _selectedFreeThrowCount = value;
+            if (value == 0)
+                SelectedFreeThrowShooter = null;
             OnPropertyChanged();
+            UpdateFreeThrowCountButtonStyles();
+            OnPropertyChanged(nameof(FreeThrowShooterVisibility));
         }
     }
 
@@ -1089,6 +1096,9 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
+
+    public Visibility FreeThrowShooterVisibility =>
+        SelectedFreeThrowCount == 0 ? Visibility.Collapsed : Visibility.Visible;
 
     private bool _isFreeThrowsSelectionActive;
     public bool IsFreeThrowsSelectionActive
@@ -1175,6 +1185,14 @@ public class MainWindowViewModel : ViewModelBase
             : (Brush)_resources["CourtBColor"];
     }
 
+    private void UpdateFreeThrowCountButtonStyles()
+    {
+        OnPropertyChanged(nameof(FreeThrowCount0Style));
+        OnPropertyChanged(nameof(FreeThrowCount1Style));
+        OnPropertyChanged(nameof(FreeThrowCount2Style));
+        OnPropertyChanged(nameof(FreeThrowCount3Style));
+    }
+
 
 
     // Action button styles
@@ -1182,6 +1200,10 @@ public class MainWindowViewModel : ViewModelBase
     public Style MissedButtonStyle => GetActionStyle("MISSED");
     public Style FoulButtonStyle => GetActionStyle("FOUL");
     public Style TurnoverButtonStyle => GetActionStyle("TURNOVER");
+    public Style FreeThrowCount0Style => GetFreeThrowCountStyle(0);
+    public Style FreeThrowCount1Style => GetFreeThrowCountStyle(1);
+    public Style FreeThrowCount2Style => GetFreeThrowCountStyle(2);
+    public Style FreeThrowCount3Style => GetFreeThrowCountStyle(3);
 
     private Style GetActionStyle(string action)
     {
@@ -1199,6 +1221,13 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         return (Style)_resources["ActionSelectableButtonStyle"];
+    }
+
+    private Style GetFreeThrowCountStyle(int count)
+    {
+        return SelectedFreeThrowCount == count
+            ? (Style)_resources["ActionSelectedMadeStyle"]
+            : (Style)_resources["FreeThrowCountButtonStyle"];
     }
 
     public Visibility NoAssistButtonVisibility =>

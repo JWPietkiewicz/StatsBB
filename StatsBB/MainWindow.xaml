@@ -222,6 +222,11 @@
             <Setter Property="FontSize" Value="18" />
             <Setter Property="FontWeight" Value="Bold" />
         </Style>
+        <!-- FREE THROW COUNT BUTTON -->
+        <Style x:Key="FreeThrowCountButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}">
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="60" />
+        </Style>
 
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
                                      TeamAStyle="{StaticResource CourtAPlayerButtonStyle}"
@@ -889,22 +894,22 @@ Margin="4" />
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Width="340">
                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
-                            <Button Content="0" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5"/>
-                            <Button Content="1" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5"/>
-                            <Button Content="2" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5"/>
-                            <Button Content="3" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5"/>
+                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5"/>
+                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5"/>
+                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5"/>
+                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5"/>
                         </WrapPanel>
-                        <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition Width="100"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Background="#cceeeeee" Grid.Column="0" Padding="10" Margin="2">
+                        <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center" Visibility="{Binding FreeThrowShooterVisibility}"/>
+                        <Grid Visibility="{Binding FreeThrowShooterVisibility}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
                                 <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Vertical"/>
+                                            <WrapPanel Orientation="Horizontal"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
@@ -917,11 +922,11 @@ Margin="4" />
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </Border>
-                            <Border Background="#ccd3d3d3" Grid.Column="1" Padding="10" Margin="2">
+                            <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
                                 <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
-                                            <WrapPanel Orientation="Vertical"/>
+                                            <WrapPanel Orientation="Horizontal"/>
                                         </ItemsPanelTemplate>
                                     </ItemsControl.ItemsPanel>
                                     <ItemsControl.ItemTemplate>
@@ -941,21 +946,16 @@ Margin="4" />
                 <Grid Visibility="{Binding IsFouledPlayerSelectionActive, Converter={StaticResource BooleanToVisibilityConverter}}"
       Background="#33FFFFFF" Panel.ZIndex="10">
                     <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Opacity="0.95">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <StackPanel Grid.ColumnSpan="2" Margin="0 0 0 10" HorizontalAlignment="Center">
-                            <TextBlock Text="Who was fouled?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
-                            <TextBlock Text="(Select from opposing team)" FontSize="14" HorizontalAlignment="Center" Foreground="Gray"/>
-                        </StackPanel>
-
-                        <Border Background="#cceeeeee" Grid.Column="0" Padding="10" Margin="2">
+                        <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
                             <ItemsControl ItemsSource="{Binding EligibleFoulOnCourtPlayers}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Vertical"/>
+                                        <WrapPanel Orientation="Horizontal"/>
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
@@ -966,11 +966,11 @@ Margin="4" />
                             </ItemsControl>
                         </Border>
 
-                        <Border Background="#ccd3d3d3" Grid.Column="1" Padding="10" Margin="2">
+                        <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
                             <ItemsControl ItemsSource="{Binding EligibleFoulOnBenchPlayers}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel Orientation="Vertical"/>
+                                        <WrapPanel Orientation="Horizontal"/>
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
