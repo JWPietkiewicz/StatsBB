@@ -37,15 +37,16 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchTurnoverPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleStealBenchPlayers { get; } = new();
-
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtShotPlayers { get; } = new();
+    public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchShotPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtFoulCommitterPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamABenchFoulCommitterPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBCourtFoulCommitterPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamBBenchFoulCommitterPlayers { get; } = new();
-
     public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleFoulOnBenchPlayers { get; } = new();
-
     public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowBenchPlayers { get; } = new();
 
@@ -57,6 +58,102 @@ public class MainWindowViewModel : ViewModelBase
         new(Players.Where(p => p.IsTeamA && !p.IsActive));
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+
+    private string _teamAName = "Team A";
+    public string TeamAName
+    {
+        get => _teamAName;
+        set
+        {
+            _teamAName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string _teamBName = "Team B";
+    public string TeamBName
+    {
+        get => _teamBName;
+        set
+        {
+            _teamBName = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamAScore;
+    public int TeamAScore
+    {
+        get => _teamAScore;
+        set
+        {
+            _teamAScore = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamBScore;
+    public int TeamBScore
+    {
+        get => _teamBScore;
+        set
+        {
+            _teamBScore = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamATimeOutsLeft = 3;
+    public int TeamATimeOutsLeft
+    {
+        get => _teamATimeOutsLeft;
+        set
+        {
+            _teamATimeOutsLeft = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamATimeoutsText));
+        }
+    }
+
+    private int _teamATotalTimeouts = 3;
+    public int TeamATotalTimeouts
+    {
+        get => _teamATotalTimeouts;
+        set
+        {
+            _teamATotalTimeouts = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamATimeoutsText));
+        }
+    }
+
+    public string TeamATimeoutsText => $"{TeamATimeOutsLeft}/{TeamATotalTimeouts}";
+
+    private int _teamBTimeOutsLeft = 3;
+    public int TeamBTimeOutsLeft
+    {
+        get => _teamBTimeOutsLeft;
+        set
+        {
+            _teamBTimeOutsLeft = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamBTimeoutsText));
+        }
+    }
+
+    private int _teamBTotalTimeouts = 3;
+    public int TeamBTotalTimeouts
+    {
+        get => _teamBTotalTimeouts;
+        set
+        {
+            _teamBTotalTimeouts = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamBTimeoutsText));
+        }
+    }
+
+    public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
 
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
@@ -116,6 +213,7 @@ public class MainWindowViewModel : ViewModelBase
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
+    public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
 
     public MainWindowViewModel(ResourceDictionary resources)
@@ -194,6 +292,23 @@ public class MainWindowViewModel : ViewModelBase
         IsTimeOutSelectionActive = true;
     }
 
+    public void HandleCourtClick(CourtPointData data)
+    {
+        ResetSelectionState();
+        SelectedPoint = data;
+
+        if (data.MouseButton == MouseButton.Left)
+        {
+            SelectedAction = "MADE";
+            IsQuickShotSelectionActive = true;
+        }
+        else if (data.MouseButton == MouseButton.Right)
+        {
+            SelectedAction = "MISSED";
+            IsQuickShotSelectionActive = true;
+        }
+    }
+
     private void BeginTurnover()
     {
         ResetSelectionState();
@@ -202,7 +317,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteTimeoutSelection(string team)
     {
-        Debug.WriteLine($"Timeout called by {team}");
+        Debug.WriteLine($"{GameClockService.TimeLeftString} Timeout called by {team}");
         IsTimeOutSelectionActive = false;
     }
 
@@ -270,6 +385,10 @@ public class MainWindowViewModel : ViewModelBase
 
     private void OnPlayerSelected(Player player)
     {
+        if (IsQuickShotSelectionActive)
+        {
+            IsQuickShotSelectionActive = false;
+        }
         if (IsFoulCommiterSelectionActive)
         {
             _foulCommiter = player;
@@ -282,7 +401,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
             {
-                Debug.WriteLine("Fouled player must be on the opposing team.");
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Fouled player must be on the opposing team.");
                 return;
             }
 
@@ -291,7 +410,7 @@ public class MainWindowViewModel : ViewModelBase
 
             if (_foulType?.ToLowerInvariant() == "offensive")
             {
-                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
             }
             else
@@ -349,8 +468,9 @@ public class MainWindowViewModel : ViewModelBase
 
         var actionType = GetActionType(SelectedAction);
         var position = SelectedPoint.Point;
+        TempMarkerRequested?.Invoke(position);
 
-        TempMarkerRemoved?.Invoke();
+
 
         if (actionType == ActionType.Other)
         {
@@ -358,13 +478,14 @@ public class MainWindowViewModel : ViewModelBase
         }
         else
         {
+            TempMarkerRemoved?.Invoke();
             Brush teamColor = GetTeamColorFromPlayer(player);
             bool isFilled = actionType == ActionType.Made;
 
             MarkerRequested?.Invoke(position, teamColor, isFilled);
         }
 
-        Debug.WriteLine($"Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
+        Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
 
         _pendingShooter = player;
 
@@ -605,6 +726,13 @@ public class MainWindowViewModel : ViewModelBase
         IsReboundSelectionActive = false;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
+        IsQuickShotSelectionActive = false;
+    }
+
+    public void CancelCurrentAction()
+    {
+        TempMarkerRemoved?.Invoke();
+        ResetSelectionState();
     }
 
 
@@ -616,14 +744,14 @@ public class MainWindowViewModel : ViewModelBase
             if (assistPlayer?.Number == _pendingShooter.Number)
             {
                 // Invalid: same player attempted to get an assist
-                Debug.WriteLine("Assist not awarded — shooter cannot assist their own shot.");
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Assist not awarded — shooter cannot assist their own shot.");
             }
             else
             {
                 var assist = assistPlayer != null
                 ? $"Assist by {assistPlayer.Number}.{assistPlayer.Name}"
                 : "No assist";
-            Debug.WriteLine($"{assist}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} {assist}");
             }
         }
 
@@ -647,7 +775,7 @@ public class MainWindowViewModel : ViewModelBase
                 _ => "Unknown rebound result"
             };
 
-            Debug.WriteLine($"{log} after miss by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} {log} after miss by {_pendingShooter.Number}.{_pendingShooter.Name}");
         }
 
         ResetSelectionState();
@@ -657,7 +785,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (_pendingShooter != null && blocker != null)
         {
-            Debug.WriteLine($"Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
         }
 
         // Reset block selection state
@@ -711,14 +839,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (source is Player p)
         {
-            Debug.WriteLine($"Turnover by {p.Number}.{p.Name}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Turnover by {p.Number}.{p.Name}");
             _pendingShooter = p;
             IsTurnoverSelectionActive = false;
             IsStealSelectionActive = true; // move to steal selection
         }
         else if (source is string team)
         {
-            Debug.WriteLine($"Team turnover by {team}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Team turnover by {team}");
             ResetSelectionState();
         }
     }
@@ -765,7 +893,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (stealer == null)
         {
-            Debug.WriteLine($"No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
             ResetSelectionState();
             return;
         }
@@ -773,12 +901,12 @@ public class MainWindowViewModel : ViewModelBase
         // If selected player is on same team, ignore the input and stay in steal mode
         if (stealer.IsTeamA == _pendingShooter.IsTeamA)
         {
-            Debug.WriteLine($"Invalid steal selection: {stealer.Number}.{stealer.Name} is on same team as turnover. Waiting for valid selection.");
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Invalid steal selection: {stealer.Number}.{stealer.Name} is on same team as turnover. Waiting for valid selection.");
             return;
         }
 
         // Valid steal
-        Debug.WriteLine($"Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
+        Debug.WriteLine($"{GameClockService.TimeLeftString} Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
         ResetSelectionState();
     }
 
@@ -984,6 +1112,22 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StealPanelVisibility =>
         IsStealSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isQuickShotSelectionActive;
+    public bool IsQuickShotSelectionActive
+    {
+        get => _isQuickShotSelectionActive;
+        set
+        {
+            _isQuickShotSelectionActive = value;
+            OnPropertyChanged();
+            UpdateQuickShotPlayerStyles();
+            OnPropertyChanged(nameof(QuickShotPanelVisibility));
+        }
+    }
+
+    public Visibility QuickShotPanelVisibility =>
+        IsQuickShotSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private void UpdateStealPlayerStyles()
     {
         EligibleStealCourtPlayers.Clear();
@@ -1011,6 +1155,39 @@ public class MainWindowViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(EligibleStealCourtPlayers));
         OnPropertyChanged(nameof(EligibleStealBenchPlayers));
+    }
+
+    private void UpdateQuickShotPlayerStyles()
+    {
+        EligibleTeamACourtShotPlayers.Clear();
+        EligibleTeamABenchShotPlayers.Clear();
+        EligibleTeamBCourtShotPlayers.Clear();
+        EligibleTeamBBenchShotPlayers.Clear();
+
+        foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
+        {
+            if (!IsQuickShotSelectionActive) continue;
+
+            if (vm.Player.IsTeamA)
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamACourtShotPlayers.Add(vm);
+                else
+                    EligibleTeamABenchShotPlayers.Add(vm);
+            }
+            else
+            {
+                if (vm.Player.IsActive)
+                    EligibleTeamBCourtShotPlayers.Add(vm);
+                else
+                    EligibleTeamBBenchShotPlayers.Add(vm);
+            }
+        }
+
+        OnPropertyChanged(nameof(EligibleTeamACourtShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamABenchShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBCourtShotPlayers));
+        OnPropertyChanged(nameof(EligibleTeamBBenchShotPlayers));
     }
 
     private bool _isFoulCommiterSelectionActive;
@@ -1180,7 +1357,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             foreach (var r in FreeThrowResultRows)
             {
-                Debug.WriteLine($"{r.Label} {r.Result}");
+                Debug.WriteLine($"{GameClockService.TimeLeftString} {r.Label} {r.Result}");
             }
 
             ResetFoulState();

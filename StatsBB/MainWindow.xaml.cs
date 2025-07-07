@@ -19,12 +19,13 @@ namespace StatsBB
 
             // 🔗 Connect view model to view
             vm.MarkerRequested += (pos, color, filled) => CourtControl.SetMarker(pos, color, filled);
+            vm.TempMarkerRequested += (pos) => CourtControl.ShowTemporaryMarker(pos);
             vm.TempMarkerRemoved += () => CourtControl.RemoveTemporaryMarker();
 
             // 📍 On canvas click: set point + show temp white marker
             CourtControl.CourtClick += (s, data) =>
             {
-                vm.SelectedPoint = data;
+                vm.HandleCourtClick(data);
                 CourtControl.ShowTemporaryMarker(data.Point);
             };
 
@@ -36,7 +37,24 @@ namespace StatsBB
         {
             if (DataContext is MainWindowViewModel vm)
             {
-                vm.SelectedPoint = p;
+                vm.HandleCourtClick(p);
+            }
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape && DataContext is MainWindowViewModel vm)
+            {
+                vm.CancelCurrentAction();
+                CourtControl.RemoveTemporaryMarker();
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Space)
+            {
+                GameClockControl.Toggle();
+                e.Handled = true;
             }
         }
     }
