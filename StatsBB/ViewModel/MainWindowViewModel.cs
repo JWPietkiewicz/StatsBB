@@ -587,6 +587,11 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (player == null) return;
         SelectedFreeThrowShooter = player;
+        if (IsFreeThrowsSelectionActive)
+        {
+            _pendingShooter = player;
+            UpdateAssistPlayerStyles();
+        }
     }
 
 
@@ -1105,6 +1110,11 @@ public class MainWindowViewModel : ViewModelBase
         {
             _selectedFreeThrowShooter = value;
             UpdateFreeThrowShooterStyles();
+            if (IsFreeThrowsSelectionActive)
+            {
+                _pendingShooter = value;
+                UpdateAssistPlayerStyles();
+            }
             OnPropertyChanged();
         }
     }
@@ -1322,11 +1332,11 @@ public class FreeThrowResult : ViewModelBase
 
     public string MadeButtonBackground =>
         Result == "MADE" ? "Green" :
-        Result == "MISSED" ? "LightGray" : "White";
+        Result == "MISSED" ? "LightGray" : "DarkGray";
 
     public string MissedButtonBackground =>
         Result == "MISSED" ? "Red" :
-        Result == "MADE" ? "LightGray" : "White";
+        Result == "MADE" ? "LightGray" : "DarkGray";
 
     public ICommand SelectResultCommand { get; }
 
