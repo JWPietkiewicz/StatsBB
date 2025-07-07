@@ -50,6 +50,9 @@ namespace StatsBB.UserControls
                 Fill = isFilled ? color : Brushes.Transparent
             };
 
+            // Ensure markers appear above overlays such as the quick-shot panel
+            Panel.SetZIndex(marker, 20);
+
             Canvas.SetLeft(marker, position.X - MarkerSize / 2);
             Canvas.SetTop(marker, position.Y - MarkerSize / 2);
 
@@ -123,6 +126,9 @@ namespace StatsBB.UserControls
                 StrokeThickness = 0.1,
                 Fill = Brushes.White
             };
+
+            // Ensure temp marker is visible above overlays
+            Panel.SetZIndex(marker, 20);
 
             Canvas.SetLeft(marker, point.X - MarkerSize / 2);
             Canvas.SetTop(marker, point.Y - MarkerSize / 2);

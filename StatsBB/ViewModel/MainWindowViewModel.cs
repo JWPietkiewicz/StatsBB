@@ -424,6 +424,12 @@ public class MainWindowViewModel : ViewModelBase
         IsQuickShotSelectionActive = false;
     }
 
+    public void CancelCurrentAction()
+    {
+        TempMarkerRemoved?.Invoke();
+        ResetSelectionState();
+    }
+
 
 
     private void CompleteAssistSelection(Player? assistPlayer)

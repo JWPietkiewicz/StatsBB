@@ -39,6 +39,15 @@ namespace StatsBB
                 vm.HandleCourtClick(p);
             }
         }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape && DataContext is MainWindowViewModel vm)
+            {
+                vm.CancelCurrentAction();
+                CourtControl.RemoveTemporaryMarker();
+            }
+        }
     }
 
 }

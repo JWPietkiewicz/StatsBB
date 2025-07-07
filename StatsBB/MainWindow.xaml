@@ -4,7 +4,8 @@
         xmlns:controls="clr-namespace:StatsBB.UserControls" 
         xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:converters="clr-namespace:StatsBB.Converters"
-        Title="Basketball Stats Map" Height="1080" Width="1920">
+        Title="Basketball Stats Map" Height="1080" Width="1920"
+        PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
