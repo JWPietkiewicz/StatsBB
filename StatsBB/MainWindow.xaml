@@ -312,7 +312,7 @@
             </Border>
 
             <!-- Clock Card -->
-            <controls:GameClock Grid.Column="1"/>
+            <controls:GameClock x:Name="GameClockControl" Grid.Column="1"/>
 
             <!-- Right Team Card -->
             <Border Grid.Column="2" Background="White" BorderBrush="#888" CornerRadius="5" BorderThickness="2" Padding="10">

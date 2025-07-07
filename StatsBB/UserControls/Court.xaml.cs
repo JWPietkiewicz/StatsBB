@@ -1,5 +1,6 @@
 ﻿using StatsBB.Model;
 using System.Diagnostics;
+using StatsBB.Services;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -29,7 +30,7 @@ namespace StatsBB.UserControls
             bool isThreePointer = IsThreePointer(clickPosition.X, clickPosition.Y);
 
             var dataPoint = new CourtPointData(clickPosition, isThreePointer, isLeftHalf, e.ChangedButton);
-            Debug.WriteLine($"Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Clicked at ({clickPosition.X:F2}, {clickPosition.Y:F2})");
 
             CourtClick?.Invoke(this, dataPoint); // Notify VM
         }

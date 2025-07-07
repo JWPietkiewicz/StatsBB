@@ -197,7 +197,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteTimeoutSelection(string team)
     {
-        Debug.WriteLine($"Timeout called by {team}");
+        Debug.WriteLine($"[{GameClockService.TimeLeftString}] Timeout called by {team}");
         IsTimeOutSelectionActive = false;
     }
 
@@ -261,7 +261,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
             {
-                Debug.WriteLine("Fouled player must be on the opposing team.");
+                Debug.WriteLine($"[{GameClockService.TimeLeftString}] Fouled player must be on the opposing team.");
                 return;
             }
 
@@ -270,7 +270,7 @@ public class MainWindowViewModel : ViewModelBase
 
             if (_foulType?.ToLowerInvariant() == "offensive")
             {
-                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
+                Debug.WriteLine($"[{GameClockService.TimeLeftString}] Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
             }
             else
@@ -330,7 +330,7 @@ public class MainWindowViewModel : ViewModelBase
             MarkerRequested?.Invoke(position, teamColor, isFilled);
         }
 
-        Debug.WriteLine($"Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
+        Debug.WriteLine($"[{GameClockService.TimeLeftString}] Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
 
         _pendingShooter = player;
 
@@ -439,14 +439,14 @@ public class MainWindowViewModel : ViewModelBase
             if (assistPlayer?.Number == _pendingShooter.Number)
             {
                 // Invalid: same player attempted to get an assist
-                Debug.WriteLine("Assist not awarded — shooter cannot assist their own shot.");
+                Debug.WriteLine($"[{GameClockService.TimeLeftString}] Assist not awarded — shooter cannot assist their own shot.");
             }
             else
             {
                 var assist = assistPlayer != null
                 ? $"Assist by {assistPlayer.Number}.{assistPlayer.Name}"
                 : "No assist";
-            Debug.WriteLine($"{assist}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] {assist}");
             }
         }
 
@@ -470,7 +470,7 @@ public class MainWindowViewModel : ViewModelBase
                 _ => "Unknown rebound result"
             };
 
-            Debug.WriteLine($"{log} after miss by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] {log} after miss by {_pendingShooter.Number}.{_pendingShooter.Name}");
         }
 
         ResetSelectionState();
@@ -480,7 +480,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (_pendingShooter != null && blocker != null)
         {
-            Debug.WriteLine($"Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
         }
 
         // Reset block selection state
@@ -534,14 +534,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (source is Player p)
         {
-            Debug.WriteLine($"Turnover by {p.Number}.{p.Name}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Turnover by {p.Number}.{p.Name}");
             _pendingShooter = p;
             IsTurnoverSelectionActive = false;
             IsStealSelectionActive = true; // move to steal selection
         }
         else if (source is string team)
         {
-            Debug.WriteLine($"Team turnover by {team}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Team turnover by {team}");
             ResetSelectionState();
         }
     }
@@ -588,7 +588,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (stealer == null)
         {
-            Debug.WriteLine($"No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
             ResetSelectionState();
             return;
         }
@@ -596,12 +596,12 @@ public class MainWindowViewModel : ViewModelBase
         // If selected player is on same team, ignore the input and stay in steal mode
         if (stealer.IsTeamA == _pendingShooter.IsTeamA)
         {
-            Debug.WriteLine($"Invalid steal selection: {stealer.Number}.{stealer.Name} is on same team as turnover. Waiting for valid selection.");
+            Debug.WriteLine($"[{GameClockService.TimeLeftString}] Invalid steal selection: {stealer.Number}.{stealer.Name} is on same team as turnover. Waiting for valid selection.");
             return;
         }
 
         // Valid steal
-        Debug.WriteLine($"Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
+        Debug.WriteLine($"[{GameClockService.TimeLeftString}] Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
         ResetSelectionState();
     }
 
@@ -989,7 +989,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             foreach (var r in FreeThrowResultRows)
             {
-                Debug.WriteLine($"{r.Label} {r.Result}");
+                Debug.WriteLine($"[{GameClockService.TimeLeftString}] {r.Label} {r.Result}");
             }
 
             ResetFoulState();
