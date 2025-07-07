@@ -46,6 +46,14 @@ namespace StatsBB
             {
                 vm.CancelCurrentAction();
                 CourtControl.RemoveTemporaryMarker();
+                e.Handled = true;
+                return;
+            }
+
+            if (e.Key == Key.Space)
+            {
+                GameClockControl.Toggle();
+                e.Handled = true;
             }
         }
     }
