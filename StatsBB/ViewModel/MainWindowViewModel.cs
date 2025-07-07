@@ -53,6 +53,20 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility SubstitutionPanelVisibility =>
         IsSubstitutionPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isTimeOutSelectionActive;
+    public bool IsTimeOutSelectionActive
+    {
+        get => _isTimeOutSelectionActive;
+        set
+        {
+            _isTimeOutSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(TimeOutPanelVisibility));
+        }
+    }
+    public Visibility TimeOutPanelVisibility =>
+        IsTimeOutSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
@@ -70,6 +84,9 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmSubstitutionCommand { get; }
     public ICommand ToggleSubInCommand { get; }
     public ICommand ToggleSubOutCommand { get; }
+    public ICommand StartTimeoutCommand { get; }
+    public ICommand TimeoutTeamACommand { get; }
+    public ICommand TimeoutTeamBCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -116,6 +133,9 @@ public class MainWindowViewModel : ViewModelBase
         ConfirmSubstitutionCommand = new RelayCommand(_ => ConfirmSubstitution(), _ => IsSubstitutionConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+        StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
+        TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
+        TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
 
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -131,6 +151,17 @@ public class MainWindowViewModel : ViewModelBase
         TeamBSubOut.Clear();
 
         IsSubstitutionPanelVisible = true;
+    }
+
+    private void BeginTimeout()
+    {
+        IsTimeOutSelectionActive = true;
+    }
+
+    private void CompleteTimeoutSelection(string team)
+    {
+        Debug.WriteLine($"Timeout called by {team}");
+        IsTimeOutSelectionActive = false;
     }
 
     private void SelectAction(string? action)
@@ -198,7 +229,7 @@ public class MainWindowViewModel : ViewModelBase
 
             if (_foulType?.ToLowerInvariant() == "offensive")
             {
-                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
+                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} â€” no free throws");
                 ResetFoulState();
             }
             else
@@ -360,7 +391,7 @@ public class MainWindowViewModel : ViewModelBase
             if (assistPlayer?.Number == _pendingShooter.Number)
             {
                 // Invalid: same player attempted to get an assist
-                Debug.WriteLine("Assist not awarded — shooter cannot assist their own shot.");
+                Debug.WriteLine("Assist not awarded â€” shooter cannot assist their own shot.");
             }
             else
             {
