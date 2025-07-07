@@ -219,8 +219,10 @@
 
         <!-- FOUL TYPE BUTTON -->
         <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="FontSize" Value="18" />
+            <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="20" />
+            <Setter Property="Margin" Value="5" />
         </Style>
         <!-- FREE THROW COUNT BUTTON -->
         <Style x:Key="FreeThrowCountButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}">
@@ -850,12 +852,12 @@ Margin="4" />
 
                         <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
-                                <Button Content="Coach Technical" Command="{Binding CoachTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
-                                <Button Content="Coach Technical" Command="{Binding CoachTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                                <Button Content="Coach" Command="{Binding CoachTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Coach" Command="{Binding CoachTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Bench Technical" Command="{Binding BenchTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
-                                <Button Content="Bench Technical" Command="{Binding BenchTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                                <Button Content="Bench" Command="{Binding BenchTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Bench" Command="{Binding BenchTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
                             </StackPanel>
                         </StackPanel>
 
@@ -901,18 +903,24 @@ Margin="4" />
                     </Grid>
                 </Grid>
                 <Grid Visibility="{Binding FoulTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="Select Foul Type" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="800" Background="White">
+                        <TextBlock Text="Select Foul Type" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center">
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Shooting" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Offensive" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike (With Turnover)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike turnover" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying (With Turnover)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying turnover" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Technical" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="SHOOTING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="OFFENSIVE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="30"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="TECHNICAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DOUBLE PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="4"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="4"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE (W T/O)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike turnover"/>
+                            <Button Content=" " Background="#00000000" BorderThickness="0" Width="85"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING (W T/O)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying turnover"/>
                         </WrapPanel>
                     </StackPanel>
                 </Grid>
@@ -920,10 +928,10 @@ Margin="4" />
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
-                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5"/>
-                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5"/>
-                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5"/>
-                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5"/>
+                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
+                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
+                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
+                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
                         </WrapPanel>
                         <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center" Visibility="{Binding FreeThrowShooterVisibility}"/>
                         <Grid Visibility="{Binding FreeThrowShooterVisibility}">
