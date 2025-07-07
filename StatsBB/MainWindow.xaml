@@ -767,15 +767,124 @@ Margin="4" />
                         </Border>
                     </StackPanel>
                 </Grid>
+                <Grid Visibility="{Binding FoulCommiterPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="220"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="#ccd3d3d3" Grid.Column="0" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding TeamABenchPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource BenchAPlayerButtonStyle}"
+                                                    Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#cceeeeee" Grid.Column="1" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding TeamACourtPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                    Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
+                                <Button Content="Coach Technical" Command="{Binding CoachTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Coach Technical" Command="{Binding CoachTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Button Content="Bench Technical" Command="{Binding BenchTechnicalTeamACommand}" Style="{StaticResource TeamAReboundStyle}" />
+                                <Button Content="Bench Technical" Command="{Binding BenchTechnicalTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <Border Background="#cceeeeee" Grid.Column="3" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding TeamBCourtPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                    Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#ccd3d3d3" Grid.Column="4" Padding="10" Margin="2">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <ItemsControl ItemsSource="{Binding TeamBBenchPlayers}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Content="{Binding DisplayName}"
+                                                    Style="{StaticResource BenchBPlayerButtonStyle}"
+                                                    Command="{Binding DataContext.SelectPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="4" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
                 <Grid Visibility="{Binding FoulTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                         <TextBlock Text="Select Foul Type" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                         <WrapPanel HorizontalAlignment="Center">
                             <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
-                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Shooting" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting" Margin="5"/>
                             <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Offensive" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Double Personal" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Unsportsmanlike (With Turnover)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike turnover" Margin="5"/>
                             <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying" Margin="5"/>
+                            <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Disqualifying (With Turnover)" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying turnover" Margin="5"/>
                             <Button Style="{StaticResource FoulTypeButtonStyle}" Content="Technical" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical" Margin="5"/>
                         </WrapPanel>
                     </StackPanel>
@@ -1021,7 +1130,6 @@ Margin="4" />
 Style="{Binding FoulButtonStyle}"
 Command="{Binding SelectActionCommand}"
 CommandParameter="Foul"
-IsEnabled="{Binding IsActionSelectionActive}"
 Grid.Column="3" />
                 <!--  <Button Style="{StaticResource Turnover}" Content="TURNOVER" Grid.Column="4"/>-->
                 <Button Content="TURNOVER (R)"

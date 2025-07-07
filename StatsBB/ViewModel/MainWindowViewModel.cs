@@ -95,6 +95,10 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
+    public ICommand CoachTechnicalTeamACommand { get; }
+    public ICommand CoachTechnicalTeamBCommand { get; }
+    public ICommand BenchTechnicalTeamACommand { get; }
+    public ICommand BenchTechnicalTeamBCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -107,7 +111,9 @@ public class MainWindowViewModel : ViewModelBase
 
         SelectActionCommand = new RelayCommand(
             param => SelectAction(param?.ToString()),
-            param => IsActionSelectionActive
+            param => IsActionSelectionActive ||
+                     (param?.ToString()?.Equals("Foul",
+                         StringComparison.InvariantCultureIgnoreCase) ?? false)
         );
 
         NoAssistCommand = new RelayCommand(
@@ -146,6 +152,11 @@ public class MainWindowViewModel : ViewModelBase
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
 
+        CoachTechnicalTeamACommand = new RelayCommand(_ => OnCoachTechnical("Team A"));
+        CoachTechnicalTeamBCommand = new RelayCommand(_ => OnCoachTechnical("Team B"));
+        BenchTechnicalTeamACommand = new RelayCommand(_ => OnBenchTechnical("Team A"));
+        BenchTechnicalTeamBCommand = new RelayCommand(_ => OnBenchTechnical("Team B"));
+
 
         Players.CollectionChanged += Players_CollectionChanged;
 
@@ -177,6 +188,18 @@ public class MainWindowViewModel : ViewModelBase
     {
         Debug.WriteLine($"Timeout called by {team}");
         IsTimeOutSelectionActive = false;
+    }
+
+    private void OnCoachTechnical(string team)
+    {
+        Debug.WriteLine($"Coach Technical on {team}");
+        OnFreeThrowSelected(1);
+    }
+
+    private void OnBenchTechnical(string team)
+    {
+        Debug.WriteLine($"Bench Technical on {team}");
+        OnFreeThrowSelected(1);
     }
 
     private void SelectAction(string? action)
@@ -220,6 +243,7 @@ public class MainWindowViewModel : ViewModelBase
     private Player? _foulCommiter;
     private Player? _fouledPlayer;
     private string? _foulType;
+    private int _defaultFreeThrows;
 
     private void OnPlayerSelected(Player player)
     {
@@ -246,6 +270,10 @@ public class MainWindowViewModel : ViewModelBase
             {
                 Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
+            }
+            else if (_defaultFreeThrows > 0)
+            {
+                OnFreeThrowSelected(_defaultFreeThrows);
             }
             else
             {
@@ -335,14 +363,55 @@ public class MainWindowViewModel : ViewModelBase
         IsFoulTypeSelectionActive = false;
 
         var lowerType = foulType.ToLowerInvariant();
+        _defaultFreeThrows = 0;
 
-        if (lowerType == "technical")
+        switch (lowerType)
         {
-            IsFreeThrowSelectionActive = true;
-        }
-        else
-        {
-            IsFouledPlayerSelectionActive = true;
+            case "personal":
+                Debug.WriteLine($"Personal foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "shooting":
+                Debug.WriteLine($"Shooting foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "offensive":
+                Debug.WriteLine($"Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "double personal":
+                Debug.WriteLine($"Double personal foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "unsportsmanlike":
+                Debug.WriteLine($"Unsportsmanlike foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "unsportsmanlike turnover":
+                Debug.WriteLine($"Unsportsmanlike foul with turnover by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "disqualifying":
+                Debug.WriteLine($"Disqualifying foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "disqualifying turnover":
+                Debug.WriteLine($"Disqualifying foul with turnover by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 2;
+                IsFouledPlayerSelectionActive = true;
+                break;
+            case "technical":
+                Debug.WriteLine($"Technical foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
+                _defaultFreeThrows = 1;
+                IsFreeThrowSelectionActive = true;
+                break;
+            default:
+                IsFouledPlayerSelectionActive = true;
+                break;
         }
     }
 
@@ -358,6 +427,7 @@ public class MainWindowViewModel : ViewModelBase
         IsFreeThrowSelectionActive = false;
         FreeThrowResultRows.Clear();
         IsFreeThrowResultSelectionActive = false;
+        _defaultFreeThrows = 0;
         ResetSelectionState();
     }
 
@@ -809,8 +879,12 @@ public class MainWindowViewModel : ViewModelBase
             _isFoulCommiterSelectionActive = value;
             OnPropertyChanged();
             UpdateFoulCommiterPlayerStyles();
+            OnPropertyChanged(nameof(FoulCommiterPanelVisibility));
         }
     }
+
+    public Visibility FoulCommiterPanelVisibility =>
+        IsFoulCommiterSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     private bool _isFoulTypeSelectionActive;
     public bool IsFoulTypeSelectionActive
@@ -947,7 +1021,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private Style GetActionStyle(string action)
     {
-        if (!IsActionSelectionActive)
+        if (!IsActionSelectionActive && action != "FOUL")
             return (Style)_resources["ActionDisabledButtonStyle"];
 
         if (SelectedAction == action)
