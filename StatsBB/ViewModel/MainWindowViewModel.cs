@@ -59,6 +59,25 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
 
+    public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
+
+    public TeamInfo TeamAInfo { get; } = new();
+    public TeamInfo TeamBInfo { get; } = new();
+
+    private TeamColorOption? _teamAColorOption;
+    public TeamColorOption? TeamAColorOption
+    {
+        get => _teamAColorOption;
+        set { _teamAColorOption = value; OnPropertyChanged(); }
+    }
+
+    private TeamColorOption? _teamBColorOption;
+    public TeamColorOption? TeamBColorOption
+    {
+        get => _teamBColorOption;
+        set { _teamBColorOption = value; OnPropertyChanged(); }
+    }
+
     private string _teamAName = "Team A";
     public string TeamAName
     {
@@ -67,6 +86,19 @@ public class MainWindowViewModel : ViewModelBase
         {
             _teamAName = value;
             OnPropertyChanged();
+            TeamAInfo.Name = value;
+        }
+    }
+
+    private string _teamAShortName = "A";
+    public string TeamAShortName
+    {
+        get => _teamAShortName;
+        set
+        {
+            _teamAShortName = value;
+            OnPropertyChanged();
+            TeamAInfo.ShortName = value;
         }
     }
 
@@ -78,6 +110,19 @@ public class MainWindowViewModel : ViewModelBase
         {
             _teamBName = value;
             OnPropertyChanged();
+            TeamBInfo.Name = value;
+        }
+    }
+
+    private string _teamBShortName = "B";
+    public string TeamBShortName
+    {
+        get => _teamBShortName;
+        set
+        {
+            _teamBShortName = value;
+            OnPropertyChanged();
+            TeamBInfo.ShortName = value;
         }
     }
 
@@ -210,6 +255,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand BenchTechnicalTeamBCommand { get; }
     public ICommand ConfirmFreeThrowsAwardedCommand { get; }
     public ICommand SelectFreeThrowShooterCommand { get; }
+    public ICommand SelectTeamAColorCommand { get; }
+    public ICommand SelectTeamBColorCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -271,10 +318,68 @@ public class MainWindowViewModel : ViewModelBase
         ConfirmFreeThrowsAwardedCommand = new RelayCommand(_ => OnConfirmFreeThrowsAwarded());
         SelectFreeThrowShooterCommand = new RelayCommand(p => SelectFreeThrowShooter(p as Player));
 
+        SelectTeamAColorCommand = new RelayCommand(p =>
+        {
+            TeamAColorOption = p as TeamColorOption;
+            TeamAInfo.Color = TeamAColorOption;
+        });
+        SelectTeamBColorCommand = new RelayCommand(p =>
+        {
+            TeamBColorOption = p as TeamColorOption;
+            TeamBInfo.Color = TeamBColorOption;
+        });
+
+        ColorOptions.Add(new TeamColorOption("Yellow", "#FFFF00", "Black"));
+        ColorOptions.Add(new TeamColorOption("Orange", "#FFA500", "Black"));
+        ColorOptions.Add(new TeamColorOption("Blue", "#0000FF", "White"));
+        ColorOptions.Add(new TeamColorOption("Light blue", "#ADD8E6", "Black"));
+        ColorOptions.Add(new TeamColorOption("Dark blue", "#00008B", "White"));
+        ColorOptions.Add(new TeamColorOption("Grey", "#808080", "Black"));
+        ColorOptions.Add(new TeamColorOption("Black", "#000000", "White"));
+        ColorOptions.Add(new TeamColorOption("Purple", "#800080", "White"));
+        ColorOptions.Add(new TeamColorOption("Pink", "#FFC0CB", "Black"));
+        ColorOptions.Add(new TeamColorOption("Red", "#FF0000", "Black"));
+        ColorOptions.Add(new TeamColorOption("Green", "#008000", "White"));
+        ColorOptions.Add(new TeamColorOption("White", "#FFFFFF", "Black"));
+        ColorOptions.Add(new TeamColorOption("Teal", "#008080", "White"));
+        ColorOptions.Add(new TeamColorOption("Lime", "#00FF00", "Black"));
+        ColorOptions.Add(new TeamColorOption("Brown", "#A52A2A", "White"));
+        ColorOptions.Add(new TeamColorOption("Maroon", "#800000", "White"));
+        ColorOptions.Add(new TeamColorOption("Blue grey", "#6699CC", "Black"));
+        ColorOptions.Add(new TeamColorOption("Mustard", "#FFDB58", "Black"));
+
+        TeamAInfo.Name = TeamAName;
+        TeamBInfo.Name = TeamBName;
+        TeamAInfo.ShortName = TeamAShortName;
+        TeamBInfo.ShortName = TeamBShortName;
+
+        TeamAInfo.PropertyChanged += (s,e) =>
+        {
+            if (e.PropertyName == nameof(TeamInfo.Name))
+                TeamAName = TeamAInfo.Name;
+            if (e.PropertyName == nameof(TeamInfo.ShortName))
+                TeamAShortName = TeamAInfo.ShortName;
+            if (e.PropertyName == nameof(TeamInfo.Color))
+                TeamAColorOption = TeamAInfo.Color;
+        };
+        TeamBInfo.PropertyChanged += (s,e) =>
+        {
+            if (e.PropertyName == nameof(TeamInfo.Name))
+                TeamBName = TeamBInfo.Name;
+            if (e.PropertyName == nameof(TeamInfo.ShortName))
+                TeamBShortName = TeamBInfo.ShortName;
+            if (e.PropertyName == nameof(TeamInfo.Color))
+                TeamBColorOption = TeamBInfo.Color;
+        };
+
 
         Players.CollectionChanged += Players_CollectionChanged;
 
         PlayerLayoutService.PopulateTeams(Players);
+        foreach (var p in Players.Where(p => p.IsTeamA))
+            TeamAInfo.Players.Add(p);
+        foreach (var p in Players.Where(p => !p.IsTeamA))
+            TeamBInfo.Players.Add(p);
         RegenerateTeams();
     }
     private void BeginSubstitution()
@@ -351,6 +456,12 @@ public class MainWindowViewModel : ViewModelBase
 
     private void Players_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
     {
+        TeamAInfo.Players.Clear();
+        foreach (var p in Players.Where(p => p.IsTeamA))
+            TeamAInfo.Players.Add(p);
+        TeamBInfo.Players.Clear();
+        foreach (var p in Players.Where(p => !p.IsTeamA))
+            TeamBInfo.Players.Add(p);
         RegenerateTeams();
     }
 

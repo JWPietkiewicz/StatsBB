@@ -8,6 +8,8 @@
         PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
+        <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
 
 
         <SolidColorBrush x:Key="CourtAColor" Color="Orange"/>
@@ -292,9 +294,120 @@
                        HorizontalAlignment="Center"/>
         </TabItem>
         <TabItem Header="TEAM INFO">
-            <TextBlock Text="Team info goes here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Team A -->
+                <StackPanel Grid.Column="0" Margin="10">
+                    <TextBlock Text="Team A" FontWeight="Bold" FontSize="16"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Team Name:" Width="100"/>
+                        <TextBox Width="200" Text="{Binding TeamAInfo.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Short Name:" Width="100"/>
+                        <TextBox Width="100" Text="{Binding TeamAInfo.ShortName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <TextBlock Text="Team Color:" Margin="0,5"/>
+                    <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}">
+                                    <ToggleButton.Content>99</ToggleButton.Content>
+                                    <ToggleButton.IsChecked>
+                                        <MultiBinding Converter="{StaticResource ColorSelectedConverter}">
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </ToggleButton.IsChecked>
+                                    <ToggleButton.Command>
+                                        <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                    </ToggleButton.Command>
+                                    <ToggleButton.CommandParameter>
+                                        <Binding />
+                                    </ToggleButton.CommandParameter>
+                                    <ToggleButton.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}">
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </ToggleButton.IsEnabled>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="Roster" Margin="0,10,0,5"/>
+                    <DataGrid ItemsSource="{Binding TeamAInfo.Players}" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" HeadersVisibility="Column" MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Binding="{Binding Number, Mode=TwoWay}" Width="40"/>
+                            <DataGridTextColumn Header="First" Binding="{Binding FirstName, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Last" Binding="{Binding LastName, Mode=TwoWay}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+
+                <!-- Team B -->
+                <StackPanel Grid.Column="1" Margin="10">
+                    <TextBlock Text="Team B" FontWeight="Bold" FontSize="16"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Team Name:" Width="100"/>
+                        <TextBox Width="200" Text="{Binding TeamBInfo.Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,5">
+                        <TextBlock Text="Short Name:" Width="100"/>
+                        <TextBox Width="100" Text="{Binding TeamBInfo.ShortName, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                    <TextBlock Text="Team Color:" Margin="0,5"/>
+                    <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ToggleButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}">
+                                    <ToggleButton.Content>99</ToggleButton.Content>
+                                    <ToggleButton.IsChecked>
+                                        <MultiBinding Converter="{StaticResource ColorSelectedConverter}">
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </ToggleButton.IsChecked>
+                                    <ToggleButton.Command>
+                                        <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                    </ToggleButton.Command>
+                                    <ToggleButton.CommandParameter>
+                                        <Binding />
+                                    </ToggleButton.CommandParameter>
+                                    <ToggleButton.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}">
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                            <Binding />
+                                        </MultiBinding>
+                                    </ToggleButton.IsEnabled>
+                                </ToggleButton>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock Text="Roster" Margin="0,10,0,5"/>
+                    <DataGrid ItemsSource="{Binding TeamBInfo.Players}" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" HeadersVisibility="Column" MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="#" Binding="{Binding Number, Mode=TwoWay}" Width="40"/>
+                            <DataGridTextColumn Header="First" Binding="{Binding FirstName, Mode=TwoWay}" Width="*"/>
+                            <DataGridTextColumn Header="Last" Binding="{Binding LastName, Mode=TwoWay}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Grid>
         </TabItem>
         <TabItem Header="MAIN">
     <Grid x:Name="___No_Name_" Background="#F9F9F9">
