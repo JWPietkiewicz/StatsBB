@@ -1147,20 +1147,26 @@ Margin="4" />
                 </Grid>
                 <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
-                        <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
-                        <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
-                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
-                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
-                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
-                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
-                        </WrapPanel>
-                        <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center" Visibility="{Binding FreeThrowShooterVisibility}"/>
-                        <Grid Visibility="{Binding FreeThrowShooterVisibility}">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
+                        <Border Background="#cceeeeee" Padding="10" Margin="2">
+                            <StackPanel>
+                                <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
+                                    <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
+                                    <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
+                                    <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
+                                    <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+                        <Border Background="#ccd3d3d3" Padding="10" Margin="2" Visibility="{Binding FreeThrowShooterVisibility}">
+                            <StackPanel>
+                                <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
                                 <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
@@ -1194,7 +1200,9 @@ Margin="4" />
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
                             </Border>
-                        </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
                         <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
