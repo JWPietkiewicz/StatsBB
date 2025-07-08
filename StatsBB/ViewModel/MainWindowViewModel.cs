@@ -344,6 +344,8 @@ public class MainWindowViewModel : ViewModelBase
     private void OnBenchTechnical(string team)
     {
         Debug.WriteLine($"Bench Technical on {team}");
+        var isTeamA = team == "Team A";
+        AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -1419,6 +1421,17 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     Debug.WriteLine($"{GameClockService.TimeLeftString} Assist by {SelectedFreeThrowAssist.Number}.{SelectedFreeThrowAssist.Name}");
                 }
+
+                var actions = new List<PlayActionViewModel>();
+                foreach (var r in FreeThrowResultRows)
+                {
+                    actions.Add(CreateAction(_pendingShooter, $"FTA {r.Result}"));
+                }
+                if (made > 0 && SelectedFreeThrowAssist != null)
+                {
+                    actions.Add(CreateAction(SelectedFreeThrowAssist, "ASSIST"));
+                }
+                AddPlayCard(actions);
             }
 
             ResetFoulState();
