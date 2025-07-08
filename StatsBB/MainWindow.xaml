@@ -254,6 +254,22 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="AssistCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsAssist}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="AssistBenchPlayerStyle" TargetType="Button" BasedOn="{StaticResource BenchPlayerSelectableStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSelectedAsAssist}" Value="True">
+                    <Setter Property="BorderBrush" Value="White"/>
+                    <Setter Property="BorderThickness" Value="4"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
         <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
                                      TeamAStyle="{StaticResource CourtAPlayerButtonStyle}"
@@ -1285,6 +1301,7 @@ Margin="4" />
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
@@ -1298,6 +1315,7 @@ Margin="4" />
                                                 <Button Content="{Binding DisplayName}"
                                                         Style="{StaticResource ShooterCourtPlayerStyle}"
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Player}"
                                                         Margin="2"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -1315,6 +1333,7 @@ Margin="4" />
                                                 <Button Content="{Binding DisplayName}"
                                                         Style="{StaticResource ShooterBenchPlayerStyle}"
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Player}"
                                                         Margin="2"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
@@ -1324,6 +1343,7 @@ Margin="4" />
                             <TextBlock Text="Assist" FontWeight="Bold" Margin="10 0 0 6" HorizontalAlignment="Center"/>
                             <Grid>
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
@@ -1337,14 +1357,21 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                                                        Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
-                                                        Command="{Binding SelectPlayerCommand}"
+                                                        Style="{StaticResource AssistCourtPlayerStyle}"
+                                                        Command="{Binding DataContext.SelectFreeThrowAssistCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Player}"
+                                                        IsEnabled="{Binding IsSelectableForAssist}"
                                                         Margin="2"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </Border>
-                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
+                                <Border Padding="6" Margin="2" Grid.Row="1" Background="White">
+                                    <Button Content="NO ASSIST"
+                                            Command="{Binding DataContext.NoAssistFreeThrowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            HorizontalAlignment="Center" Padding="20,6" Margin="2"/>
+                                </Border>
+                                <Border Background="#ccd3d3d3" Grid.Row="2" Padding="6" Margin="2">
                                     <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -1354,8 +1381,10 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                                                        Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
-                                                        Command="{Binding SelectPlayerCommand}"
+                                                        Style="{StaticResource AssistBenchPlayerStyle}"
+                                                        Command="{Binding DataContext.SelectFreeThrowAssistCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding Player}"
+                                                        IsEnabled="{Binding IsSelectableForAssist}"
                                                         Margin="2"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

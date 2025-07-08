@@ -212,6 +212,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand BenchTechnicalTeamBCommand { get; }
     public ICommand ConfirmFreeThrowsAwardedCommand { get; }
     public ICommand SelectFreeThrowShooterCommand { get; }
+    public ICommand SelectFreeThrowAssistCommand { get; }
+    public ICommand NoAssistFreeThrowCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -272,6 +274,8 @@ public class MainWindowViewModel : ViewModelBase
         BenchTechnicalTeamBCommand = new RelayCommand(_ => OnBenchTechnical("Team B"));
         ConfirmFreeThrowsAwardedCommand = new RelayCommand(_ => OnConfirmFreeThrowsAwarded());
         SelectFreeThrowShooterCommand = new RelayCommand(p => SelectFreeThrowShooter(p as Player));
+        SelectFreeThrowAssistCommand = new RelayCommand(p => ToggleFreeThrowAssist(p as Player));
+        NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
 
 
         Players.CollectionChanged += Players_CollectionChanged;
@@ -385,6 +389,7 @@ public class MainWindowViewModel : ViewModelBase
     private bool _freeThrowTeamIsTeamA;
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
+    private Player? _selectedFreeThrowAssist;
 
     private void OnPlayerSelected(Player player)
     {
@@ -585,6 +590,7 @@ public class MainWindowViewModel : ViewModelBase
         IsFreeThrowsSelectionActive = false;
         SelectedFreeThrowCount = 0;
         SelectedFreeThrowShooter = null;
+        SelectedFreeThrowAssist = null;
         _defaultFreeThrows = 0;
         EligibleFreeThrowCourtPlayers.Clear();
         EligibleFreeThrowBenchPlayers.Clear();
@@ -719,8 +725,24 @@ public class MainWindowViewModel : ViewModelBase
         if (IsFreeThrowsSelectionActive)
         {
             _pendingShooter = SelectedFreeThrowShooter;
+            SelectedFreeThrowAssist = null;
             UpdateAssistPlayerStyles();
         }
+    }
+
+    private void ToggleFreeThrowAssist(Player? player)
+    {
+        if (player == null) return;
+
+        if (SelectedFreeThrowAssist == player)
+            SelectedFreeThrowAssist = null;
+        else
+            SelectedFreeThrowAssist = player;
+    }
+
+    private void SetNoFreeThrowAssist()
+    {
+        SelectedFreeThrowAssist = null;
     }
 
 
@@ -995,10 +1017,11 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var vm in players)
         {
-            bool isSelectable = IsAssistSelectionActive &&
+            bool isSelectable = (IsAssistSelectionActive || IsFreeThrowsSelectionActive) &&
                                vm.Player.Number != _pendingShooter.Number;
 
             vm.SetAssistSelectionMode(isSelectable);
+            vm.IsSelectedAsAssist = vm.Player == SelectedFreeThrowAssist;
 
             if (vm.Player.Number == _pendingShooter.Number) continue;
 
@@ -1301,8 +1324,20 @@ public class MainWindowViewModel : ViewModelBase
             if (IsFreeThrowsSelectionActive)
             {
                 _pendingShooter = value;
+                SelectedFreeThrowAssist = null;
                 UpdateAssistPlayerStyles();
             }
+            OnPropertyChanged();
+        }
+    }
+
+    public Player? SelectedFreeThrowAssist
+    {
+        get => _selectedFreeThrowAssist;
+        set
+        {
+            _selectedFreeThrowAssist = value;
+            UpdateAssistPlayerStyles();
             OnPropertyChanged();
         }
     }
@@ -1331,6 +1366,7 @@ public class MainWindowViewModel : ViewModelBase
     private void StartFreeThrows(int count)
     {
         IsFreeThrowsAwardedSelectionActive = false;
+        SelectedFreeThrowAssist = null;
 
         if (count <= 0)
         {
@@ -1366,6 +1402,18 @@ public class MainWindowViewModel : ViewModelBase
             foreach (var r in FreeThrowResultRows)
             {
                 Debug.WriteLine($"{GameClockService.TimeLeftString} {r.Label} {r.Result}");
+            }
+
+            var made = FreeThrowResultRows.Count(r => r.Result == "MADE");
+            var missed = FreeThrowResultRows.Count(r => r.Result == "MISSED");
+
+            if (_pendingShooter != null)
+            {
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Free throws by {_pendingShooter.Number}.{_pendingShooter.Name}: {made} made, {missed} missed");
+                if (made > 0 && SelectedFreeThrowAssist != null)
+                {
+                    Debug.WriteLine($"{GameClockService.TimeLeftString} Assist by {SelectedFreeThrowAssist.Number}.{SelectedFreeThrowAssist.Name}");
+                }
             }
 
             ResetFoulState();

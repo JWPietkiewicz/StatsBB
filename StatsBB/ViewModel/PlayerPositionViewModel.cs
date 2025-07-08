@@ -174,6 +174,17 @@ namespace StatsBB.ViewModel
             }
         }
 
+        private bool _isSelectedAsAssist;
+        public bool IsSelectedAsAssist
+        {
+            get => _isSelectedAsAssist;
+            set
+            {
+                _isSelectedAsAssist = value;
+                OnPropertyChanged();
+            }
+        }
+
         public PlayerPositionViewModel(Player player, ICommand selectCommand)
         {
             Player = player;
