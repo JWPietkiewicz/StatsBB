@@ -1178,6 +1178,7 @@ Margin="4" />
                                             <Button Content="{Binding DisplayName}"
                                                     Style="{StaticResource ShooterCourtPlayerStyle}"
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding Player}"
                                                     Margin="4" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
@@ -1195,6 +1196,7 @@ Margin="4" />
                                             <Button Content="{Binding DisplayName}"
                                                     Style="{StaticResource ShooterBenchPlayerStyle}"
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    CommandParameter="{Binding Player}"
                                                     Margin="4" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
