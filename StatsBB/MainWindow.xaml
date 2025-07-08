@@ -262,6 +262,23 @@
         <converters:IsTeamAToBenchStyleConverter x:Key="BenchPlayerStyleConverter"
                                      TeamAStyle="{StaticResource BenchAPlayerButtonStyle}"
                                      TeamBStyle="{StaticResource BenchBPlayerButtonStyle}" />
+
+        <Style x:Key="FieldTitlesStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/> 
+            <Setter Property="Margin" Value="5"/> 
+            <Setter Property="Padding" Value="5"/> 
+        </Style>
+        <Style x:Key="FieldStyle" TargetType="TextBox">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -287,9 +304,102 @@
 
     <TabControl>
         <TabItem Header="GAME SETTINGS">
-            <TextBlock Text="Game settings go here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Border Background="White" BorderBrush="#888" CornerRadius="5" BorderThickness="2" Padding="20" Margin="20" Width="600">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="400" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Periods" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="4" Grid.Row="0" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Period time" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="10" Grid.Row="1" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Max player foul" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="5" Grid.Row="2" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Team foul limit before bonus" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="4" Grid.Row="3" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Overtime" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Style="{StaticResource CheckBoxStyle}" Grid.Row="4" Grid.Column="1"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Overtime time" Grid.Row="5" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="5" Grid.Row="5" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Jump ball" Grid.Row="6" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Style="{StaticResource CheckBoxStyle}" Grid.Row="6" Grid.Column="1"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Max technical fouls" Grid.Row="7" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="2" Grid.Row="7" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Players on court" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="5" Grid.Row="8" Grid.Column="1" Width="60"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts per period" Grid.Row="9" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Style="{StaticResource CheckBoxStyle}" x:Name="TimeoutsPerPeriodCheckBox" Grid.Row="9" Grid.Column="1"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts in period 1" Grid.Row="10" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="1" Grid.Row="10" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts in period 2" Grid.Row="11" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="1" Grid.Row="11" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts in period 3" Grid.Row="12" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="1" Grid.Row="12" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts in period 4" Grid.Row="13" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="1" Grid.Row="13" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerPeriodCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts per half" Grid.Row="14" Grid.Column="0" VerticalAlignment="Center"/>
+                        <CheckBox Style="{StaticResource CheckBoxStyle}" x:Name="TimeoutsPerHalfCheckBox" Grid.Row="14" Grid.Column="1" IsChecked="True"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts first half" Grid.Row="15" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="2" Grid.Row="15" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts second half" Grid.Row="16" Grid.Column="0" VerticalAlignment="Center"
+                                   Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="3" Grid.Row="16" Grid.Column="1" Width="60"
+                                 Visibility="{Binding IsChecked, ElementName=TimeoutsPerHalfCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                        <TextBlock Style="{StaticResource FieldTitlesStyle}" Text="Timeouts per overtime" Grid.Row="17" Grid.Column="0" VerticalAlignment="Center"/>
+                        <TextBox Style="{StaticResource FieldStyle}"  Text="0" Grid.Row="17" Grid.Column="1" Width="60"/>
+                    </Grid>
+                </Border>
+            </ScrollViewer>
         </TabItem>
         <TabItem Header="TEAM INFO">
             <TextBlock Text="Team info goes here." 
@@ -375,7 +485,7 @@
                         <TextBlock Text="{Binding TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
-                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="Green" RadiusX="4" RadiusY="4"/>
+                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="Black" RadiusX="4" RadiusY="4"/>
 
                     <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
