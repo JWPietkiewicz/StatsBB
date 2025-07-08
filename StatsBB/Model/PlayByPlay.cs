@@ -1,48 +1,71 @@
-﻿namespace StatsBB.Model
+namespace StatsBB.Model;
+
+/// <summary>
+/// Represents a raw play-by-play event coming from the live game feed.
+/// </summary>
+public class PlayByPlay
 {
-    public class PlayByPlay
-    {
-        public int Id { get; set; }
-        public int Period { get; set; }
-        public string Time { get; set; }
-        public bool TeamA {  get; set; }
-        public int PlayerNumer { get; set; }
-        public string PlayerName { get; set; }
-        public bool IsTeamAction { get; set; }
-        public bool IsGameAction { get; set; }
-        public PlayType Play { get; set; }
-    }
-    public enum PlayType
-    {
-        GameStart = 0,
-        GameEnd = 1,
-        PeriodStart = 2,
-        PeriodEnd = 3,
-        JumpBallWon = 4,
-        JumpBallLost = 5,
-        Shot2Made = 6,
-        Shot2Missed = 7,
-        Shot3Made = 8,
-        Shot3Missed = 9,
-        FreeThrowMade = 10,
-        FreeThrowMissed = 11,
-        OffensiveRebound = 12,
-        DeffensiveRebound = 13,
-        TeamRebound = 14,
-        Assist = 15,
-        Turnover = 16,
-        Steal = 17,
-        Block = 18,
-        Foul = 19,
-        FoulDrawn = 20,
-        UnsportsmanlikeFoul = 21,
-        OffensiveFoul = 22,
-        Ejection = 23,
-        Timeout = 24,
-        SubstitutionIn = 25,
-        SubstitutionOut = 26,
-        Dunk = 27,
-        Putback = 28,
-        Unknown = 29
-    }
+    public int Id { get; set; }
+    public int OrderNumber { get; set; }
+    public string Clock { get; set; } = string.Empty;
+    public Period Period { get; set; }
+    public TeamSelect Team { get; set; }
+    public int Player { get; set; }
+    public PlayType PlayType { get; set; }
+    public List<string> Flags { get; set; } = new();
+    public List<string> SubFlags { get; set; } = new();
+    public Point Point { get; set; } = new();
+    public bool PossessionSwitch { get; set; }
+    public bool ArrowSwitch { get; set; }
+    public bool ScoreChange { get; set; }
+    public StatsSnapshot TeamA { get; set; } = new();
+    public StatsSnapshot TeamB { get; set; } = new();
+    public string Description { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Identifies which team performed the action.
+/// </summary>
+public enum TeamSelect
+{
+    TeamA,
+    TeamB
+}
+
+/// <summary>
+/// Enumerates the different periods in a game.
+/// </summary>
+public enum Period
+{
+    Q1 = 1,
+    Q2 = 2,
+    Q3 = 3,
+    Q4 = 4,
+    OT1 = 5,
+    OT2 = 6
+}
+
+/// <summary>
+/// Type of play that occurred.
+/// </summary>
+public enum PlayType
+{
+    FieldGoal,
+    FreeThrow,
+    Rebound,
+    Turnover,
+    Foul,
+    Substitution,
+    Timeout,
+    JumpBall,
+    Violation,
+    Other
+}
+
+/// <summary>
+/// Simple point wrapper used in the feed.
+/// </summary>
+public class Point
+{
+    public int Value { get; set; }
 }
