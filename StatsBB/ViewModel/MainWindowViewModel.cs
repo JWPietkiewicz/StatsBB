@@ -3,6 +3,7 @@ using StatsBB.MVVM;
 using StatsBB.Services;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Linq;
@@ -51,6 +52,8 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowBenchPlayers { get; } = new();
 
     public StatsTabViewModel StatsVM { get; }
+
+    public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
 
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
@@ -283,6 +286,8 @@ public class MainWindowViewModel : ViewModelBase
         PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
         StatsVM = new StatsTabViewModel(Players);
+
+        GenerateSamplePlayByPlayData();
     }
     private void BeginSubstitution()
     {
@@ -1538,6 +1543,85 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var p in subIn)
             p.IsActive = true;
+    }
+
+    // ---- PlayByPlay log helpers ----
+
+    private PlayActionViewModel CreateAction(Player player, string action)
+    {
+        Debug.WriteLine($"CreateAction: {player.Number} {player.Name} {action}");
+        return new PlayActionViewModel
+        {
+            TeamColor = GetTeamColorFromPlayer(player),
+            PlayerNumber = player.Number.ToString(),
+            FirstName = GetFirstName(player.Name),
+            LastName = GetLastName(player.Name),
+            Action = action
+        };
+    }
+
+    private PlayActionViewModel CreateTeamAction(bool teamA, string action)
+    {
+        var name = teamA ? TeamAName : TeamBName;
+        Debug.WriteLine($"CreateTeamAction: {name} {action}");
+        return new PlayActionViewModel
+        {
+            TeamColor = teamA ? (Brush)_resources["CourtAColor"] : (Brush)_resources["CourtBColor"],
+            PlayerNumber = string.Empty,
+            FirstName = name,
+            LastName = string.Empty,
+            Action = action
+        };
+    }
+
+    private void AddPlayCard(IEnumerable<PlayActionViewModel> actions)
+    {
+        var card = new PlayCardViewModel
+        {
+            Time = GameClockService.TimeLeftString,
+            TeamAScore = TeamAScore,
+            TeamBScore = TeamBScore
+        };
+        foreach (var a in actions)
+            card.Actions.Add(a);
+
+        PlayByPlayCards.Insert(0, card);
+        Debug.WriteLine($"Play card added: {card.Header}");
+    }
+
+    private static string GetFirstName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+        var parts = name.Split(' ');
+        return parts.Length > 0 ? parts[0] : string.Empty;
+    }
+
+    private static string GetLastName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return string.Empty;
+        var parts = name.Split(' ');
+        return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
+    }
+
+    private void GenerateSamplePlayByPlayData()
+    {
+        if (Players.Count == 0) return;
+
+        var shooter = Players.First();
+        AddPlayCard(new[] { CreateAction(shooter, "2PM") });
+
+        var missShooter = Players.ElementAtOrDefault(3);
+        var rebounder = Players.ElementAtOrDefault(8);
+        if (missShooter != null && rebounder != null)
+        {
+            AddPlayCard(new[]
+            {
+                CreateAction(missShooter, "2PA MISSED"),
+                CreateAction(rebounder, "REBOUND")
+            });
+        }
+
+        AddPlayCard(new[] { CreateTeamAction(true, "TIMEOUT") });
     }
 
 
