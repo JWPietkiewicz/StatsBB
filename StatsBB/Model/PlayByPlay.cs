@@ -1,17 +1,28 @@
-﻿namespace StatsBB.Model
+using System.Collections.Generic;
+using System.Windows;
+
+namespace StatsBB.Model
 {
     public class PlayByPlay
     {
         public int Id { get; set; }
-        public int Period { get; set; }
-        public string Time { get; set; }
-        public bool TeamA {  get; set; }
-        public int PlayerNumer { get; set; }
-        public string PlayerName { get; set; }
-        public bool IsTeamAction { get; set; }
-        public bool IsGameAction { get; set; }
-        public PlayType Play { get; set; }
+        public int OrderNumber { get; set; }
+        public string Clock { get; set; } = string.Empty;
+        public Period Period { get; set; }
+        public TeamSelect Team { get; set; }
+        public int Player { get; set; }
+        public PlayType PlayType { get; set; }
+        public List<string> Flags { get; set; } = new();
+        public List<string> Subflags { get; set; } = new();
+        public Point? Point { get; set; }
+        public bool PossesionSwitch { get; set; }
+        public bool ArrowSwitch { get; set; }
+        public bool ScoreChange { get; set; }
+        public List<string> TeamA { get; set; } = new();
+        public List<string> TeamB { get; set; } = new();
+        public string Description { get; set; } = string.Empty;
     }
+
     public enum PlayType
     {
         GameStart = 0,
