@@ -1669,9 +1669,7 @@ Grid.Column="4" />
     </Grid>
         </TabItem>
         <TabItem Header="STATS">
-            <TextBlock Text="Stats go here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+            <controls:StatsView DataContext="{Binding StatsVM}" />
         </TabItem>
     </TabControl>
 </Window>

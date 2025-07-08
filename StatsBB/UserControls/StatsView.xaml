@@ -1,0 +1,73 @@
+<UserControl x:Class="StatsBB.UserControls.StatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Grid.Column="0" ItemsSource="{Binding TeamAStats}" AutoGenerateColumns="False" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="No." Binding="{Binding No}" Width="40"/>
+                <DataGridTextColumn Header="Player" Binding="{Binding Player}" Width="120"/>
+                <DataGridCheckBoxColumn Header="s5" Binding="{Binding S5}" Width="40"/>
+                <DataGridCheckBoxColumn Header="onCourt" Binding="{Binding OnCourt}" Width="60"/>
+                <DataGridTextColumn Header="Mins" Binding="{Binding Mins}" Width="50"/>
+                <DataGridTextColumn Header="Pts" Binding="{Binding Pts}" Width="40"/>
+                <DataGridTextColumn Header="FG" Binding="{Binding FG}" Width="60"/>
+                <DataGridTextColumn Header="FG%" Binding="{Binding FGPercent}" Width="50"/>
+                <DataGridTextColumn Header="2P" Binding="{Binding TwoP}" Width="60"/>
+                <DataGridTextColumn Header="2P%" Binding="{Binding TwoPPercent}" Width="50"/>
+                <DataGridTextColumn Header="3P" Binding="{Binding ThreeP}" Width="60"/>
+                <DataGridTextColumn Header="3P%" Binding="{Binding ThreePPercent}" Width="50"/>
+                <DataGridTextColumn Header="FT" Binding="{Binding FT}" Width="60"/>
+                <DataGridTextColumn Header="FT%" Binding="{Binding FTPercent}" Width="50"/>
+                <DataGridTextColumn Header="OFF" Binding="{Binding OFF}" Width="40"/>
+                <DataGridTextColumn Header="DEF" Binding="{Binding DEF}" Width="40"/>
+                <DataGridTextColumn Header="REB" Binding="{Binding REB}" Width="40"/>
+                <DataGridTextColumn Header="AST" Binding="{Binding AST}" Width="40"/>
+                <DataGridTextColumn Header="TO" Binding="{Binding TO}" Width="40"/>
+                <DataGridTextColumn Header="STL" Binding="{Binding STL}" Width="40"/>
+                <DataGridTextColumn Header="BLK" Binding="{Binding BLK}" Width="40"/>
+                <DataGridTextColumn Header="BLKR" Binding="{Binding BLKR}" Width="50"/>
+                <DataGridTextColumn Header="PF" Binding="{Binding PF}" Width="40"/>
+                <DataGridTextColumn Header="Fls on" Binding="{Binding FoulsOn}" Width="50"/>
+                <DataGridTextColumn Header="+/-" Binding="{Binding PlusMinus}" Width="50"/>
+                <DataGridTextColumn Header="Index" Binding="{Binding Index}" Width="50"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid Grid.Column="1" ItemsSource="{Binding TeamBStats}" AutoGenerateColumns="False" HeadersVisibility="Column">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="No." Binding="{Binding No}" Width="40"/>
+                <DataGridTextColumn Header="Player" Binding="{Binding Player}" Width="120"/>
+                <DataGridCheckBoxColumn Header="s5" Binding="{Binding S5}" Width="40"/>
+                <DataGridCheckBoxColumn Header="onCourt" Binding="{Binding OnCourt}" Width="60"/>
+                <DataGridTextColumn Header="Mins" Binding="{Binding Mins}" Width="50"/>
+                <DataGridTextColumn Header="Pts" Binding="{Binding Pts}" Width="40"/>
+                <DataGridTextColumn Header="FG" Binding="{Binding FG}" Width="60"/>
+                <DataGridTextColumn Header="FG%" Binding="{Binding FGPercent}" Width="50"/>
+                <DataGridTextColumn Header="2P" Binding="{Binding TwoP}" Width="60"/>
+                <DataGridTextColumn Header="2P%" Binding="{Binding TwoPPercent}" Width="50"/>
+                <DataGridTextColumn Header="3P" Binding="{Binding ThreeP}" Width="60"/>
+                <DataGridTextColumn Header="3P%" Binding="{Binding ThreePPercent}" Width="50"/>
+                <DataGridTextColumn Header="FT" Binding="{Binding FT}" Width="60"/>
+                <DataGridTextColumn Header="FT%" Binding="{Binding FTPercent}" Width="50"/>
+                <DataGridTextColumn Header="OFF" Binding="{Binding OFF}" Width="40"/>
+                <DataGridTextColumn Header="DEF" Binding="{Binding DEF}" Width="40"/>
+                <DataGridTextColumn Header="REB" Binding="{Binding REB}" Width="40"/>
+                <DataGridTextColumn Header="AST" Binding="{Binding AST}" Width="40"/>
+                <DataGridTextColumn Header="TO" Binding="{Binding TO}" Width="40"/>
+                <DataGridTextColumn Header="STL" Binding="{Binding STL}" Width="40"/>
+                <DataGridTextColumn Header="BLK" Binding="{Binding BLK}" Width="40"/>
+                <DataGridTextColumn Header="BLKR" Binding="{Binding BLKR}" Width="50"/>
+                <DataGridTextColumn Header="PF" Binding="{Binding PF}" Width="40"/>
+                <DataGridTextColumn Header="Fls on" Binding="{Binding FoulsOn}" Width="50"/>
+                <DataGridTextColumn Header="+/-" Binding="{Binding PlusMinus}" Width="50"/>
+                <DataGridTextColumn Header="Index" Binding="{Binding Index}" Width="50"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

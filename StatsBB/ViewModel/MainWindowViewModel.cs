@@ -50,6 +50,8 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowCourtPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleFreeThrowBenchPlayers { get; } = new();
 
+    public StatsTabViewModel StatsVM { get; }
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -276,6 +278,7 @@ public class MainWindowViewModel : ViewModelBase
 
         PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
+        StatsVM = new StatsTabViewModel(Players);
     }
     private void BeginSubstitution()
     {
