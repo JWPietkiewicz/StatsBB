@@ -710,10 +710,15 @@ public class MainWindowViewModel : ViewModelBase
     private void SelectFreeThrowShooter(Player? player)
     {
         if (player == null) return;
-        SelectedFreeThrowShooter = player;
+
+        if (SelectedFreeThrowShooter == player)
+            SelectedFreeThrowShooter = null;
+        else
+            SelectedFreeThrowShooter = player;
+
         if (IsFreeThrowsSelectionActive)
         {
-            _pendingShooter = player;
+            _pendingShooter = SelectedFreeThrowShooter;
             UpdateAssistPlayerStyles();
         }
     }
