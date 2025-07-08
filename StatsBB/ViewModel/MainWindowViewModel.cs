@@ -331,11 +331,15 @@ public class MainWindowViewModel : ViewModelBase
     {
         Debug.WriteLine($"{GameClockService.TimeLeftString} Timeout called by {team}");
         IsTimeOutSelectionActive = false;
+        var isTeamA = team == "Team A";
+        AddPlayCard(new[] { CreateTeamAction(isTeamA, "TIMEOUT") });
     }
 
     private void OnCoachTechnical(string team)
     {
         Debug.WriteLine($"Coach Technical on {team}");
+        var isTeamA = team == "Team A";
+        AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -389,6 +393,9 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     private Player? _pendingShooter;
+    private bool _pendingIsThreePoint;
+    private bool _wasBlocked;
+    private Player? _blocker;
     private Player? _foulCommiter;
     private Player? _fouledPlayer;
     private string? _foulType;
@@ -397,6 +404,7 @@ public class MainWindowViewModel : ViewModelBase
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
+    private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
     {
@@ -422,6 +430,12 @@ public class MainWindowViewModel : ViewModelBase
 
             _fouledPlayer = player;
             IsFouledPlayerSelectionActive = false;
+
+            if (_fouledPlayer != null)
+                _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
+
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
 
             if (_foulType?.ToLowerInvariant() == "offensive")
             {
@@ -503,18 +517,23 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
 
         _pendingShooter = player;
+        _pendingIsThreePoint = SelectedPoint.IsThreePoint;
+        _wasBlocked = false;
+        _blocker = null;
+        _currentPlayActions.Clear();
 
-        if (actionType == ActionType.Made)
+        if (actionType == ActionType.Turnover)
+        {
+            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
+            IsTurnoverSelectionActive = true;
+        }
+        else if (actionType == ActionType.Made)
         {
             IsAssistSelectionActive = true;
         }
         else if (actionType == ActionType.Missed)
         {
             IsReboundSelectionActive = true;
-        }
-        else if (actionType == ActionType.Turnover)
-        {
-            IsTurnoverSelectionActive = true;
         }
         else
         {
@@ -529,6 +548,10 @@ public class MainWindowViewModel : ViewModelBase
 
         _foulType = foulType;
         IsFoulTypeSelectionActive = false;
+
+        _currentPlayActions.Clear();
+        if (_foulCommiter != null)
+            _currentPlayActions.Add(CreateAction(_foulCommiter, $"FOUL {foulType.ToUpperInvariant()}"));
 
         var lowerType = foulType.ToLowerInvariant();
         _defaultFreeThrows = 0;
@@ -789,7 +812,14 @@ public class MainWindowViewModel : ViewModelBase
                 ? $"Assist by {assistPlayer.Number}.{assistPlayer.Name}"
                 : "No assist";
             Debug.WriteLine($"{GameClockService.TimeLeftString} {assist}");
+                if (assistPlayer != null)
+                    _currentPlayActions.Add(CreateAction(assistPlayer, "ASSIST"));
             }
+
+            var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MADE");
+            _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
         }
 
         _pendingShooter = null;
@@ -813,6 +843,19 @@ public class MainWindowViewModel : ViewModelBase
             };
 
             Debug.WriteLine($"{GameClockService.TimeLeftString} {log} after miss by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            if (reboundSource is Player rp)
+            {
+                _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
+            }
+            else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
+            {
+                bool teamA = team == "TeamA";
+                _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
+            }
+            var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MISSED");
+            _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
         }
 
         ResetSelectionState();
@@ -823,6 +866,9 @@ public class MainWindowViewModel : ViewModelBase
         if (_pendingShooter != null && blocker != null)
         {
             Debug.WriteLine($"{GameClockService.TimeLeftString} Block by {blocker.Number}.{blocker.Name} on {_pendingShooter.Number}.{_pendingShooter.Name}");
+            _wasBlocked = true;
+            _blocker = blocker;
+            _currentPlayActions.Add(CreateAction(blocker, "BLOCK"));
         }
 
         // Reset block selection state
@@ -878,12 +924,16 @@ public class MainWindowViewModel : ViewModelBase
         {
             Debug.WriteLine($"{GameClockService.TimeLeftString} Turnover by {p.Number}.{p.Name}");
             _pendingShooter = p;
+            _currentPlayActions.Clear();
+            _currentPlayActions.Add(CreateAction(p, "TURNOVER"));
             IsTurnoverSelectionActive = false;
             IsStealSelectionActive = true; // move to steal selection
         }
         else if (source is string team)
         {
             Debug.WriteLine($"{GameClockService.TimeLeftString} Team turnover by {team}");
+            bool teamA = team == "TeamA" || team == "Team A";
+            AddPlayCard(new[] { CreateTeamAction(teamA, "TURNOVER") });
             ResetSelectionState();
         }
     }
@@ -931,6 +981,8 @@ public class MainWindowViewModel : ViewModelBase
         if (stealer == null)
         {
             Debug.WriteLine($"{GameClockService.TimeLeftString} No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
             ResetSelectionState();
             return;
         }
@@ -944,6 +996,9 @@ public class MainWindowViewModel : ViewModelBase
 
         // Valid steal
         Debug.WriteLine($"{GameClockService.TimeLeftString} Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
+        _currentPlayActions.Add(CreateAction(stealer, "STEAL"));
+        AddPlayCard(_currentPlayActions.ToList());
+        _currentPlayActions.Clear();
         ResetSelectionState();
     }
 
@@ -1602,6 +1657,14 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"Play card added: {card.Header}");
     }
 
+    private static string FormatShotAction(bool isThree, string result)
+    {
+        var prefix = isThree ? "3P" : "2P";
+        return result == "MADE"
+            ? $"{prefix}M"
+            : $"{prefix}A {result}";
+    }
+
     private static string GetFirstName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return string.Empty;
@@ -1621,7 +1684,7 @@ public class MainWindowViewModel : ViewModelBase
         if (Players.Count == 0) return;
 
         var shooter = Players.First();
-        AddPlayCard(new[] { CreateAction(shooter, "2PM") });
+        AddPlayCard(new[] { CreateAction(shooter, FormatShotAction(false, "MADE")) });
 
         var missShooter = Players.ElementAtOrDefault(3);
         var rebounder = Players.ElementAtOrDefault(8);
@@ -1629,7 +1692,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             AddPlayCard(new[]
             {
-                CreateAction(missShooter, "2PA MISSED"),
+                CreateAction(missShooter, FormatShotAction(false, "MISSED")),
                 CreateAction(rebounder, "REBOUND")
             });
         }
