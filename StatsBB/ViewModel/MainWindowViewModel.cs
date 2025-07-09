@@ -439,9 +439,11 @@ public class MainWindowViewModel : ViewModelBase
                 TeamBColorOption = TeamBInfo.Color;
         };
 
+        Game.HomeTeam.Players.CollectionChanged += TeamPlayersChanged;
+        Game.AwayTeam.Players.CollectionChanged += TeamPlayersChanged;
 
-        TeamAInfo.Players.CollectionChanged += TeamPlayersChanged;
-        TeamBInfo.Players.CollectionChanged += TeamPlayersChanged;
+        //TeamAInfo.Players.CollectionChanged += TeamPlayersChanged;
+        //TeamBInfo.Players.CollectionChanged += TeamPlayersChanged;
         RegenerateTeamsFromInfo();
         //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
@@ -557,7 +559,29 @@ public class MainWindowViewModel : ViewModelBase
     private void RegenerateTeamsFromInfo()
     {
         Players.Clear();
-
+        int s5 = 0;
+        foreach(var p in Game.HomeTeam.Players)
+        {
+            if(s5<5)
+            {
+                p.IsActive = true;
+            }
+            s5++;
+            p.IsTeamA = true;
+            Players.Add(p);
+        }
+        s5 = 0;
+        foreach (var p in Game.AwayTeam.Players)
+        {
+            if (s5 < 5)
+            {
+                p.IsActive = true;
+            }
+            s5++;
+            p.IsTeamA = false;
+            Players.Add(p);
+        }
+        /*
         int id = 1;
         foreach (var p in TeamAInfo.Players.Take(15))
         {
@@ -573,7 +597,7 @@ public class MainWindowViewModel : ViewModelBase
             p.Id = id++;
             Players.Add(p);
         }
-
+        */
         RegenerateTeams();
     }
 

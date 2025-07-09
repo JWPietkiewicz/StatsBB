@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Net.Sockets;
 using StatsBB.Domain;
 using StatsBB.MVVM;
 
@@ -6,26 +7,51 @@ namespace StatsBB.Model;
 
 public class TeamInfo : ViewModelBase
 {
-    private string _name = string.Empty;
+    public Team Team { get; set; }
+    public Guid TeamId
+    {
+        get => Team.TeamId;
+        set { Team.TeamId = value; OnPropertyChanged(); }
+    }
+    public int Points
+    {
+        get => Team.Points;
+        set { Team.Points = value; OnPropertyChanged(); }
+    }
+
+    public bool IsHomeTeam
+    {
+        get => Team.IsHomeTeam;
+        set { Team.IsHomeTeam = value; OnPropertyChanged(); }
+    }
+
+    public void AddPoints(int points)
+    {
+        Team.AddPoints(points);
+    }
+
+    public void AddFoul(Period currentPeriod)
+    {
+        Team.AddFoul(currentPeriod);
+    }
+
     public string Name
     {
-        get => _name;
-        set { _name = value; OnPropertyChanged(); }
+        get => Team.TeamName;
+        set { Team.TeamName = value; OnPropertyChanged(); }
     }
 
-    private string _shortName = string.Empty;
     public string ShortName
     {
-        get => _shortName;
-        set { _shortName = value; OnPropertyChanged(); }
+        get => Team.TeamShortName;
+        set { Team.TeamShortName = value; OnPropertyChanged(); }
     }
 
-    private TeamColorOption? _color;
     public TeamColorOption? Color
     {
-        get => _color;
-        set { _color = value; OnPropertyChanged(); }
+        get => Team.TeamColor;
+        set { Team.TeamColor = value; OnPropertyChanged(); }
     }
 
-    public ObservableCollection<Player> Players { get; } = new();
+    public ObservableCollection<Player> Players { get => Team.Players; }
 }

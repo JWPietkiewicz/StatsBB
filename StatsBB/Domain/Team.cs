@@ -1,3 +1,4 @@
+using StatsBB.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,8 +9,9 @@ public class Team
 {
     public Guid TeamId { get; set; } = Guid.NewGuid();
     public string TeamName { get; set; } = string.Empty;
-    public TeamColor TeamColor { get; set; }
-    public List<Player> Players { get; set; } = new();
+    public string TeamShortName {  get; set; } = string.Empty;
+    public TeamColorOption TeamColor { get; set; }
+    public ObservableCollection<Player> Players { get; set; } = new();
     public int Points { get; set; }
 
     public bool IsHomeTeam { get; set; }

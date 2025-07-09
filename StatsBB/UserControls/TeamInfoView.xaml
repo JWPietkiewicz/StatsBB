@@ -3,10 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="600"/>
+            <ColumnDefinition Width="600"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+        <StackPanel Grid.Column="0" Margin="0,0,10,0" Background="LightGray">
             <TextBlock Text="Home Team" FontWeight="Bold" Margin="0,0,0,5"/>
             <TextBlock Text="Team Name"/>
             <TextBox Text="{Binding HomeTeamName, UpdateSourceTrigger=PropertyChanged}"/>
@@ -21,7 +21,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-        <StackPanel Grid.Column="1">
+        <StackPanel Grid.Column="1" Background="LightGray">
             <TextBlock Text="Away Team" FontWeight="Bold" Margin="0,0,0,5"/>
             <TextBlock Text="Team Name"/>
             <TextBox Text="{Binding AwayTeamName, UpdateSourceTrigger=PropertyChanged}"/>
