@@ -70,12 +70,17 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamAColorOption;
         set
         {
+            if (_teamAColorOption == value)
+                return;
+
             _teamAColorOption = value;
             OnPropertyChanged();
             if (value != null && _resources["CourtAColor"] is SolidColorBrush b)
             {
                 b.Color = ((SolidColorBrush)value.ColorBrush).Color;
             }
+            if (TeamAInfo.Color != value)
+                TeamAInfo.Color = value;
         }
     }
 
@@ -85,12 +90,17 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamBColorOption;
         set
         {
+            if (_teamBColorOption == value)
+                return;
+
             _teamBColorOption = value;
             OnPropertyChanged();
             if (value != null && _resources["CourtBColor"] is SolidColorBrush b)
             {
                 b.Color = ((SolidColorBrush)value.ColorBrush).Color;
             }
+            if (TeamBInfo.Color != value)
+                TeamBInfo.Color = value;
         }
     }
 
@@ -100,9 +110,13 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamAName;
         set
         {
+            if (_teamAName == value)
+                return;
+
             _teamAName = value;
             OnPropertyChanged();
-            TeamAInfo.Name = value;
+            if (TeamAInfo.Name != value)
+                TeamAInfo.Name = value;
         }
     }
 
@@ -112,9 +126,13 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamAShortName;
         set
         {
+            if (_teamAShortName == value)
+                return;
+
             _teamAShortName = value;
             OnPropertyChanged();
-            TeamAInfo.ShortName = value;
+            if (TeamAInfo.ShortName != value)
+                TeamAInfo.ShortName = value;
         }
     }
 
@@ -124,9 +142,13 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamBName;
         set
         {
+            if (_teamBName == value)
+                return;
+
             _teamBName = value;
             OnPropertyChanged();
-            TeamBInfo.Name = value;
+            if (TeamBInfo.Name != value)
+                TeamBInfo.Name = value;
         }
     }
 
@@ -136,9 +158,13 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamBShortName;
         set
         {
+            if (_teamBShortName == value)
+                return;
+
             _teamBShortName = value;
             OnPropertyChanged();
-            TeamBInfo.ShortName = value;
+            if (TeamBInfo.ShortName != value)
+                TeamBInfo.ShortName = value;
         }
     }
 
@@ -369,22 +395,22 @@ public class MainWindowViewModel : ViewModelBase
         TeamAInfo.ShortName = TeamAShortName;
         TeamBInfo.ShortName = TeamBShortName;
 
-        TeamAInfo.PropertyChanged += (s,e) =>
+        TeamAInfo.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == nameof(TeamInfo.Name))
+            if (e.PropertyName == nameof(TeamInfo.Name) && TeamAName != TeamAInfo.Name)
                 TeamAName = TeamAInfo.Name;
-            if (e.PropertyName == nameof(TeamInfo.ShortName))
+            if (e.PropertyName == nameof(TeamInfo.ShortName) && TeamAShortName != TeamAInfo.ShortName)
                 TeamAShortName = TeamAInfo.ShortName;
-            if (e.PropertyName == nameof(TeamInfo.Color))
+            if (e.PropertyName == nameof(TeamInfo.Color) && TeamAColorOption != TeamAInfo.Color)
                 TeamAColorOption = TeamAInfo.Color;
         };
-        TeamBInfo.PropertyChanged += (s,e) =>
+        TeamBInfo.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == nameof(TeamInfo.Name))
+            if (e.PropertyName == nameof(TeamInfo.Name) && TeamBName != TeamBInfo.Name)
                 TeamBName = TeamBInfo.Name;
-            if (e.PropertyName == nameof(TeamInfo.ShortName))
+            if (e.PropertyName == nameof(TeamInfo.ShortName) && TeamBShortName != TeamBInfo.ShortName)
                 TeamBShortName = TeamBInfo.ShortName;
-            if (e.PropertyName == nameof(TeamInfo.Color))
+            if (e.PropertyName == nameof(TeamInfo.Color) && TeamBColorOption != TeamBInfo.Color)
                 TeamBColorOption = TeamBInfo.Color;
         };
 

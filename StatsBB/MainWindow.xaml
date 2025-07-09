@@ -315,27 +315,27 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ToggleButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}">
-                                    <ToggleButton.Content>99</ToggleButton.Content>
-                                    <ToggleButton.IsChecked>
+                                <RadioButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamAColorGroup">
+                                    <RadioButton.Content>99</RadioButton.Content>
+                                    <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
                                             <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
-                                    </ToggleButton.IsChecked>
-                                    <ToggleButton.Command>
+                                    </RadioButton.IsChecked>
+                                    <RadioButton.Command>
                                         <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                    </ToggleButton.Command>
-                                    <ToggleButton.CommandParameter>
+                                    </RadioButton.Command>
+                                    <RadioButton.CommandParameter>
                                         <Binding />
-                                    </ToggleButton.CommandParameter>
-                                    <ToggleButton.IsEnabled>
+                                    </RadioButton.CommandParameter>
+                                    <RadioButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
                                             <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
-                                    </ToggleButton.IsEnabled>
-                                </ToggleButton>
+                                    </RadioButton.IsEnabled>
+                                </RadioButton>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -369,27 +369,27 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <ToggleButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}">
-                                    <ToggleButton.Content>99</ToggleButton.Content>
-                                    <ToggleButton.IsChecked>
+                                <RadioButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamBColorGroup">
+                                    <RadioButton.Content>99</RadioButton.Content>
+                                    <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
                                             <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
-                                    </ToggleButton.IsChecked>
-                                    <ToggleButton.Command>
+                                    </RadioButton.IsChecked>
+                                    <RadioButton.Command>
                                         <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                    </ToggleButton.Command>
-                                    <ToggleButton.CommandParameter>
+                                    </RadioButton.Command>
+                                    <RadioButton.CommandParameter>
                                         <Binding />
-                                    </ToggleButton.CommandParameter>
-                                    <ToggleButton.IsEnabled>
+                                    </RadioButton.CommandParameter>
+                                    <RadioButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
                                             <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
-                                    </ToggleButton.IsEnabled>
-                                </ToggleButton>
+                                    </RadioButton.IsEnabled>
+                                </RadioButton>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
