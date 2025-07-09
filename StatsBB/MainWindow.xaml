@@ -4,6 +4,7 @@
         xmlns:controls="clr-namespace:StatsBB.UserControls" 
         xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:converters="clr-namespace:StatsBB.Converters"
+        xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
         Title="Basketball Stats Map" Height="1080" Width="1920"
         PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
@@ -12,10 +13,10 @@
         <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
 
 
-        <SolidColorBrush x:Key="PrimaryAColor" Color="Orange"/>
-        <SolidColorBrush x:Key="SecondaryAColor" Color="White"/>
-        <SolidColorBrush x:Key="PrimaryBColor" Color="Green"/>
-        <SolidColorBrush x:Key="SecondaryBColor" Color="White"/>
+        <SolidColorBrush x:Key="PrimaryAColor" Color="Orange" po:Freeze="False"/>
+        <SolidColorBrush x:Key="SecondaryAColor" Color="White" po:Freeze="False"/>
+        <SolidColorBrush x:Key="PrimaryBColor" Color="Green" po:Freeze="False"/>
+        <SolidColorBrush x:Key="SecondaryBColor" Color="White" po:Freeze="False"/>
         <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
         <SolidColorBrush x:Key="DisabledColor" Color="LightGray"/>
         <SolidColorBrush x:Key="HoverGrey" Color="#D3D3D3"/>
