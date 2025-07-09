@@ -1597,11 +1597,31 @@ public class MainWindowViewModel : ViewModelBase
 
     private void ConfirmSubstitution()
     {
+        var actions = new List<PlayActionViewModel>();
+
+        foreach (var p in TeamASubIn)
+            actions.Add(CreateAction(p, "SUB PLAYER IN"));
+        foreach (var p in TeamASubOut)
+            actions.Add(CreateAction(p, "SUB PLAYER OUT"));
+        foreach (var p in TeamBSubIn)
+            actions.Add(CreateAction(p, "SUB PLAYER IN"));
+        foreach (var p in TeamBSubOut)
+            actions.Add(CreateAction(p, "SUB PLAYER OUT"));
+
+        if (actions.Count > 0)
+            AddPlayCard(actions);
+
         ApplySubstitution(TeamASubIn, TeamASubOut);
         ApplySubstitution(TeamBSubIn, TeamBSubOut);
 
+        TeamASubIn.Clear();
+        TeamASubOut.Clear();
+        TeamBSubIn.Clear();
+        TeamBSubOut.Clear();
+
         RegenerateTeams();
         IsSubstitutionPanelVisible = false;
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
     }
 
     private void ApplySubstitution(IEnumerable<Player> subIn, IEnumerable<Player> subOut)
