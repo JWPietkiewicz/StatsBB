@@ -537,10 +537,11 @@ public class MainWindowViewModel : ViewModelBase
         _currentPlayActions.Clear();
 
         if (actionType == ActionButtonMode.Turnover)
+        {  
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }
-        else if (actionType == ActionType.Made)
+        else if (actionType == ActionButtonMode.Made)
         {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
