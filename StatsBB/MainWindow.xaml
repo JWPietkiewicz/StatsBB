@@ -22,6 +22,26 @@
         <SolidColorBrush x:Key="DarkGrey" Color="DarkGray"/>
         <SolidColorBrush x:Key="Grey" Color="Gray"/>
 
+        <Style x:Key="TeamColorButtonStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="BasePlayerButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="64" />
             <Setter Property="Height" Value="64" />
@@ -315,7 +335,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <RadioButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamAColorGroup">
+                                <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                                             Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamAColorGroup">
                                     <RadioButton.Content>99</RadioButton.Content>
                                     <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
@@ -369,7 +390,8 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <RadioButton Width="40" Height="40" Margin="2" Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamBColorGroup">
+                                <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                                             Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamBColorGroup">
                                     <RadioButton.Content>99</RadioButton.Content>
                                     <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
