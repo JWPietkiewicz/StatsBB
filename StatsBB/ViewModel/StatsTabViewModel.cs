@@ -15,8 +15,8 @@ public class StatsTabViewModel : ViewModelBase
         Game = game;
     }
 
-    public ObservableCollection<Player> HomePlayers => Game.HomeTeam?.Players ?? new();
-    public ObservableCollection<Player> AwayPlayers => Game.AwayTeam?.Players ?? new();
+    public ObservableCollection<Player> HomePlayers => Game.HomeTeam?.GetPlayers() ?? new();
+    public ObservableCollection<Player> AwayPlayers => Game.AwayTeam?.GetPlayers() ?? new();
 
     public int HomeScore => Game.HomeTeam?.Points ?? 0;
     public int AwayScore => Game.AwayTeam?.Points ?? 0;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using StatsBB.Domain;
+using StatsBB.Model;
 using StatsBB.MVVM;
 
 namespace StatsBB.ViewModel;
@@ -62,7 +63,7 @@ public class TeamInfoViewModel : ViewModelBase
         get => Game.AwayTeam.TeamColor;
         set { Game.AwayTeam.TeamColor = value; OnPropertyChanged(); }
     }
-
-    public ObservableCollection<Player> HomePlayers => Game.HomeTeam.Players;
-    public ObservableCollection<Player> AwayPlayers => Game.AwayTeam.Players;
+    
+    public ObservableCollection<Player> HomePlayers => Game.HomeTeam.GetPlayers();
+    public ObservableCollection<Player> AwayPlayers => Game.AwayTeam.GetPlayers();
 }

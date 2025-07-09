@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace StatsBB.Domain;
 
@@ -29,5 +30,17 @@ public class Team
             currentPeriod.HomeTimeoutsTaken++;
         else
             currentPeriod.AwayTimeoutsTaken++;
+    }
+
+
+    public ObservableCollection<Player> GetPlayers()
+    {
+        ObservableCollection<Player> result = new ObservableCollection<Player>();
+        foreach (Player player in Players)
+        {
+            player.IsTeamA = IsHomeTeam;
+            result.Add(player);
+        }
+        return result;
     }
 }

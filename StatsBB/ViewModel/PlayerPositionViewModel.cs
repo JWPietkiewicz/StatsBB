@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using StatsBB.Domain;
 
 namespace StatsBB.ViewModel
 {

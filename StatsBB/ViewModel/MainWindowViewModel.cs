@@ -11,14 +11,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using StatsBB.Domain;
 
 namespace StatsBB.ViewModel;
 
 public class MainWindowViewModel : ViewModelBase
 {
     public TeamInfoViewModel TeamInfoVM { get; }
-public Domain.Game Game => TeamInfoVM.Game;
-    public ObservableCollection<Player> Players { get; set; } = new();
+    public Game Game => TeamInfoVM.Game;
+    public ObservableCollection<Player> Players { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamAPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamBPlayers { get; } = new();
     public ObservableCollection<FreeThrowResult> FreeThrowResultRows { get; } = new();
@@ -57,7 +58,6 @@ public Domain.Game Game => TeamInfoVM.Game;
     public StatsTabViewModel StatsVM { get; }
 
     public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
-
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -66,6 +66,12 @@ public Domain.Game Game => TeamInfoVM.Game;
         new(Players.Where(p => p.IsTeamA && !p.IsActive));
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+
+    public void SetTeams()
+    {
+        Game.HomeTeam.Players.ForEach(p => p.IsTeamA = true);
+        Game.AwayTeam.Players.ForEach(p => p.IsTeamA = false);
+    }
 
     private string _teamAName = "Team A";
     public string TeamAName
@@ -288,7 +294,7 @@ public Domain.Game Game => TeamInfoVM.Game;
 
         Players.CollectionChanged += Players_CollectionChanged;
 
-        PlayerLayoutService.PopulateTeams(Players);
+        //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
 
@@ -506,7 +512,7 @@ public Domain.Game Game => TeamInfoVM.Game;
 
 
 
-        if (actionType == Domain.ActionType.Other)
+        if (actionType == ActionButtonMode.Other)
         {
             MarkerRequested?.Invoke(position, Brushes.Transparent, false);
         }
@@ -514,7 +520,7 @@ public Domain.Game Game => TeamInfoVM.Game;
         {
             TempMarkerRemoved?.Invoke();
             Brush teamColor = GetTeamColorFromPlayer(player);
-            bool isFilled = actionType == Domain.ActionType.Made;
+            bool isFilled = actionType == ActionButtonMode.Made;
 
             MarkerRequested?.Invoke(position, teamColor, isFilled);
         }
@@ -527,16 +533,16 @@ public Domain.Game Game => TeamInfoVM.Game;
         _blocker = null;
         _currentPlayActions.Clear();
 
-        if (actionType == Domain.ActionType.Turnover)
+        if (actionType == ActionButtonMode.Turnover)
         {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }
-        else if (actionType == Domain.ActionType.Made)
+        else if (actionType == ActionButtonMode.Made)
         {
             IsAssistSelectionActive = true;
         }
-        else if (actionType == Domain.ActionType.Missed)
+        else if (actionType == ActionButtonMode.Missed)
         {
             IsReboundSelectionActive = true;
         }
@@ -1014,12 +1020,12 @@ public Domain.Game Game => TeamInfoVM.Game;
             : (Brush)_resources["CourtBColor"];
     }
 
-    private Domain.ActionType GetActionType(string action) => action.ToUpperInvariant() switch
+    private ActionButtonMode GetActionType(string action) => action.ToUpperInvariant() switch
     {
-        "MADE" => Domain.ActionType.Made,
-        "MISSED" => Domain.ActionType.Missed,
-        "TURNOVER" => Domain.ActionType.Turnover,
-        _ => Domain.ActionType.Other
+        "MADE" => ActionButtonMode.Made,
+        "MISSED" => ActionButtonMode.Missed,
+        "TURNOVER" => ActionButtonMode.Turnover,
+        _ => ActionButtonMode.Other
     };
 
     private CourtPointData? _selectedPoint;

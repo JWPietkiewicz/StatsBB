@@ -4,10 +4,20 @@ namespace StatsBB.Domain;
 
 public class Player
 {
-    public Guid PlayerId { get; set; } = Guid.NewGuid();
+    public int Id { get; set; }
     public int Number { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
+    public bool IsTeamA { get; set; }
+    public string DisplayName
+    {
+        get { return Number.ToString(); }
+    }
+    public string Name
+    {
+        get { return FirstName + "" + LastName; }
+    }
 
     public int Points { get; set; }
     public int Assists { get; set; }
