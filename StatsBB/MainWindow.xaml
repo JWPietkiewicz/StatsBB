@@ -324,8 +324,8 @@
                                     <ToggleButton.Content>99</ToggleButton.Content>
                                     <ToggleButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                            <Binding />
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </ToggleButton.IsChecked>
                                     <ToggleButton.Command>
@@ -336,8 +336,8 @@
                                     </ToggleButton.CommandParameter>
                                     <ToggleButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                            <Binding />
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </ToggleButton.IsEnabled>
                                 </ToggleButton>
@@ -378,8 +378,8 @@
                                     <ToggleButton.Content>99</ToggleButton.Content>
                                     <ToggleButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                            <Binding />
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </ToggleButton.IsChecked>
                                     <ToggleButton.Command>
@@ -390,8 +390,8 @@
                                     </ToggleButton.CommandParameter>
                                     <ToggleButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
-                                            <Binding />
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </ToggleButton.IsEnabled>
                                 </ToggleButton>
