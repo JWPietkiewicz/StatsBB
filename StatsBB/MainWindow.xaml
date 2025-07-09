@@ -319,7 +319,7 @@
     </Window.InputBindings>
 
     <TabControl>
-        <TabItem Header="GAME SETTINGS">
+        <TabItem Header="GAME SETTINGS" IsEnabled="False">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <Border Background="White" BorderBrush="#888" CornerRadius="5" BorderThickness="2" Padding="20" Margin="20" Width="600">
                     <Grid>
@@ -418,9 +418,7 @@
             </ScrollViewer>
         </TabItem>
         <TabItem Header="TEAM INFO">
-            <TextBlock Text="Team info goes here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
+            <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
         </TabItem>
         <TabItem Header="MAIN">
     <Grid x:Name="___No_Name_" Background="#F9F9F9">

@@ -1,6 +1,7 @@
 using StatsBB.Model;
 using StatsBB.MVVM;
 using StatsBB.Services;
+using Domain = StatsBB.Domain;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -10,12 +11,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using StatsBB.Domain;
 
 namespace StatsBB.ViewModel;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public ObservableCollection<Player> Players { get; set; } = new();
+    public TeamInfoViewModel TeamInfoVM { get; }
+    public Game Game => TeamInfoVM.Game;
+    public ObservableCollection<Player> Players { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamAPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamBPlayers { get; } = new();
     public ObservableCollection<FreeThrowResult> FreeThrowResultRows { get; } = new();
@@ -63,6 +67,12 @@ public class MainWindowViewModel : ViewModelBase
         new(Players.Where(p => p.IsTeamA && !p.IsActive));
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+
+    public void SetTeams()
+    {
+        Game.HomeTeam.Players.ForEach(p => p.IsTeamA = true);
+        Game.AwayTeam.Players.ForEach(p => p.IsTeamA = false);
+    }
 
     private string _teamAName = "Team A";
     public string TeamAName
@@ -226,6 +236,8 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(ResourceDictionary resources)
     {
         _resources = resources;
+        TeamInfoVM = new TeamInfoViewModel(this);
+
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
         SelectActionCommand = new RelayCommand(
@@ -283,9 +295,11 @@ public class MainWindowViewModel : ViewModelBase
 
         Players.CollectionChanged += Players_CollectionChanged;
 
-        PlayerLayoutService.PopulateTeams(Players);
+        //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
-        StatsVM = new StatsTabViewModel(Players);
+        
+        StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
+        // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
     }
@@ -501,7 +515,7 @@ public class MainWindowViewModel : ViewModelBase
 
 
 
-        if (actionType == ActionType.Other)
+        if (actionType == ActionButtonMode.Other)
         {
             MarkerRequested?.Invoke(position, Brushes.Transparent, false);
         }
@@ -509,7 +523,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             TempMarkerRemoved?.Invoke();
             Brush teamColor = GetTeamColorFromPlayer(player);
-            bool isFilled = actionType == ActionType.Made;
+            bool isFilled = actionType == ActionButtonMode.Made;
 
             MarkerRequested?.Invoke(position, teamColor, isFilled);
         }
@@ -522,16 +536,20 @@ public class MainWindowViewModel : ViewModelBase
         _blocker = null;
         _currentPlayActions.Clear();
 
-        if (actionType == ActionType.Turnover)
-        {
+        if (actionType == ActionButtonMode.Turnover)
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }
         else if (actionType == ActionType.Made)
         {
+            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
+            IsTurnoverSelectionActive = true;
+        }
+        else if (actionType == ActionButtonMode.Made)
+        {
             IsAssistSelectionActive = true;
         }
-        else if (actionType == ActionType.Missed)
+        else if (actionType == ActionButtonMode.Missed)
         {
             IsReboundSelectionActive = true;
         }
@@ -1009,12 +1027,12 @@ public class MainWindowViewModel : ViewModelBase
             : (Brush)_resources["CourtBColor"];
     }
 
-    private ActionType GetActionType(string action) => action.ToUpperInvariant() switch
+    private ActionButtonMode GetActionType(string action) => action.ToUpperInvariant() switch
     {
-        "MADE" => ActionType.Made,
-        "MISSED" => ActionType.Missed,
-        "TURNOVER" => ActionType.Turnover,
-        _ => ActionType.Other
+        "MADE" => ActionButtonMode.Made,
+        "MISSED" => ActionButtonMode.Missed,
+        "TURNOVER" => ActionButtonMode.Turnover,
+        _ => ActionButtonMode.Other
     };
 
     private CourtPointData? _selectedPoint;

@@ -1,4 +1,5 @@
-﻿using StatsBB.Model;
+﻿using StatsBB.Domain;
+using StatsBB.Model;
 using StatsBB.ViewModel;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -7,6 +8,7 @@ namespace StatsBB.Services;
 
 public static class PlayerLayoutService
 {
+    /*
     public static void PopulateTeams(ObservableCollection<Player> players)
     {
         players.Add(new Player() { Id = 1, Name = "Jabril Durham", Number = 1, IsTeamA = true, IsActive = true });
@@ -32,7 +34,7 @@ public static class PlayerLayoutService
         players.Add(new Player() { Id = 20, Name = "Jakub Schenk", Number = 55, IsTeamA = false, IsActive = false });
         players.Add(new Player() { Id = 21, Name = "Andy Van Vliet", Number = 81, IsTeamA = false, IsActive = false });
     }
-
+    */
     public static ObservableCollection<PlayerPositionViewModel> CreatePositionedPlayers(
         IEnumerable<Player> players,
         ResourceDictionary resources,
