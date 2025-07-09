@@ -68,6 +68,55 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamBBenchPlayers =>
         new(Players.Where(p => !p.IsTeamA && !p.IsActive));
 
+    public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
+
+    public TeamInfo TeamAInfo { get; } = new();
+    public TeamInfo TeamBInfo { get; } = new();
+
+    private TeamColorOption? _teamAColorOption;
+    public TeamColorOption? TeamAColorOption
+    {
+        get => _teamAColorOption;
+        set
+        {
+            if (_teamAColorOption == value)
+                return;
+
+            _teamAColorOption = value;
+            OnPropertyChanged();
+            if (value != null && _resources["PrimaryAColor"] is SolidColorBrush bA &&
+                _resources["SecondaryAColor"] is SolidColorBrush sA)
+            {
+                bA.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                sA.Color = ((SolidColorBrush)value.TextBrush).Color;
+            }
+            if (TeamAInfo.Color != value)
+                TeamAInfo.Color = value;
+        }
+    }
+
+    private TeamColorOption? _teamBColorOption;
+    public TeamColorOption? TeamBColorOption
+    {
+        get => _teamBColorOption;
+        set
+        {
+            if (_teamBColorOption == value)
+                return;
+
+            _teamBColorOption = value;
+            OnPropertyChanged();
+            if (value != null && _resources["PrimaryBColor"] is SolidColorBrush bB &&
+                _resources["SecondaryBColor"] is SolidColorBrush sB)
+            {
+                bB.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                sB.Color = ((SolidColorBrush)value.TextBrush).Color;
+            }
+            if (TeamBInfo.Color != value)
+                TeamBInfo.Color = value;
+        }
+    }
+
     public void SetTeams()
     {
         Game.HomeTeam.Players.ForEach(p => p.IsTeamA = true);
@@ -80,8 +129,29 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamAName;
         set
         {
+            if (_teamAName == value)
+                return;
+
             _teamAName = value;
             OnPropertyChanged();
+            if (TeamAInfo.Name != value)
+                TeamAInfo.Name = value;
+        }
+    }
+
+    private string _teamAShortName = "A";
+    public string TeamAShortName
+    {
+        get => _teamAShortName;
+        set
+        {
+            if (_teamAShortName == value)
+                return;
+
+            _teamAShortName = value;
+            OnPropertyChanged();
+            if (TeamAInfo.ShortName != value)
+                TeamAInfo.ShortName = value;
         }
     }
 
@@ -91,8 +161,29 @@ public class MainWindowViewModel : ViewModelBase
         get => _teamBName;
         set
         {
+            if (_teamBName == value)
+                return;
+
             _teamBName = value;
             OnPropertyChanged();
+            if (TeamBInfo.Name != value)
+                TeamBInfo.Name = value;
+        }
+    }
+
+    private string _teamBShortName = "B";
+    public string TeamBShortName
+    {
+        get => _teamBShortName;
+        set
+        {
+            if (_teamBShortName == value)
+                return;
+
+            _teamBShortName = value;
+            OnPropertyChanged();
+            if (TeamBInfo.ShortName != value)
+                TeamBInfo.ShortName = value;
         }
     }
 
@@ -225,6 +316,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand BenchTechnicalTeamBCommand { get; }
     public ICommand ConfirmFreeThrowsAwardedCommand { get; }
     public ICommand SelectFreeThrowShooterCommand { get; }
+    public ICommand SelectTeamAColorCommand { get; }
+    public ICommand SelectTeamBColorCommand { get; }
     public ICommand SelectFreeThrowAssistCommand { get; }
     public ICommand NoAssistFreeThrowCommand { get; }
 
@@ -292,9 +385,64 @@ public class MainWindowViewModel : ViewModelBase
         SelectFreeThrowAssistCommand = new RelayCommand(p => ToggleFreeThrowAssist(p as Player));
         NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
 
+        SelectTeamAColorCommand = new RelayCommand(p =>
+        {
+            TeamAColorOption = p as TeamColorOption;
+            TeamAInfo.Color = TeamAColorOption;
+        });
+        SelectTeamBColorCommand = new RelayCommand(p =>
+        {
+            TeamBColorOption = p as TeamColorOption;
+            TeamBInfo.Color = TeamBColorOption;
+        });
 
-        Players.CollectionChanged += Players_CollectionChanged;
+        ColorOptions.Add(new TeamColorOption("Yellow", "#FFFF00", "Black"));
+        ColorOptions.Add(new TeamColorOption("Orange", "#FFA500", "Black"));
+        ColorOptions.Add(new TeamColorOption("Blue", "#0000FF", "White"));
+        ColorOptions.Add(new TeamColorOption("Light blue", "#ADD8E6", "Black"));
+        ColorOptions.Add(new TeamColorOption("Dark blue", "#00008B", "White"));
+        ColorOptions.Add(new TeamColorOption("Grey", "#808080", "Black"));
+        ColorOptions.Add(new TeamColorOption("Black", "#000000", "White"));
+        ColorOptions.Add(new TeamColorOption("Purple", "#800080", "White"));
+        ColorOptions.Add(new TeamColorOption("Pink", "#FFC0CB", "Black"));
+        ColorOptions.Add(new TeamColorOption("Red", "#FF0000", "Black"));
+        ColorOptions.Add(new TeamColorOption("Green", "#008000", "White"));
+        ColorOptions.Add(new TeamColorOption("White", "#FFFFFF", "Black"));
+        ColorOptions.Add(new TeamColorOption("Teal", "#008080", "White"));
+        ColorOptions.Add(new TeamColorOption("Lime", "#00FF00", "Black"));
+        ColorOptions.Add(new TeamColorOption("Brown", "#A52A2A", "White"));
+        ColorOptions.Add(new TeamColorOption("Maroon", "#800000", "White"));
+        ColorOptions.Add(new TeamColorOption("Blue grey", "#6699CC", "Black"));
+        ColorOptions.Add(new TeamColorOption("Mustard", "#FFDB58", "Black"));
 
+        TeamAInfo.Name = TeamAName;
+        TeamBInfo.Name = TeamBName;
+        TeamAInfo.ShortName = TeamAShortName;
+        TeamBInfo.ShortName = TeamBShortName;
+
+        TeamAInfo.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(TeamInfo.Name) && TeamAName != TeamAInfo.Name)
+                TeamAName = TeamAInfo.Name;
+            if (e.PropertyName == nameof(TeamInfo.ShortName) && TeamAShortName != TeamAInfo.ShortName)
+                TeamAShortName = TeamAInfo.ShortName;
+            if (e.PropertyName == nameof(TeamInfo.Color) && TeamAColorOption != TeamAInfo.Color)
+                TeamAColorOption = TeamAInfo.Color;
+        };
+        TeamBInfo.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(TeamInfo.Name) && TeamBName != TeamBInfo.Name)
+                TeamBName = TeamBInfo.Name;
+            if (e.PropertyName == nameof(TeamInfo.ShortName) && TeamBShortName != TeamBInfo.ShortName)
+                TeamBShortName = TeamBInfo.ShortName;
+            if (e.PropertyName == nameof(TeamInfo.Color) && TeamBColorOption != TeamBInfo.Color)
+                TeamBColorOption = TeamBInfo.Color;
+        };
+
+
+        TeamAInfo.Players.CollectionChanged += TeamPlayersChanged;
+        TeamBInfo.Players.CollectionChanged += TeamPlayersChanged;
+        RegenerateTeamsFromInfo();
         //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
         
@@ -381,9 +529,9 @@ public class MainWindowViewModel : ViewModelBase
         SelectedAction = action;
     }
 
-    private void Players_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void TeamPlayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        RegenerateTeams();
+        RegenerateTeamsFromInfo();
     }
 
     private void RegenerateTeams()
@@ -404,6 +552,29 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var p in teamA) TeamAPlayers.Add(p);
         foreach (var p in teamB) TeamBPlayers.Add(p);
+    }
+
+    private void RegenerateTeamsFromInfo()
+    {
+        Players.Clear();
+
+        int id = 1;
+        foreach (var p in TeamAInfo.Players.Take(15))
+        {
+            p.IsTeamA = true;
+            p.Id = id++;
+            Players.Add(p);
+        }
+
+        id = 16;
+        foreach (var p in TeamBInfo.Players.Take(15))
+        {
+            p.IsTeamA = false;
+            p.Id = id++;
+            Players.Add(p);
+        }
+
+        RegenerateTeams();
     }
 
     private Player? _pendingShooter;
@@ -1024,8 +1195,8 @@ public class MainWindowViewModel : ViewModelBase
     private Brush GetTeamColorFromPlayer(Player player)
     {
         return player.IsTeamA
-            ? (Brush)_resources["CourtAColor"]
-            : (Brush)_resources["CourtBColor"];
+            ? (Brush)_resources["PrimaryAColor"]
+            : (Brush)_resources["PrimaryBColor"];
     }
 
     private ActionButtonMode GetActionType(string action) => action.ToUpperInvariant() switch
@@ -1531,8 +1702,8 @@ public class MainWindowViewModel : ViewModelBase
     private Brush GetTeamColor(PlayerPositionViewModel vm)
     {
         return vm.Player.IsTeamA
-            ? (Brush)_resources["CourtAColor"]
-            : (Brush)_resources["CourtBColor"];
+            ? (Brush)_resources["PrimaryAColor"]
+            : (Brush)_resources["PrimaryBColor"];
     }
 
     private void UpdateFreeThrowCountButtonStyles()
