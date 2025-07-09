@@ -58,6 +58,7 @@ public class MainWindowViewModel : ViewModelBase
     public StatsTabViewModel StatsVM { get; }
 
     public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -296,7 +297,9 @@ public class MainWindowViewModel : ViewModelBase
 
         //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
+        
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
+        // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
     }
@@ -534,6 +537,10 @@ public class MainWindowViewModel : ViewModelBase
         _currentPlayActions.Clear();
 
         if (actionType == ActionButtonMode.Turnover)
+            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
+            IsTurnoverSelectionActive = true;
+        }
+        else if (actionType == ActionType.Made)
         {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
