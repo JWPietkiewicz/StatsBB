@@ -39,6 +39,10 @@ public class ActionProcessor
                 if (assistingPlayer != null)
                     assistingPlayer.AddAssist();
                 team.AddPoints(points);
+                if (team.IsHomeTeam)
+                    period.HomeTeamPoints += points;
+                else
+                    period.AwayTeamPoints += points;
                 break;
             case ActionType.ShotMissed:
                 player.AddShotAttempt(isThreePoint);
@@ -66,6 +70,10 @@ public class ActionProcessor
                 player.AddFreeThrowMade();
                 player.AddPoints(1);
                 team.AddPoints(1);
+                if (team.IsHomeTeam)
+                    period.HomeTeamPoints += 1;
+                else
+                    period.AwayTeamPoints += 1;
                 break;
             case ActionType.FreeThrowMissed:
                 player.AddFreeThrowAttempt();

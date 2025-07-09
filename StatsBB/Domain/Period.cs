@@ -10,4 +10,7 @@ public class Period
     public int AwayTeamFouls { get; set; }
     public int HomeTimeoutsTaken { get; set; }
     public int AwayTimeoutsTaken { get; set; }
+
+    public int HomeTeamPoints { get; set; }
+    public int AwayTeamPoints { get; set; }
 }

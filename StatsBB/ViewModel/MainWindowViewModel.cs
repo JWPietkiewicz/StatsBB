@@ -1,6 +1,7 @@
 using StatsBB.Model;
 using StatsBB.MVVM;
 using StatsBB.Services;
+using StatsBB.Domain;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ namespace StatsBB.ViewModel;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public TeamInfoViewModel TeamInfoVM { get; }
+    public Game Game => TeamInfoVM.Game;
     public ObservableCollection<Player> Players { get; set; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamAPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamBPlayers { get; } = new();
@@ -226,6 +229,8 @@ public class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(ResourceDictionary resources)
     {
         _resources = resources;
+        TeamInfoVM = new TeamInfoViewModel(this);
+
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
         SelectActionCommand = new RelayCommand(
@@ -285,7 +290,7 @@ public class MainWindowViewModel : ViewModelBase
 
         PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
-        StatsVM = new StatsTabViewModel(Players);
+        StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
 
         //GenerateSamplePlayByPlayData();
     }
