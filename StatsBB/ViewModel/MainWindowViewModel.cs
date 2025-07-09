@@ -287,7 +287,7 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeams();
         StatsVM = new StatsTabViewModel(Players);
 
-        GenerateSamplePlayByPlayData();
+        //GenerateSamplePlayByPlayData();
     }
     private void BeginSubstitution()
     {
