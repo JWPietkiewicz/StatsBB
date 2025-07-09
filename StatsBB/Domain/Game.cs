@@ -1,3 +1,4 @@
+using StatsBB.Model;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,9 @@ public class Game
 {
     public Guid GameId { get; set; } = Guid.NewGuid();
     public Team? HomeTeam { get; set; }
+    public TeamInfo? HomeTeamInfo { get; set; }
     public Team? AwayTeam { get; set; }
+    public TeamInfo? AwayTeamInfo { get; set; }
     public List<Period> Periods { get; set; } = new();
     public int CurrentPeriod { get; set; }
     public List<ActionLogEntry> ActionLog { get; set; } = new();

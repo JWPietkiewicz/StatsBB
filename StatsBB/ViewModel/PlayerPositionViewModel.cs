@@ -241,6 +241,8 @@ namespace StatsBB.ViewModel
                     finalStyle = (Style)_resources["BenchPlayerDisabledStyle"];
                 }
             }
+            if (teamColor == null)
+                teamColor = Brushes.Transparent;
 
             ButtonStyle = finalStyle;
 

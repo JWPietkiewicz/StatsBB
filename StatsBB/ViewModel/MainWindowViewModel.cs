@@ -117,12 +117,6 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    public void SetTeams()
-    {
-        Game.HomeTeam.Players.ForEach(p => p.IsTeamA = true);
-        Game.AwayTeam.Players.ForEach(p => p.IsTeamA = false);
-    }
-
     private string _teamAName = "Team A";
     public string TeamAName
     {
@@ -733,11 +727,6 @@ public class MainWindowViewModel : ViewModelBase
 
         if (actionType == ActionButtonMode.Turnover)
         {  
-            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
-            IsTurnoverSelectionActive = true;
-        }
-        else if (actionType == ActionButtonMode.Made)
-        {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }

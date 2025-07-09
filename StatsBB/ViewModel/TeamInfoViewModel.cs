@@ -10,9 +10,7 @@ public class TeamInfoViewModel : ViewModelBase
 {
     private readonly MainWindowViewModel _main;
     public Game Game { get; } = new();
-
-    public ObservableCollection<TeamColor> TeamColors { get; } = new((TeamColor[])Enum.GetValues(typeof(TeamColor)));
-
+    public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
     public TeamInfoViewModel(MainWindowViewModel main)
     {
         _main = main;
@@ -22,6 +20,7 @@ public class TeamInfoViewModel : ViewModelBase
         EnsurePlayers(Game.AwayTeam);
         HomeTeamName = _main.TeamAName;
         AwayTeamName = _main.TeamBName;
+        ColorOptions = _main.ColorOptions;
     }
 
     private static void EnsurePlayers(Team team)
@@ -50,18 +49,6 @@ public class TeamInfoViewModel : ViewModelBase
             OnPropertyChanged();
             _main.TeamBName = value;
         }
-    }
-
-    public TeamColor HomeTeamColor
-    {
-        get => Game.HomeTeam.TeamColor;
-        set { Game.HomeTeam.TeamColor = value; OnPropertyChanged(); }
-    }
-
-    public TeamColor AwayTeamColor
-    {
-        get => Game.AwayTeam.TeamColor;
-        set { Game.AwayTeam.TeamColor = value; OnPropertyChanged(); }
     }
     
     public ObservableCollection<Player> HomePlayers => Game.HomeTeam.GetPlayers();

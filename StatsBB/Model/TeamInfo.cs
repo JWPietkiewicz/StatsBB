@@ -7,6 +7,16 @@ namespace StatsBB.Model;
 
 public class TeamInfo : ViewModelBase
 {
+    public TeamInfo()
+    {
+        Team = new Team();
+    }
+
+    public TeamInfo(Team team)
+    {
+        Team = team;
+    }
+
     public Team Team { get; set; }
     public Guid TeamId
     {

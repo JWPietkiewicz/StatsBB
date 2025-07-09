@@ -1,6 +1,38 @@
 <UserControl x:Class="StatsBB.UserControls.TeamInfoView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:converters="clr-namespace:StatsBB.Converters"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
+        <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
+        <Style x:Key="TeamColorButtonStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="60"/>
+            <Setter Property="Height" Value="60"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="BorderThickness" Value="4"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="600"/>
@@ -11,8 +43,39 @@
             <TextBlock Text="Team Name"/>
             <TextBox Text="{Binding HomeTeamName, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="Team Color" Margin="0,5,0,0"/>
-            <ComboBox ItemsSource="{Binding TeamColors}"
-                      SelectedItem="{Binding HomeTeamColor}"/>
+            <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                                 Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamAColorGroup">
+                            <RadioButton.Content>99</RadioButton.Content>
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                    <Binding Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                            <RadioButton.Command>
+                                <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                            </RadioButton.Command>
+                            <RadioButton.CommandParameter>
+                                <Binding />
+                            </RadioButton.CommandParameter>
+                            <RadioButton.IsEnabled>
+                                <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                    <Binding Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsEnabled>
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="0,5,0,0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
@@ -26,8 +89,39 @@
             <TextBlock Text="Team Name"/>
             <TextBox Text="{Binding AwayTeamName, UpdateSourceTrigger=PropertyChanged}"/>
             <TextBlock Text="Team Color" Margin="0,5,0,0"/>
-            <ComboBox ItemsSource="{Binding TeamColors}"
-                      SelectedItem="{Binding AwayTeamColor}"/>
+            <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                                 Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamBColorGroup">
+                            <RadioButton.Content>99</RadioButton.Content>
+                            <RadioButton.IsChecked>
+                                <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                    <Binding Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsChecked>
+                            <RadioButton.Command>
+                                <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                            </RadioButton.Command>
+                            <RadioButton.CommandParameter>
+                                <Binding />
+                            </RadioButton.CommandParameter>
+                            <RadioButton.IsEnabled>
+                                <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
+                                    <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                    <Binding Mode="OneWay" />
+                                </MultiBinding>
+                            </RadioButton.IsEnabled>
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
             <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" Margin="0,5,0,0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
