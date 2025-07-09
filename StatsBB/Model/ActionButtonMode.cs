@@ -1,11 +1,10 @@
 ﻿namespace StatsBB.Model
 {
-    public enum ActionType
+    public enum ActionButtonMode
     {
         Made,
         Missed,
         Turnover,
         Foul,
         Other
-    }
-}
+    }}

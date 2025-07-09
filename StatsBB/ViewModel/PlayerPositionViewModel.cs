@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using StatsBB.Domain;
 
 namespace StatsBB.ViewModel
 {
@@ -170,6 +171,17 @@ namespace StatsBB.ViewModel
             set
             {
                 _isSelectedAsFreeThrowShooter = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isSelectedAsAssist;
+        public bool IsSelectedAsAssist
+        {
+            get => _isSelectedAsAssist;
+            set
+            {
+                _isSelectedAsAssist = value;
                 OnPropertyChanged();
             }
         }

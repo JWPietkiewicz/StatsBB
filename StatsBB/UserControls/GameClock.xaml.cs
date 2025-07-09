@@ -23,6 +23,7 @@ public partial class GameClock : UserControl
     private void UpdateDisplay()
     {
         TimeText.Text = GameClockService.TimeLeftString;
+        PeriodText.Text = GameClockService.Period;
         StartStopButton.Content = GameClockService.IsRunning ? "STOP" : "START";
         StartStopButton.Background = GameClockService.IsRunning ? Brushes.Green : Brushes.Red;
     }

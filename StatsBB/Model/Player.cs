@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+/*
 namespace StatsBB.Model
 {
     public class Player
@@ -20,3 +20,4 @@ namespace StatsBB.Model
         }
     }
 }
+*/
