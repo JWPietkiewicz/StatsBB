@@ -288,11 +288,6 @@
     </Window.InputBindings>
 
     <TabControl>
-        <TabItem Header="GAME SETTINGS">
-            <TextBlock Text="Game settings go here." 
-                       VerticalAlignment="Center" 
-                       HorizontalAlignment="Center"/>
-        </TabItem>
         <TabItem Header="TEAM INFO">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
@@ -442,7 +437,7 @@
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Fill="Orange" RadiusX="4" RadiusY="4"/>
+                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Fill="{DynamicResource CourtAColor}" RadiusX="4" RadiusY="4"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TeamAName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"/>
                     <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -488,7 +483,7 @@
                         <TextBlock Text="{Binding TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
-                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="Green" RadiusX="4" RadiusY="4"/>
+                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="{DynamicResource CourtBColor}" RadiusX="4" RadiusY="4"/>
 
                     <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>

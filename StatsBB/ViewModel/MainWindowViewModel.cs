@@ -68,14 +68,30 @@ public class MainWindowViewModel : ViewModelBase
     public TeamColorOption? TeamAColorOption
     {
         get => _teamAColorOption;
-        set { _teamAColorOption = value; OnPropertyChanged(); }
+        set
+        {
+            _teamAColorOption = value;
+            OnPropertyChanged();
+            if (value != null && _resources["CourtAColor"] is SolidColorBrush b)
+            {
+                b.Color = ((SolidColorBrush)value.ColorBrush).Color;
+            }
+        }
     }
 
     private TeamColorOption? _teamBColorOption;
     public TeamColorOption? TeamBColorOption
     {
         get => _teamBColorOption;
-        set { _teamBColorOption = value; OnPropertyChanged(); }
+        set
+        {
+            _teamBColorOption = value;
+            OnPropertyChanged();
+            if (value != null && _resources["CourtBColor"] is SolidColorBrush b)
+            {
+                b.Color = ((SolidColorBrush)value.ColorBrush).Color;
+            }
+        }
     }
 
     private string _teamAName = "Team A";
@@ -373,14 +389,9 @@ public class MainWindowViewModel : ViewModelBase
         };
 
 
-        Players.CollectionChanged += Players_CollectionChanged;
-
-        PlayerLayoutService.PopulateTeams(Players);
-        foreach (var p in Players.Where(p => p.IsTeamA))
-            TeamAInfo.Players.Add(p);
-        foreach (var p in Players.Where(p => !p.IsTeamA))
-            TeamBInfo.Players.Add(p);
-        RegenerateTeams();
+        TeamAInfo.Players.CollectionChanged += TeamPlayersChanged;
+        TeamBInfo.Players.CollectionChanged += TeamPlayersChanged;
+        RegenerateTeamsFromInfo();
     }
     private void BeginSubstitution()
     {
@@ -454,15 +465,9 @@ public class MainWindowViewModel : ViewModelBase
         SelectedAction = action;
     }
 
-    private void Players_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void TeamPlayersChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        TeamAInfo.Players.Clear();
-        foreach (var p in Players.Where(p => p.IsTeamA))
-            TeamAInfo.Players.Add(p);
-        TeamBInfo.Players.Clear();
-        foreach (var p in Players.Where(p => !p.IsTeamA))
-            TeamBInfo.Players.Add(p);
-        RegenerateTeams();
+        RegenerateTeamsFromInfo();
     }
 
     private void RegenerateTeams()
@@ -483,6 +488,29 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var p in teamA) TeamAPlayers.Add(p);
         foreach (var p in teamB) TeamBPlayers.Add(p);
+    }
+
+    private void RegenerateTeamsFromInfo()
+    {
+        Players.Clear();
+
+        int id = 1;
+        foreach (var p in TeamAInfo.Players.Take(15))
+        {
+            p.IsTeamA = true;
+            p.Id = id++;
+            Players.Add(p);
+        }
+
+        id = 16;
+        foreach (var p in TeamBInfo.Players.Take(15))
+        {
+            p.IsTeamA = false;
+            p.Id = id++;
+            Players.Add(p);
+        }
+
+        RegenerateTeams();
     }
 
     private Player? _pendingShooter;

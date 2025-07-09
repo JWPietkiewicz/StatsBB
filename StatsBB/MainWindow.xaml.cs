@@ -51,7 +51,7 @@ namespace StatsBB
                 return;
             }
 
-            if (e.Key == Key.Space)
+            if (e.Key == Key.Space && Keyboard.FocusedElement is not TextBox)
             {
                 GameClockControl.Toggle();
                 e.Handled = true;
