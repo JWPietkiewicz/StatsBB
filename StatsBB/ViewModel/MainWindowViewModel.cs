@@ -1,7 +1,7 @@
 using StatsBB.Model;
 using StatsBB.MVVM;
 using StatsBB.Services;
-using StatsBB.Domain;
+using Domain = StatsBB.Domain;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace StatsBB.ViewModel;
 public class MainWindowViewModel : ViewModelBase
 {
     public TeamInfoViewModel TeamInfoVM { get; }
-    public Game Game => TeamInfoVM.Game;
+public Domain.Game Game => TeamInfoVM.Game;
     public ObservableCollection<Player> Players { get; set; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamAPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> TeamBPlayers { get; } = new();
@@ -506,7 +506,7 @@ public class MainWindowViewModel : ViewModelBase
 
 
 
-        if (actionType == ActionType.Other)
+        if (actionType == Domain.ActionType.Other)
         {
             MarkerRequested?.Invoke(position, Brushes.Transparent, false);
         }
@@ -514,7 +514,7 @@ public class MainWindowViewModel : ViewModelBase
         {
             TempMarkerRemoved?.Invoke();
             Brush teamColor = GetTeamColorFromPlayer(player);
-            bool isFilled = actionType == ActionType.Made;
+            bool isFilled = actionType == Domain.ActionType.Made;
 
             MarkerRequested?.Invoke(position, teamColor, isFilled);
         }
@@ -527,16 +527,16 @@ public class MainWindowViewModel : ViewModelBase
         _blocker = null;
         _currentPlayActions.Clear();
 
-        if (actionType == ActionType.Turnover)
+        if (actionType == Domain.ActionType.Turnover)
         {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }
-        else if (actionType == ActionType.Made)
+        else if (actionType == Domain.ActionType.Made)
         {
             IsAssistSelectionActive = true;
         }
-        else if (actionType == ActionType.Missed)
+        else if (actionType == Domain.ActionType.Missed)
         {
             IsReboundSelectionActive = true;
         }
@@ -1014,12 +1014,12 @@ public class MainWindowViewModel : ViewModelBase
             : (Brush)_resources["CourtBColor"];
     }
 
-    private ActionType GetActionType(string action) => action.ToUpperInvariant() switch
+    private Domain.ActionType GetActionType(string action) => action.ToUpperInvariant() switch
     {
-        "MADE" => ActionType.Made,
-        "MISSED" => ActionType.Missed,
-        "TURNOVER" => ActionType.Turnover,
-        _ => ActionType.Other
+        "MADE" => Domain.ActionType.Made,
+        "MISSED" => Domain.ActionType.Missed,
+        "TURNOVER" => Domain.ActionType.Turnover,
+        _ => Domain.ActionType.Other
     };
 
     private CourtPointData? _selectedPoint;
