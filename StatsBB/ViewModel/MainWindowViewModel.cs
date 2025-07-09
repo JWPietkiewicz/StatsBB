@@ -75,9 +75,11 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamAColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["CourtAColor"] is SolidColorBrush b)
+            if (value != null && _resources["PrimaryAColor"] is SolidColorBrush bA &&
+                _resources["SecondaryAColor"] is SolidColorBrush sA)
             {
-                b.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                bA.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                sA.Color = ((SolidColorBrush)value.TextBrush).Color;
             }
             if (TeamAInfo.Color != value)
                 TeamAInfo.Color = value;
@@ -95,9 +97,11 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamBColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["CourtBColor"] is SolidColorBrush b)
+            if (value != null && _resources["PrimaryBColor"] is SolidColorBrush bB &&
+                _resources["SecondaryBColor"] is SolidColorBrush sB)
             {
-                b.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                bB.Color = ((SolidColorBrush)value.ColorBrush).Color;
+                sB.Color = ((SolidColorBrush)value.TextBrush).Color;
             }
             if (TeamBInfo.Color != value)
                 TeamBInfo.Color = value;
@@ -1078,8 +1082,8 @@ public class MainWindowViewModel : ViewModelBase
     private Brush GetTeamColorFromPlayer(Player player)
     {
         return player.IsTeamA
-            ? (Brush)_resources["CourtAColor"]
-            : (Brush)_resources["CourtBColor"];
+            ? (Brush)_resources["PrimaryAColor"]
+            : (Brush)_resources["PrimaryBColor"];
     }
 
     private ActionType GetActionType(string action) => action.ToUpperInvariant() switch
@@ -1548,8 +1552,8 @@ public class MainWindowViewModel : ViewModelBase
     private Brush GetTeamColor(PlayerPositionViewModel vm)
     {
         return vm.Player.IsTeamA
-            ? (Brush)_resources["CourtAColor"]
-            : (Brush)_resources["CourtBColor"];
+            ? (Brush)_resources["PrimaryAColor"]
+            : (Brush)_resources["PrimaryBColor"];
     }
 
     private void UpdateFreeThrowCountButtonStyles()

@@ -12,8 +12,10 @@
         <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
 
 
-        <SolidColorBrush x:Key="CourtAColor" Color="Orange"/>
-        <SolidColorBrush x:Key="CourtBColor" Color="Green"/>
+        <SolidColorBrush x:Key="PrimaryAColor" Color="Orange"/>
+        <SolidColorBrush x:Key="SecondaryAColor" Color="White"/>
+        <SolidColorBrush x:Key="PrimaryBColor" Color="Green"/>
+        <SolidColorBrush x:Key="SecondaryBColor" Color="White"/>
         <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
         <SolidColorBrush x:Key="DisabledColor" Color="LightGray"/>
         <SolidColorBrush x:Key="HoverGrey" Color="#D3D3D3"/>
@@ -134,23 +136,23 @@
             <Setter Property="Background" Value="{StaticResource BenchColor}"/>
         </Style>
         <Style x:Key="CourtAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtAColor}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryAColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}"/>
         </Style>
         <Style x:Key="BenchAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource CourtAColor}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource CourtAColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryAColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryAColor}"/>
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style x:Key="BenchBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource CourtBColor}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource CourtBColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryBColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBColor}"/>
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style x:Key="CourtBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtBColor}"/>
+            <Setter Property="Background" Value="{StaticResource PrimaryBColor}"/>
         </Style>
         <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
         </Style>
@@ -174,8 +176,8 @@
         </Style>
         <!-- TEAM A TIMEOUT BUTTON -->
         <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtAColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="80" />
@@ -183,8 +185,8 @@
 
         <!-- TEAM B TIMEOUT BUTTON -->
         <Style x:Key="TeamBTimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtBColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="80" />
@@ -196,8 +198,8 @@
         </Style>
         <!-- TEAM A REBOUND BUTTON -->
         <Style x:Key="TeamAReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtAColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="100" />
             <Setter Property="Height" Value="60" />
@@ -205,8 +207,8 @@
 
         <!-- TEAM B REBOUND BUTTON -->
         <Style x:Key="TeamBReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtBColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="100" />
             <Setter Property="Height" Value="60" />
@@ -214,16 +216,16 @@
 
         <!-- TEAM A TURNOVER BUTTON -->
         <Style x:Key="TeamATurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtAColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Height" Value="30" />
         </Style>
 
         <!-- TEAM B TURNOVER BUTTON -->
         <Style x:Key="TeamBTurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtBColor}" />
-            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Height" Value="30" />
         </Style>
@@ -348,19 +350,19 @@
                                     <RadioButton.Content>99</RadioButton.Content>
                                     <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsChecked>
                                     <RadioButton.Command>
-                                        <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                        <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
                                     </RadioButton.Command>
                                     <RadioButton.CommandParameter>
                                         <Binding />
                                     </RadioButton.CommandParameter>
                                     <RadioButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsEnabled>
@@ -403,19 +405,19 @@
                                     <RadioButton.Content>99</RadioButton.Content>
                                     <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsChecked>
                                     <RadioButton.Command>
-                                        <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=TabItem}"/>
+                                        <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
                                     </RadioButton.Command>
                                     <RadioButton.CommandParameter>
                                         <Binding />
                                     </RadioButton.CommandParameter>
                                     <RadioButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=TabItem}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsEnabled>
@@ -467,7 +469,7 @@
                         <RowDefinition Height="3*"/>
                         <RowDefinition Height="2*"/>
                     </Grid.RowDefinitions>
-                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Fill="{DynamicResource CourtAColor}" RadiusX="4" RadiusY="4"/>
+                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Fill="{DynamicResource PrimaryAColor}" RadiusX="4" RadiusY="4"/>
                     <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TeamAName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"/>
                     <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>
@@ -513,7 +515,7 @@
                         <TextBlock Text="{Binding TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </Border>
                     <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
-                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="{DynamicResource CourtBColor}" RadiusX="4" RadiusY="4"/>
+                    <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="{DynamicResource PrimaryBColor}" RadiusX="4" RadiusY="4"/>
 
                     <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                         <Grid.ColumnDefinitions>

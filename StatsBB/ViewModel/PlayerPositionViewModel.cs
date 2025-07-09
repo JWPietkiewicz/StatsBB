@@ -37,8 +37,8 @@ namespace StatsBB.ViewModel
         public bool IsSelectable { get; private set; }
 
         public Brush TeamColor => Player.IsTeamA
-    ? (Brush)_resources["CourtAColor"]
-    : (Brush)_resources["CourtBColor"];
+    ? (Brush)_resources["PrimaryAColor"]
+    : (Brush)_resources["PrimaryBColor"];
 
         public Brush TeamColorDimmed => new SolidColorBrush(GetDimmedColor());
 
