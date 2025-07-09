@@ -181,79 +181,8 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private int _teamAScore;
-    public int TeamAScore
-    {
-        get => _teamAScore;
-        set
-        {
-            _teamAScore = value;
-            OnPropertyChanged();
-        }
-    }
 
-    private int _teamBScore;
-    public int TeamBScore
-    {
-        get => _teamBScore;
-        set
-        {
-            _teamBScore = value;
-            OnPropertyChanged();
-        }
-    }
-
-    private int _teamATimeOutsLeft = 3;
-    public int TeamATimeOutsLeft
-    {
-        get => _teamATimeOutsLeft;
-        set
-        {
-            _teamATimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    private int _teamATotalTimeouts = 3;
-    public int TeamATotalTimeouts
-    {
-        get => _teamATotalTimeouts;
-        set
-        {
-            _teamATotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    public string TeamATimeoutsText => $"{TeamATimeOutsLeft}/{TeamATotalTimeouts}";
-
-    private int _teamBTimeOutsLeft = 3;
-    public int TeamBTimeOutsLeft
-    {
-        get => _teamBTimeOutsLeft;
-        set
-        {
-            _teamBTimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    private int _teamBTotalTimeouts = 3;
-    public int TeamBTotalTimeouts
-    {
-        get => _teamBTotalTimeouts;
-        set
-        {
-            _teamBTotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
+    public GameStateViewModel GameState { get; } = new();
 
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
@@ -1870,8 +1799,8 @@ public class MainWindowViewModel : ViewModelBase
         var card = new PlayCardViewModel
         {
             Time = GameClockService.TimeLeftString,
-            TeamAScore = TeamAScore,
-            TeamBScore = TeamBScore
+            TeamAScore = GameState.TeamAScore,
+            TeamBScore = GameState.TeamBScore
         };
         foreach (var a in actions)
             card.Actions.Add(a);

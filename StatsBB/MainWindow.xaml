@@ -381,7 +381,7 @@
 
                 <!-- ========= Row 0: Team Cards & Clock ========= -->
 
-                <Grid Grid.Row="0" Grid.Column="0" Margin="0,10,10,10" HorizontalAlignment="Stretch">
+                <Grid Grid.Row="0" Grid.Column="0" Margin="0,10,10,10" HorizontalAlignment="Stretch" DataContext="{Binding GameState}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="3*"/>
