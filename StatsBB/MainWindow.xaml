@@ -137,23 +137,23 @@
             <Setter Property="Background" Value="{StaticResource BenchColor}"/>
         </Style>
         <Style x:Key="CourtAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryAColor}"/>
-            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}"/>
         </Style>
         <Style x:Key="BenchAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryAColor}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PrimaryAColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryAColor}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAColor}"/>
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style x:Key="BenchBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
             <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource PrimaryBColor}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PrimaryBColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBColor}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBColor}"/>
             <Setter Property="BorderThickness" Value="1" />
         </Style>
         <Style x:Key="CourtBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryBColor}"/>
+            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}"/>
         </Style>
         <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
         </Style>
@@ -177,8 +177,8 @@
         </Style>
         <!-- TEAM A TIMEOUT BUTTON -->
         <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="80" />
@@ -186,8 +186,8 @@
 
         <!-- TEAM B TIMEOUT BUTTON -->
         <Style x:Key="TeamBTimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="80" />
@@ -199,8 +199,8 @@
         </Style>
         <!-- TEAM A REBOUND BUTTON -->
         <Style x:Key="TeamAReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="100" />
             <Setter Property="Height" Value="60" />
@@ -208,8 +208,8 @@
 
         <!-- TEAM B REBOUND BUTTON -->
         <Style x:Key="TeamBReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="100" />
             <Setter Property="Height" Value="60" />
@@ -217,16 +217,16 @@
 
         <!-- TEAM A TURNOVER BUTTON -->
         <Style x:Key="TeamATurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryAColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryAColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Height" Value="30" />
         </Style>
 
         <!-- TEAM B TURNOVER BUTTON -->
         <Style x:Key="TeamBTurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{StaticResource SecondaryBColor}" />
+            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
+            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Height" Value="30" />
         </Style>
