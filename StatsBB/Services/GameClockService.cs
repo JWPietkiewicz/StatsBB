@@ -36,12 +36,14 @@ public static class GameClockService
     {
         if (!IsRunning)
             _timer.Start();
+        TimeUpdated?.Invoke();
     }
 
     public static void Stop()
     {
         if (IsRunning)
             _timer.Stop();
+        TimeUpdated?.Invoke();
     }
 
     public static void Toggle()

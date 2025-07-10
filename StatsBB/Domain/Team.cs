@@ -1,4 +1,3 @@
-using StatsBB.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +9,11 @@ public class Team
     public Guid TeamId { get; set; } = Guid.NewGuid();
     public string TeamName { get; set; } = string.Empty;
     public string TeamShortName {  get; set; } = string.Empty;
-    public TeamColorOption TeamColor { get; set; }
+    /// <summary>
+    /// Name of the team's color. This is kept as a simple string so the domain
+    /// layer has no dependency on UI-specific color types.
+    /// </summary>
+    public string TeamColorName { get; set; } = "White";
     public ObservableCollection<Player> Players { get; set; } = new();
     public int Points { get; set; }
 

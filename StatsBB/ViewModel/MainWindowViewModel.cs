@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using StatsBB.Domain;
+using System.ComponentModel;
 
 namespace StatsBB.ViewModel;
 
@@ -57,16 +58,17 @@ public class MainWindowViewModel : ViewModelBase
 
     public StatsTabViewModel StatsVM { get; }
 
-    public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
+    public PlayByPlayLogViewModel PlayLog { get; } = new();
 
-    public ObservableCollection<Player> TeamACourtPlayers =>
-        new(Players.Where(p => p.IsTeamA && p.IsActive));
-    public ObservableCollection<Player> TeamBCourtPlayers =>
-        new(Players.Where(p => !p.IsTeamA && p.IsActive));
-    public ObservableCollection<Player> TeamABenchPlayers =>
-        new(Players.Where(p => p.IsTeamA && !p.IsActive));
-    public ObservableCollection<Player> TeamBBenchPlayers =>
-        new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+    /// <summary>
+    /// View model used by the scoreboard view.
+    /// </summary>
+    public ScoreBoardViewModel ScoreBoardVM { get; }
+
+    public ObservableCollection<Player> TeamACourtPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBCourtPlayers { get; } = new();
+    public ObservableCollection<Player> TeamABenchPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBBenchPlayers { get; } = new();
 
     public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
 
@@ -181,79 +183,8 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private int _teamAScore;
-    public int TeamAScore
-    {
-        get => _teamAScore;
-        set
-        {
-            _teamAScore = value;
-            OnPropertyChanged();
-        }
-    }
 
-    private int _teamBScore;
-    public int TeamBScore
-    {
-        get => _teamBScore;
-        set
-        {
-            _teamBScore = value;
-            OnPropertyChanged();
-        }
-    }
-
-    private int _teamATimeOutsLeft = 3;
-    public int TeamATimeOutsLeft
-    {
-        get => _teamATimeOutsLeft;
-        set
-        {
-            _teamATimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    private int _teamATotalTimeouts = 3;
-    public int TeamATotalTimeouts
-    {
-        get => _teamATotalTimeouts;
-        set
-        {
-            _teamATotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    public string TeamATimeoutsText => $"{TeamATimeOutsLeft}/{TeamATotalTimeouts}";
-
-    private int _teamBTimeOutsLeft = 3;
-    public int TeamBTimeOutsLeft
-    {
-        get => _teamBTimeOutsLeft;
-        set
-        {
-            _teamBTimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    private int _teamBTotalTimeouts = 3;
-    public int TeamBTotalTimeouts
-    {
-        get => _teamBTotalTimeouts;
-        set
-        {
-            _teamBTotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
+    public GameStateViewModel GameState { get; } = new();
 
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
@@ -314,6 +245,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectTeamBColorCommand { get; }
     public ICommand SelectFreeThrowAssistCommand { get; }
     public ICommand NoAssistFreeThrowCommand { get; }
+    public ICommand SwapSidesCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -324,6 +256,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         _resources = resources;
         TeamInfoVM = new TeamInfoViewModel(this);
+        ScoreBoardVM = new ScoreBoardViewModel(this);
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
@@ -378,6 +311,8 @@ public class MainWindowViewModel : ViewModelBase
         SelectFreeThrowShooterCommand = new RelayCommand(p => SelectFreeThrowShooter(p as Player));
         SelectFreeThrowAssistCommand = new RelayCommand(p => ToggleFreeThrowAssist(p as Player));
         NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
+
+        SwapSidesCommand = new RelayCommand(_ => SwapSides());
 
         SelectTeamAColorCommand = new RelayCommand(p =>
         {
@@ -441,8 +376,9 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeamsFromInfo();
         //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
-        
+
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
+        SubscribePlayerEvents();
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -490,6 +426,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"{GameClockService.TimeLeftString} Timeout called by {team}");
         IsTimeOutSelectionActive = false;
         var isTeamA = team == "Team A";
+        UseTimeout(isTeamA);
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "TIMEOUT") });
     }
 
@@ -498,6 +435,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"Coach Technical on {team}");
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
+        GameState.AddFoul(isTeamA);
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -508,6 +446,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"Bench Technical on {team}");
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
+        GameState.AddFoul(isTeamA);
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -530,10 +469,34 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeamsFromInfo();
     }
 
+    private void PlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Player.IsPlaying))
+        {
+            RegenerateTeamsFromInfo();
+        }
+    }
+
+    private void SubscribePlayerEvents()
+    {
+        foreach (var p in Game.HomeTeam.Players)
+            p.PropertyChanged -= PlayerPropertyChanged;
+        foreach (var p in Game.AwayTeam.Players)
+            p.PropertyChanged -= PlayerPropertyChanged;
+        foreach (var p in Game.HomeTeam.Players)
+            p.PropertyChanged += PlayerPropertyChanged;
+        foreach (var p in Game.AwayTeam.Players)
+            p.PropertyChanged += PlayerPropertyChanged;
+    }
+
     private void RegenerateTeams()
     {
         TeamAPlayers.Clear();
         TeamBPlayers.Clear();
+        TeamACourtPlayers.Clear();
+        TeamBCourtPlayers.Clear();
+        TeamABenchPlayers.Clear();
+        TeamBBenchPlayers.Clear();
 
         var teamA = PlayerLayoutService.CreatePositionedPlayers(
             Players.Where(p => p.IsTeamA),
@@ -546,31 +509,44 @@ public class MainWindowViewModel : ViewModelBase
             OnPlayerSelected
         );
 
-        foreach (var p in teamA) TeamAPlayers.Add(p);
-        foreach (var p in teamB) TeamBPlayers.Add(p);
+        foreach (var p in teamA)
+        {
+            TeamAPlayers.Add(p);
+            if (p.Player.IsActive)
+                TeamACourtPlayers.Add(p.Player);
+            else
+                TeamABenchPlayers.Add(p.Player);
+        }
+        foreach (var p in teamB)
+        {
+            TeamBPlayers.Add(p);
+            if (p.Player.IsActive)
+                TeamBCourtPlayers.Add(p.Player);
+            else
+                TeamBBenchPlayers.Add(p.Player);
+        }
     }
 
     private void RegenerateTeamsFromInfo()
     {
         Players.Clear();
+
+        var home = Game.HomeTeam.Players.Where(p => p.IsPlaying).ToList();
+        var away = Game.AwayTeam.Players.Where(p => p.IsPlaying).ToList();
+
         int s5 = 0;
-        foreach(var p in Game.HomeTeam.Players)
+        foreach (var p in home)
         {
-            if(s5<5)
-            {
-                p.IsActive = true;
-            }
+            p.IsActive = s5 < 5;
             s5++;
             p.IsTeamA = true;
             Players.Add(p);
         }
+
         s5 = 0;
-        foreach (var p in Game.AwayTeam.Players)
+        foreach (var p in away)
         {
-            if (s5 < 5)
-            {
-                p.IsActive = true;
-            }
+            p.IsActive = s5 < 5;
             s5++;
             p.IsTeamA = false;
             Players.Add(p);
@@ -593,6 +569,8 @@ public class MainWindowViewModel : ViewModelBase
         }
         */
         RegenerateTeams();
+        SubscribePlayerEvents();
+        StatsVM?.Refresh();
     }
 
     private Player? _pendingShooter;
@@ -636,6 +614,9 @@ public class MainWindowViewModel : ViewModelBase
 
             if (_fouledPlayer != null)
                 _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
+
+            if (_foulCommiter != null)
+                GameState.AddFoul(_foulCommiter.IsTeamA);
 
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
@@ -1021,6 +1002,7 @@ public class MainWindowViewModel : ViewModelBase
 
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MADE");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
+            RecordPoints(_pendingShooter, _pendingIsThreePoint ? 3 : 2);
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
@@ -1689,6 +1671,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     actions.Add(CreateAction(SelectedFreeThrowAssist, "ASSIST"));
                 }
+                if (made > 0)
+                    RecordPoints(_pendingShooter, made);
                 AddPlayCard(actions);
             }
 
@@ -1865,19 +1849,69 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
+    private void RecordPoints(Player shooter, int points)
+    {
+        if (shooter.IsTeamA)
+        {
+            Game.HomeTeam.AddPoints(points);
+            GameState.TeamAScore = Game.HomeTeam.Points;
+        }
+        else
+        {
+            Game.AwayTeam.AddPoints(points);
+            GameState.TeamBScore = Game.AwayTeam.Points;
+        }
+        shooter.AddPoints(points);
+        StatsVM.Refresh();
+    }
+
+    private void UseTimeout(bool teamA)
+    {
+        var period = Game.GetCurrentPeriod();
+        if (teamA)
+        {
+            Game.HomeTeam.AddTimeout(period);
+            GameState.TeamATimeOutsLeft = Math.Max(0, GameState.TeamATimeOutsLeft - 1);
+        }
+        else
+        {
+            Game.AwayTeam.AddTimeout(period);
+            GameState.TeamBTimeOutsLeft = Math.Max(0, GameState.TeamBTimeOutsLeft - 1);
+        }
+    }
+
     private void AddPlayCard(IEnumerable<PlayActionViewModel> actions)
     {
-        var card = new PlayCardViewModel
-        {
-            Time = GameClockService.TimeLeftString,
-            TeamAScore = TeamAScore,
-            TeamBScore = TeamBScore
-        };
-        foreach (var a in actions)
-            card.Actions.Add(a);
+        PlayLog.AddCard(
+            GameClockService.TimeLeftString,
+            GameState.TeamAScore,
+            GameState.TeamBScore,
+            actions);
+    }
 
-        PlayByPlayCards.Insert(0, card);
-        Debug.WriteLine($"Play card added: {card.Header}");
+    private void SwapSides()
+    {
+        var temp = Game.HomeTeam;
+        Game.HomeTeam = Game.AwayTeam;
+        Game.AwayTeam = temp;
+
+        Game.HomeTeam.IsHomeTeam = true;
+        Game.AwayTeam.IsHomeTeam = false;
+
+        var nameTmp = TeamAName;
+        TeamAName = TeamBName;
+        TeamBName = nameTmp;
+
+        var shortTmp = TeamAShortName;
+        TeamAShortName = TeamBShortName;
+        TeamBShortName = shortTmp;
+
+        var colorTmp = TeamAColorOption;
+        TeamAColorOption = TeamBColorOption;
+        TeamBColorOption = colorTmp;
+
+        RegenerateTeamsFromInfo();
+        StatsVM.Refresh();
     }
 
     private static string FormatShotAction(bool isThree, string result)
@@ -1907,6 +1941,7 @@ public class MainWindowViewModel : ViewModelBase
         if (Players.Count == 0) return;
 
         var shooter = Players.First();
+        RecordPoints(shooter, 2);
         AddPlayCard(new[] { CreateAction(shooter, FormatShotAction(false, "MADE")) });
 
         var missShooter = Players.ElementAtOrDefault(3);
@@ -1920,6 +1955,7 @@ public class MainWindowViewModel : ViewModelBase
             });
         }
 
+        UseTimeout(true);
         AddPlayCard(new[] { CreateTeamAction(true, "TIMEOUT") });
     }
 
