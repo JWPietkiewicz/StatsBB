@@ -59,6 +59,11 @@ public class MainWindowViewModel : ViewModelBase
 
     public PlayByPlayLogViewModel PlayLog { get; } = new();
 
+    /// <summary>
+    /// View model used by the scoreboard view.
+    /// </summary>
+    public ScoreBoardViewModel ScoreBoardVM { get; }
+
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
     public ObservableCollection<Player> TeamBCourtPlayers =>
@@ -253,6 +258,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         _resources = resources;
         TeamInfoVM = new TeamInfoViewModel(this);
+        ScoreBoardVM = new ScoreBoardViewModel(this);
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 

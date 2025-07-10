@@ -381,7 +381,8 @@
 
                 <!-- ========= Row 0: Team Cards & Clock ========= -->
 
-                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0" />
+                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0" 
+                                         DataContext="{Binding ScoreBoardVM}" />
 
                 <Grid Grid.Row="1" Grid.Column="0" Margin="10">
                     <Grid.RowDefinitions>
