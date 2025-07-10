@@ -57,7 +57,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public StatsTabViewModel StatsVM { get; }
 
-    public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
+    public PlayByPlayLogViewModel PlayLog { get; } = new();
 
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
@@ -1796,17 +1796,11 @@ public class MainWindowViewModel : ViewModelBase
 
     private void AddPlayCard(IEnumerable<PlayActionViewModel> actions)
     {
-        var card = new PlayCardViewModel
-        {
-            Time = GameClockService.TimeLeftString,
-            TeamAScore = GameState.TeamAScore,
-            TeamBScore = GameState.TeamBScore
-        };
-        foreach (var a in actions)
-            card.Actions.Add(a);
-
-        PlayByPlayCards.Insert(0, card);
-        Debug.WriteLine($"Play card added: {card.Header}");
+        PlayLog.AddCard(
+            GameClockService.TimeLeftString,
+            GameState.TeamAScore,
+            GameState.TeamBScore,
+            actions);
     }
 
     private static string FormatShotAction(bool isThree, string result)
