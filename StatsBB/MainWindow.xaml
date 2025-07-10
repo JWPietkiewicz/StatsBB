@@ -1468,36 +1468,15 @@ Grid.Column="4" />
                         <ItemsControl ItemsSource="{Binding TeamAPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Grid VerticalAlignment="Center" x:Name="PlayerGrid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="70"/>
-                                            <ColumnDefinition Width="70"/>
-                                            <ColumnDefinition Width="80"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                        </Grid.RowDefinitions>
-                                    </Grid>
+                                    <WrapPanel Orientation="Vertical" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            <!-- KEY: Apply attached properties to the ITEM CONTAINER, not the DataTemplate -->
-                            <ItemsControl.ItemContainerStyle>
-                                <Style TargetType="ContentPresenter">
-                                    <Setter Property="Grid.Row" Value="{Binding Row}" />
-                                    <Setter Property="Grid.Column" Value="{Binding Column}" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-        Style="{Binding ButtonStyle}"
-        Command="{Binding SelectPlayerCommand}"/>
+                                            Style="{Binding ButtonStyle}"
+                                            IsEnabled="False" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -1506,34 +1485,14 @@ Grid.Column="4" />
                         <ItemsControl ItemsSource="{Binding TeamBPlayers}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Grid VerticalAlignment="Center">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="70"/>
-                                            <ColumnDefinition Width="70"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                            <RowDefinition Height="80"/>
-                                        </Grid.RowDefinitions>
-                                    </Grid>
+                                    <WrapPanel Orientation="Vertical" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemContainerStyle>
-                                <Style TargetType="ContentPresenter">
-                                    <Setter Property="Grid.Row" Value="{Binding Row}" />
-                                    <Setter Property="Grid.Column" Value="{Binding Column}" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-        Style="{Binding ButtonStyle}"
-        Command="{Binding SelectPlayerCommand}"/>
+                                            Style="{Binding ButtonStyle}"
+                                            IsEnabled="False" />
 
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
