@@ -65,14 +65,10 @@ public class MainWindowViewModel : ViewModelBase
     /// </summary>
     public ScoreBoardViewModel ScoreBoardVM { get; }
 
-    public ObservableCollection<Player> TeamACourtPlayers =>
-        new(Players.Where(p => p.IsTeamA && p.IsActive));
-    public ObservableCollection<Player> TeamBCourtPlayers =>
-        new(Players.Where(p => !p.IsTeamA && p.IsActive));
-    public ObservableCollection<Player> TeamABenchPlayers =>
-        new(Players.Where(p => p.IsTeamA && !p.IsActive));
-    public ObservableCollection<Player> TeamBBenchPlayers =>
-        new(Players.Where(p => !p.IsTeamA && !p.IsActive));
+    public ObservableCollection<Player> TeamACourtPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBCourtPlayers { get; } = new();
+    public ObservableCollection<Player> TeamABenchPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBBenchPlayers { get; } = new();
 
     public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
 
@@ -497,6 +493,10 @@ public class MainWindowViewModel : ViewModelBase
     {
         TeamAPlayers.Clear();
         TeamBPlayers.Clear();
+        TeamACourtPlayers.Clear();
+        TeamBCourtPlayers.Clear();
+        TeamABenchPlayers.Clear();
+        TeamBBenchPlayers.Clear();
 
         var teamA = PlayerLayoutService.CreatePositionedPlayers(
             Players.Where(p => p.IsTeamA),
@@ -509,8 +509,22 @@ public class MainWindowViewModel : ViewModelBase
             OnPlayerSelected
         );
 
-        foreach (var p in teamA) TeamAPlayers.Add(p);
-        foreach (var p in teamB) TeamBPlayers.Add(p);
+        foreach (var p in teamA)
+        {
+            TeamAPlayers.Add(p);
+            if (p.Player.IsActive)
+                TeamACourtPlayers.Add(p.Player);
+            else
+                TeamABenchPlayers.Add(p.Player);
+        }
+        foreach (var p in teamB)
+        {
+            TeamBPlayers.Add(p);
+            if (p.Player.IsActive)
+                TeamBCourtPlayers.Add(p.Player);
+            else
+                TeamBBenchPlayers.Add(p.Player);
+        }
     }
 
     private void RegenerateTeamsFromInfo()
