@@ -38,7 +38,7 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="Margin" Value="4" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -47,7 +47,7 @@
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
                     BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="4"
+                    CornerRadius="2"
                     Padding="{TemplateBinding Padding}">
                             <ContentPresenter
                         HorizontalAlignment="Center"
@@ -67,11 +67,6 @@
         </Style>
         <Style x:Key="ActionSelectableButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             <Setter Property="Background" Value="{StaticResource DarkGrey}"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource Grey}"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
         <!-- Action: Cannot be selected -->
         <Style x:Key="ActionDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
@@ -295,7 +290,7 @@
         <!-- FREE THROW RESULT BUTTON -->
         <Style x:Key="FreeThrowResultButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionSelectableButtonStyle}">
             <Setter Property="Background"  Value="Gray" />
-            <Setter Property="Width" Value="80" />
+            <Setter Property="Width" Value="120" />
             <Setter Property="Height" Value="40" />
         </Style>
 
@@ -421,7 +416,7 @@
                                         <ItemsControl ItemsSource="{Binding EligibleTeamABenchShotPlayers}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -587,7 +582,7 @@
                                         <ItemsControl ItemsSource="{Binding EligibleTeamABenchReboundPlayers}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -750,7 +745,7 @@ Margin="4" />
                                         <ItemsControl ItemsSource="{Binding EligibleTeamABenchTurnoverPlayers}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -914,7 +909,7 @@ Margin="4" />
                                         <ItemsControl ItemsSource="{Binding EligibleTeamABenchFoulCommitterPlayers}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1018,7 +1013,9 @@ Margin="4" />
                             </StackPanel>
                         </Grid>
                         <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border Background="#cceeeeee" Padding="10" Margin="2">
                                     <StackPanel>
                                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
@@ -1038,11 +1035,11 @@ Margin="4" />
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                             </Grid.RowDefinitions>
-                                            <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
+                                            <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                                 <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <WrapPanel Orientation="Horizontal"/>
+                                                            <WrapPanel Orientation="Horizontal" Width="360"/>
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
@@ -1056,11 +1053,11 @@ Margin="4" />
                                                     </ItemsControl.ItemTemplate>
                                                 </ItemsControl>
                                             </Border>
-                                            <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
+                                            <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                                 <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <WrapPanel Orientation="Horizontal"/>
+                                                            <WrapPanel Orientation="Horizontal" Width="360"/>
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
                                                     <ItemsControl.ItemTemplate>
@@ -1077,7 +1074,8 @@ Margin="4" />
                                         </Grid>
                                     </StackPanel>
                                 </Border>
-                                <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                                <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center" Style="{StaticResource FoulTypeButtonStyle}" />
                             </StackPanel>
                         </Grid>
                         <Grid Visibility="{Binding IsFouledPlayerSelectionActive, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -1088,11 +1086,11 @@ Margin="4" />
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2">
+                                <Border Background="#cceeeeee" Grid.Row="0" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                     <ItemsControl ItemsSource="{Binding EligibleFoulOnCourtPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Horizontal"/>
+                                                <WrapPanel Orientation="Horizontal" Width="360" />
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
@@ -1103,11 +1101,11 @@ Margin="4" />
                                     </ItemsControl>
                                 </Border>
 
-                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2">
+                                <Border Background="#ccd3d3d3" Grid.Row="1" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                     <ItemsControl ItemsSource="{Binding EligibleFoulOnBenchPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel Orientation="Horizontal"/>
+                                                <WrapPanel Orientation="Horizontal" Width="360"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
@@ -1120,17 +1118,21 @@ Margin="4" />
                             </Grid>
                         </Grid>
                         <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <StackPanel Orientation="Horizontal">
+                                
+                            </StackPanel>
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
+                                    <ColumnDefinition/>
                                 </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Margin="0 0 10 0">
-                                    <TextBlock Text="Free Throw Results" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 20"/>
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                    <TextBlock Text="Free Throws" FontSize="18" FontWeight="Bold"/>
                                     <ItemsControl ItemsSource="{Binding FreeThrowResultRows}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <StackPanel Orientation="Vertical" Margin="0 10">
+                                                <StackPanel Orientation="Vertical" Margin="10">
                                                     <TextBlock Text="{Binding Label}" FontWeight="Bold" Margin="0 0 0 6"/>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                         <Button Content="MADE"
@@ -1138,32 +1140,32 @@ Margin="4" />
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MADE"
                                                         Background="{Binding MadeButtonBackground}"
-                                                        Margin="6"/>
+                                                        Margin="4"/>
                                                         <Button Content="MISSED"
                                                         Style="{StaticResource FreeThrowResultButtonStyle}"
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MISSED"
                                                         Background="{Binding MissedButtonBackground}"
-                                                        Margin="6"/>
+                                                        Margin="4"/>
                                                     </StackPanel>
                                                 </StackPanel>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Text="Shooter" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Shooter" FontSize="22" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
+                                        <Border Background="#cceeeeee" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Padding="4" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                             <ItemsControl ItemsSource="{Binding EligibleFreeThrowCourtPlayers}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
-                                                        <WrapPanel Orientation="Horizontal"/>
+                                                        <WrapPanel Orientation="Horizontal" Width="360"/>
                                                     </ItemsPanelTemplate>
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
@@ -1177,11 +1179,11 @@ Margin="4" />
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                         </Border>
-                                        <Border Background="#ccd3d3d3" Grid.Row="1" Padding="6" Margin="2">
+                                        <Border Background="#ccd3d3d3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Padding="4" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                             <ItemsControl ItemsSource="{Binding EligibleFreeThrowBenchPlayers}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
-                                                        <WrapPanel Orientation="Horizontal"/>
+                                                        <WrapPanel Orientation="Horizontal" Width="360"/>
                                                     </ItemsPanelTemplate>
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
@@ -1196,6 +1198,8 @@ Margin="4" />
                                             </ItemsControl>
                                         </Border>
                                     </Grid>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
                                     <TextBlock Text="Assist" FontWeight="Bold" Margin="10 0 0 6" HorizontalAlignment="Center"/>
                                     <Grid>
                                         <Grid.RowDefinitions>
@@ -1203,11 +1207,11 @@ Margin="4" />
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
-                                        <Border Background="#cceeeeee" Grid.Row="0" Padding="6" Margin="2">
+                                        <Border Background="#cceeeeee" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0" Padding="6" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                             <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
-                                                        <WrapPanel Orientation="Horizontal"/>
+                                                        <WrapPanel Orientation="Horizontal" Width="360"/>
                                                     </ItemsPanelTemplate>
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
@@ -1222,16 +1226,16 @@ Margin="4" />
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
                                         </Border>
-                                        <Border Padding="6" Margin="2" Grid.Row="1" Background="White">
+                                        <Border Grid.Row="1">
                                             <Button Content="NO ASSIST"
-                                            Command="{Binding DataContext.NoAssistFreeThrowCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            HorizontalAlignment="Center" Padding="20,6" Margin="2"/>
+                                            Command="{Binding DataContext.NoAssistFreeThrowCommand, RelativeSource={RelativeSource AncestorType=Window}}" Height="60"
+                                            Width="380" FontSize="24" FontWeight="Bold" Background="White" Foreground="Black" BorderBrush="Black" BorderThickness="1" Margin="10" />
                                         </Border>
-                                        <Border Background="#ccd3d3d3" Grid.Row="2" Padding="6" Margin="2">
+                                        <Border Background="#ccd3d3d3" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2" Padding="6" Margin="2" BorderThickness="1" BorderBrush="Black" Width="380">
                                             <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate>
-                                                        <WrapPanel Orientation="Horizontal"/>
+                                                        <WrapPanel Orientation="Horizontal" Width="360"/>
                                                     </ItemsPanelTemplate>
                                                 </ItemsControl.ItemsPanel>
                                                 <ItemsControl.ItemTemplate>
