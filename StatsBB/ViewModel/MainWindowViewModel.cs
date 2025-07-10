@@ -437,6 +437,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"Coach Technical on {team}");
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
+        GameState.AddFoul(isTeamA);
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -447,6 +448,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"Bench Technical on {team}");
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
+        GameState.AddFoul(isTeamA);
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -574,6 +576,9 @@ public class MainWindowViewModel : ViewModelBase
 
             if (_fouledPlayer != null)
                 _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
+
+            if (_foulCommiter != null)
+                GameState.AddFoul(_foulCommiter.IsTeamA);
 
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();

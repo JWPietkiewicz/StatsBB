@@ -88,5 +88,37 @@ public class GameStateViewModel : ViewModelBase
     }
 
     public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
+
+    private int _teamAFouls;
+    public int TeamAFouls
+    {
+        get => _teamAFouls;
+        set
+        {
+            if (_teamAFouls == value) return;
+            _teamAFouls = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamBFouls;
+    public int TeamBFouls
+    {
+        get => _teamBFouls;
+        set
+        {
+            if (_teamBFouls == value) return;
+            _teamBFouls = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public void AddFoul(bool teamA)
+    {
+        if (teamA)
+            TeamAFouls++;
+        else
+            TeamBFouls++;
+    }
 }
 

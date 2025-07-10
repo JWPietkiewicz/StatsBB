@@ -48,6 +48,12 @@ public class ScoreBoardViewModel : ViewModelBase
             case nameof(GameStateViewModel.TeamBTimeoutsText):
                 OnPropertyChanged(nameof(TeamBTimeoutsText));
                 break;
+            case nameof(GameStateViewModel.TeamAFouls):
+                OnPropertyChanged(nameof(TeamAFouls));
+                break;
+            case nameof(GameStateViewModel.TeamBFouls):
+                OnPropertyChanged(nameof(TeamBFouls));
+                break;
         }
     }
 
@@ -55,6 +61,8 @@ public class ScoreBoardViewModel : ViewModelBase
     public int TeamBScore => _main.GameState.TeamBScore;
     public string TeamATimeoutsText => _main.GameState.TeamATimeoutsText;
     public string TeamBTimeoutsText => _main.GameState.TeamBTimeoutsText;
+    public int TeamAFouls => _main.GameState.TeamAFouls;
+    public int TeamBFouls => _main.GameState.TeamBFouls;
 
     public Brush TeamAColor => _main.TeamAColorOption?.ColorBrush ?? Brushes.Orange;
     public Brush TeamBColor => _main.TeamBColorOption?.ColorBrush ?? Brushes.Green;
