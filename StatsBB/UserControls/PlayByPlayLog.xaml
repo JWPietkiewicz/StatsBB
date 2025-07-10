@@ -5,7 +5,7 @@
         <ItemsControl ItemsSource="{Binding Cards}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border Margin="5" Padding="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="4">
+                    <Border Margin="5" Padding="5" BorderBrush="Gray" BorderThickness="1" CornerRadius="2">
                         <StackPanel>
                             <TextBlock Text="{Binding Header}" FontWeight="Bold"/>
                             <ItemsControl ItemsSource="{Binding Actions}">
