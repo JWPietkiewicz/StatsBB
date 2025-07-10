@@ -40,7 +40,6 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="20"/>
             <Setter Property="Margin" Value="5" />
-            <Setter Property="Padding" Value="15" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -152,27 +151,20 @@
         <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}" po:Freeze="False">
         </Style>
 
-        <Style x:Key="Made" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-
+        <Style x:Key="BottomPanelButton" BasedOn="{StaticResource BaseActionButtonStyle}" TargetType="Button">
+            <Setter Property="Padding" Value="15"/> 
         </Style>
-        <Style x:Key="Missed" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-
-        </Style>
-        <Style x:Key="Sub" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-        </Style>
-        <Style x:Key="Foul" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-
-        </Style>
-        <Style x:Key="Turnover" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-        </Style>
-        <Style x:Key="JumpBall" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-        </Style>
-        <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-        </Style>
-        <Style x:Key="FreeThrows" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
-        <Style x:Key="Assist" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
-        <Style x:Key="Rebound" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
-        <Style x:Key="Steal" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
+        <Style x:Key="Made" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Missed" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Sub" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Foul" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Turnover" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="JumpBall" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="FreeThrows" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Assist" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Rebound" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
+        <Style x:Key="Steal" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
         <!-- TEAM A TIMEOUT BUTTON -->
         <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
             <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
