@@ -32,6 +32,18 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="PlayerEditTextStyle" TargetType="TextBox">
+            <EventSetter Event="PreviewKeyDown" Handler="PlayerTextBox_PreviewKeyDown" />
+        </Style>
+
+        <Style x:Key="PlayerDataGridStyle" TargetType="DataGrid">
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="AlternatingRowBackground" Value="#FFF0F0F0"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="RowHeight" Value="30"/>
+        </Style>
     </UserControl.Resources>
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
@@ -46,7 +58,7 @@
             <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel/>
+                        <WrapPanel ItemWidth="60" ItemHeight="60" MaxWidth="520"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -76,12 +88,18 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell">
+            <DataGrid x:Name="HomeGrid" ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell" Style="{StaticResource PlayerDataGridStyle}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridCheckBoxColumn Header="Play" Binding="{Binding IsPlaying}" Width="50"/>
+                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTemplateColumn Header="Play" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsPlaying, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
@@ -97,7 +115,7 @@
             <ItemsControl ItemsSource="{Binding ColorOptions}" Margin="0,2">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel/>
+                        <WrapPanel ItemWidth="60" ItemHeight="60" MaxWidth="520"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
@@ -127,12 +145,18 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell">
+            <DataGrid x:Name="AwayGrid" ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell" Style="{StaticResource PlayerDataGridStyle}">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridCheckBoxColumn Header="Play" Binding="{Binding IsPlaying}" Width="50"/>
+                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTemplateColumn Header="Play" Width="50">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsPlaying, Mode=TwoWay}" HorizontalAlignment="Center"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
