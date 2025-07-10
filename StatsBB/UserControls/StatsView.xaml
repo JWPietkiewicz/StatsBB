@@ -10,15 +10,15 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Game.HomeTeam.TeamName}" Grid.Column="0" HorizontalAlignment="Left" Margin="10 10 10 10" FontWeight="Bold" FontSize="60"/>
+            <TextBlock Text="{Binding HomeTeamName}" Grid.Column="0" HorizontalAlignment="Left" Margin="10 10 10 10" FontWeight="Bold" FontSize="60"/>
             <TextBlock Text="{Binding HomeScore}" Grid.Column="1" HorizontalAlignment="Center" Margin="10" FontWeight="Bold" FontSize="60"/>
             <TextBlock Text=":" Grid.Column="2" FontWeight="Bold" FontSize="60" Margin="10"/>
             <TextBlock Text="{Binding AwayScore}" Grid.Column="3" HorizontalAlignment="Center" Margin="10" FontWeight="Bold" FontSize="60" />
-            <TextBlock Text="{Binding Game.AwayTeam.TeamName}" Grid.Column="4" HorizontalAlignment="Right" Margin="10" FontWeight="Bold" FontSize="60"/>
+            <TextBlock Text="{Binding AwayTeamName}" Grid.Column="4" HorizontalAlignment="Right" Margin="10" FontWeight="Bold" FontSize="60"/>
         </Grid>
         <StackPanel Width="1070">
         <Separator Margin="10"/>
-            <TextBlock Text="{Binding Game.HomeTeam.TeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
+            <TextBlock Text="{Binding HomeTeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
             
         <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" Width="1050">
             <DataGrid.Columns>
@@ -63,7 +63,7 @@
 
         <Separator Margin="10"/>
 
-        <TextBlock Text="{Binding Game.AwayTeam.TeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
+        <TextBlock Text="{Binding AwayTeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
         <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True"  Width="1050">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="*"/>
