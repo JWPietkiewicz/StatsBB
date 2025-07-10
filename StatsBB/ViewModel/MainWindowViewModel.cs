@@ -225,6 +225,10 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand TurnoverTeamACommand { get; }
     public ICommand TurnoverTeamBCommand { get; }
     public ICommand StartTurnoverCommand { get; }
+    public ICommand StartAssistCommand { get; }
+    public ICommand StartReboundCommand { get; }
+    public ICommand StartStealCommand { get; }
+    public ICommand StartFreeThrowsCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
@@ -302,6 +306,10 @@ public class MainWindowViewModel : ViewModelBase
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
+        StartAssistCommand = new RelayCommand(_ => BeginAssist());
+        StartReboundCommand = new RelayCommand(_ => BeginRebound());
+        StartStealCommand = new RelayCommand(_ => BeginSteal());
+        StartFreeThrowsCommand = new RelayCommand(_ => BeginFreeThrows());
 
         CoachTechnicalTeamACommand = new RelayCommand(_ => OnCoachTechnical("Team A"));
         CoachTechnicalTeamBCommand = new RelayCommand(_ => OnCoachTechnical("Team B"));
@@ -419,6 +427,30 @@ public class MainWindowViewModel : ViewModelBase
     {
         ResetSelectionState();
         IsTurnoverSelectionActive = true;
+    }
+
+    private void BeginAssist()
+    {
+        ResetSelectionState();
+        IsAssistSelectionActive = true;
+    }
+
+    private void BeginRebound()
+    {
+        ResetSelectionState();
+        IsReboundSelectionActive = true;
+    }
+
+    private void BeginSteal()
+    {
+        ResetSelectionState();
+        IsStealSelectionActive = true;
+    }
+
+    private void BeginFreeThrows()
+    {
+        ResetSelectionState();
+        BeginFreeThrowsAwardedSelection();
     }
 
     private void CompleteTimeoutSelection(string team)

@@ -168,6 +168,10 @@
         </Style>
         <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
         </Style>
+        <Style x:Key="FreeThrows" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
+        <Style x:Key="Assist" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
+        <Style x:Key="Rebound" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
+        <Style x:Key="Steal" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}"/>
         <!-- TEAM A TIMEOUT BUTTON -->
         <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
             <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
@@ -1462,47 +1466,6 @@ Margin="4" />
 
                     </Grid>
 
-                    <Grid Background="White" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="90" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="200"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-
-                        <Button Content="MADE (Q)"
-        Style="{Binding MadeButtonStyle}"
-        Command="{Binding SelectActionCommand}"
-        CommandParameter="MADE"
-        IsEnabled="{Binding IsActionSelectionActive}"
-        Grid.Column="1" />
-                        <!--  <Button Style="{StaticResource Missed}" Content="MISSED" Grid.Column="2"/>-->
-                        <Button Content="MISSED (W)"
-        Style="{Binding MissedButtonStyle}"
-        Command="{Binding SelectActionCommand}"
-        CommandParameter="Missed"
-        IsEnabled="{Binding IsActionSelectionActive}"
-        Grid.Column="2" />
-                        <!--  <Button Style="{StaticResource Foul}" Content="FOUL" Grid.Column="3" />-->
-                        <Button Content="FOUL (E)"
-Style="{Binding FoulButtonStyle}"
-Command="{Binding SelectActionCommand}"
-CommandParameter="Foul"
-Grid.Column="3" />
-                        <!--  <Button Style="{StaticResource Turnover}" Content="TURNOVER" Grid.Column="4"/>-->
-                        <Button Content="TURNOVER (R)"
-Style="{StaticResource Turnover}"
-Command="{Binding StartTurnoverCommand}"
-Grid.Column="4" />
-
-
-                    </Grid>
                     <Border Grid.Column="0" Grid.Row="1" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Stretch" HorizontalAlignment="Left" Padding="5">
                         <ItemsControl ItemsSource="{Binding TeamAPlayers}">
                             <ItemsControl.ItemsPanel>
@@ -1535,27 +1498,19 @@ Grid.Column="4" />
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </Border>
-                    <Grid  Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="top" HorizontalAlignment="Center">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="90" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="150"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
-                        <Button Grid.Column="1"
-            Style="{StaticResource Sub}"
-            Content="SUB"
-            Command="{Binding StartSubstitutionCommand}" />
-                        <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT"
-                        Command="{Binding StartTimeoutCommand}" />
-                        <Button Grid.Column="3" Style="{StaticResource Turnover}" Content="TURNOVER"
-                        Command="{Binding StartTurnoverCommand}" />
-
-                    </Grid>
+                    <StackPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Content="MADE (Q)" Style="{Binding MadeButtonStyle}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
+                        <Button Content="MISSED (W)" Style="{Binding MissedButtonStyle}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
+                        <Button Content="FOUL (E)" Style="{Binding FoulButtonStyle}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
+                        <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
+                        <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
+                        <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
+                        <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
+                        <Button Content="STEAL" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
+                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}"/>
+                        <Button Content="SUB" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
+                        <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
+                    </StackPanel>
                 </Grid>
                 <!-- Play‐by‐Play Log -->
                 <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="#F9F9F9" BorderBrush="LightGray" BorderThickness="2">
