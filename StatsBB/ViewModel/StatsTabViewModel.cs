@@ -15,6 +15,9 @@ public class StatsTabViewModel : ViewModelBase
         Game = game;
     }
 
+    public string HomeTeamName => Game.HomeTeam?.TeamName ?? string.Empty;
+    public string AwayTeamName => Game.AwayTeam?.TeamName ?? string.Empty;
+
     public ObservableCollection<Player> HomePlayers =>
         new(Game.HomeTeam?.Players
                 .Where(p => p.IsPlaying)
@@ -83,6 +86,8 @@ public class StatsTabViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(HomePlayers));
         OnPropertyChanged(nameof(AwayPlayers));
+        OnPropertyChanged(nameof(HomeTeamName));
+        OnPropertyChanged(nameof(AwayTeamName));
         OnPropertyChanged(nameof(HomeScore));
         OnPropertyChanged(nameof(AwayScore));
         OnPropertyChanged(nameof(HomeP1));
