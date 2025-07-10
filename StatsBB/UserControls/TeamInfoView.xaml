@@ -76,13 +76,18 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="0,5,0,0">
+            <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
                     <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
                     <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                    <DataGridCheckBoxColumn Header="Play" Binding="{Binding IsPlaying}" Width="50"/>
                 </DataGrid.Columns>
             </DataGrid>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Button Content="Load Team" Command="{Binding LoadHomeTeamCommand}" Margin="0,0,5,0"/>
+                <Button Content="Save Team" Command="{Binding SaveHomeTeamCommand}"/>
+            </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1" Background="LightGray">
             <TextBlock Text="Away Team" FontWeight="Bold" Margin="0,0,0,5"/>
@@ -122,13 +127,18 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" Margin="0,5,0,0">
+            <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" Margin="0,5,0,0" CanUserAddRows="False" SelectionUnit="Cell">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
                     <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
                     <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                    <DataGridCheckBoxColumn Header="Play" Binding="{Binding IsPlaying}" Width="50"/>
                 </DataGrid.Columns>
             </DataGrid>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Button Content="Load Team" Command="{Binding LoadAwayTeamCommand}" Margin="0,0,5,0"/>
+                <Button Content="Save Team" Command="{Binding SaveAwayTeamCommand}"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -42,7 +42,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <DataGrid Grid.Column="0" ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column">
+            <DataGrid Grid.Column="0" ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
                     <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
@@ -50,9 +50,19 @@
                     <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                     <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                     <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
+                    <DataGridTextColumn Header="Blk" Binding="{Binding Blocks}" Width="50"/>
+                    <DataGridTextColumn Header="Stl" Binding="{Binding Steals}" Width="50"/>
+                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="50"/>
+                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="50"/>
+                    <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="50"/>
+                    <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
+                    <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
+                    <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                    <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
+                    <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                 </DataGrid.Columns>
             </DataGrid>
-            <DataGrid Grid.Column="1" ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column">
+            <DataGrid Grid.Column="1" ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
                     <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
@@ -60,6 +70,16 @@
                     <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                     <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                     <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
+                    <DataGridTextColumn Header="Blk" Binding="{Binding Blocks}" Width="50"/>
+                    <DataGridTextColumn Header="Stl" Binding="{Binding Steals}" Width="50"/>
+                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="50"/>
+                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="50"/>
+                    <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="50"/>
+                    <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
+                    <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
+                    <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                    <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
+                    <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

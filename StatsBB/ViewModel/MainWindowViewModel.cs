@@ -248,6 +248,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectTeamBColorCommand { get; }
     public ICommand SelectFreeThrowAssistCommand { get; }
     public ICommand NoAssistFreeThrowCommand { get; }
+    public ICommand SwapSidesCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -313,6 +314,8 @@ public class MainWindowViewModel : ViewModelBase
         SelectFreeThrowShooterCommand = new RelayCommand(p => SelectFreeThrowShooter(p as Player));
         SelectFreeThrowAssistCommand = new RelayCommand(p => ToggleFreeThrowAssist(p as Player));
         NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
+
+        SwapSidesCommand = new RelayCommand(_ => SwapSides());
 
         SelectTeamAColorCommand = new RelayCommand(p =>
         {
@@ -489,24 +492,23 @@ public class MainWindowViewModel : ViewModelBase
     private void RegenerateTeamsFromInfo()
     {
         Players.Clear();
+
+        var home = Game.HomeTeam.Players.Where(p => p.IsPlaying).ToList();
+        var away = Game.AwayTeam.Players.Where(p => p.IsPlaying).ToList();
+
         int s5 = 0;
-        foreach(var p in Game.HomeTeam.Players)
+        foreach (var p in home)
         {
-            if(s5<5)
-            {
-                p.IsActive = true;
-            }
+            p.IsActive = s5 < 5;
             s5++;
             p.IsTeamA = true;
             Players.Add(p);
         }
+
         s5 = 0;
-        foreach (var p in Game.AwayTeam.Players)
+        foreach (var p in away)
         {
-            if (s5 < 5)
-            {
-                p.IsActive = true;
-            }
+            p.IsActive = s5 < 5;
             s5++;
             p.IsTeamA = false;
             Players.Add(p);
@@ -1842,6 +1844,31 @@ public class MainWindowViewModel : ViewModelBase
             GameState.TeamAScore,
             GameState.TeamBScore,
             actions);
+    }
+
+    private void SwapSides()
+    {
+        var temp = Game.HomeTeam;
+        Game.HomeTeam = Game.AwayTeam;
+        Game.AwayTeam = temp;
+
+        Game.HomeTeam.IsHomeTeam = true;
+        Game.AwayTeam.IsHomeTeam = false;
+
+        var nameTmp = TeamAName;
+        TeamAName = TeamBName;
+        TeamBName = nameTmp;
+
+        var shortTmp = TeamAShortName;
+        TeamAShortName = TeamBShortName;
+        TeamBShortName = shortTmp;
+
+        var colorTmp = TeamAColorOption;
+        TeamAColorOption = TeamBColorOption;
+        TeamBColorOption = colorTmp;
+
+        RegenerateTeamsFromInfo();
+        StatsVM.Refresh();
     }
 
     private static string FormatShotAction(bool isThree, string result)

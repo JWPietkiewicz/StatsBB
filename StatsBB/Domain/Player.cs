@@ -9,6 +9,12 @@ public class Player
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    /// <summary>
+    /// Indicates whether the player is on the game roster. Only players with
+    /// <c>IsPlaying</c> set to <c>true</c> should appear on the main view and in
+    /// the stats tab.
+    /// </summary>
+    public bool IsPlaying { get; set; } = true;
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
