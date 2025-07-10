@@ -53,8 +53,12 @@ public static class PlayerLayoutService
         foreach (var player in sorted)
         {
             // Choose styles
-            string courtStyleKey = player.IsTeamA ? "CourtAPlayerButtonStyle" : "CourtBPlayerButtonStyle";
-            string benchStyleKey = "BenchPlayerButtonStyle";
+            string courtStyleKey = player.IsTeamA
+                ? "CourtAPlayerButtonStyle"
+                : "CourtBPlayerButtonStyle";
+            string benchStyleKey = player.IsTeamA
+                ? "BenchAPlayerButtonStyle"
+                : "BenchBPlayerButtonStyle";
 
             Style style = player.IsActive
                 ? (Style)resources[courtStyleKey]
