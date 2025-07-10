@@ -43,6 +43,42 @@ public class StatsTabViewModel : ViewModelBase
     public int AwayP3 => GetAwayPeriod(2);
     public int AwayP4 => GetAwayPeriod(3);
 
+    private Player CalculateTotals(bool home)
+    {
+        var players = home
+            ? Game.HomeTeam?.Players?.Where(p => p.IsPlaying)
+            : Game.AwayTeam?.Players?.Where(p => p.IsPlaying);
+
+        var result = new Player { LastName = "TOTAL" };
+        if (players != null)
+        {
+            foreach (var p in players)
+            {
+                result.Points += p.Points;
+                result.Assists += p.Assists;
+                result.Rebounds += p.Rebounds;
+                result.Blocks += p.Blocks;
+                result.Steals += p.Steals;
+                result.Turnovers += p.Turnovers;
+                result.FoulsCommitted += p.FoulsCommitted;
+                result.ShotsMade2pt += p.ShotsMade2pt;
+                result.ShotAttempts2pt += p.ShotAttempts2pt;
+                result.ShotsMade3pt += p.ShotsMade3pt;
+                result.ShotAttempts3pt += p.ShotAttempts3pt;
+                result.FreeThrowsMade += p.FreeThrowsMade;
+                result.FreeThrowsAttempted += p.FreeThrowsAttempted;
+            }
+        }
+
+        return result;
+    }
+
+    public ObservableCollection<Player> HomeTotalsCollection =>
+        new() { CalculateTotals(true) };
+
+    public ObservableCollection<Player> AwayTotalsCollection =>
+        new() { CalculateTotals(false) };
+
     public void Refresh()
     {
         OnPropertyChanged(nameof(HomePlayers));
@@ -57,5 +93,7 @@ public class StatsTabViewModel : ViewModelBase
         OnPropertyChanged(nameof(AwayP2));
         OnPropertyChanged(nameof(AwayP3));
         OnPropertyChanged(nameof(AwayP4));
+        OnPropertyChanged(nameof(HomeTotalsCollection));
+        OnPropertyChanged(nameof(AwayTotalsCollection));
     }
 }
