@@ -53,7 +53,16 @@ public class Player : INotifyPropertyChanged
     public int FreeThrowsAttempted { get; set; }
     public int FreeThrowsMade { get; set; }
 
-    public void AddPoints(int points) => Points += points;
+    public void AddPoints(int points)
+    {
+        if (points == 3)
+            AddShotMade(true);
+        else if (points == 2)
+            AddShotMade(false);
+        else
+            AddFreeThrowMade();
+        Points += points;
+    }
     public void AddAssist() => Assists++;
     public void AddRebound() => Rebounds++;
     public void AddBlock() => Blocks++;
