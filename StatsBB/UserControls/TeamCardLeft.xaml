@@ -25,7 +25,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                     <Border Background="#EEE" CornerRadius="3" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding GameState.TeamATimeoutsText}" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TeamATimeoutsText}" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
@@ -37,7 +37,7 @@
                 </StackPanel>
             </Grid>
             <Border Grid.RowSpan="2" Grid.Column="2" BorderBrush="#888" CornerRadius="0"  BorderThickness="1,0,0,0">
-                <TextBlock Text="{Binding GameState.TeamAScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding TeamAScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
         </Grid>
     </Border>

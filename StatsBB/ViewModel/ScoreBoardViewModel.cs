@@ -4,8 +4,9 @@ using StatsBB.MVVM;
 namespace StatsBB.ViewModel;
 
 /// <summary>
-/// View model used by the scoreboard view. It simply exposes
-/// team names and the current <see cref="GameStateViewModel"/>.
+/// View model used by the scoreboard view. It exposes
+/// team names along with score and timeout information
+/// mirrored from <see cref="GameStateViewModel"/>.
 /// </summary>
 public class ScoreBoardViewModel : ViewModelBase
 {
@@ -15,6 +16,7 @@ public class ScoreBoardViewModel : ViewModelBase
     {
         _main = main;
         _main.PropertyChanged += MainOnPropertyChanged;
+        _main.GameState.PropertyChanged += GameStateOnPropertyChanged;
     }
 
     private void MainOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -25,7 +27,29 @@ public class ScoreBoardViewModel : ViewModelBase
             OnPropertyChanged(nameof(TeamBName));
     }
 
-    public GameStateViewModel GameState => _main.GameState;
+    private void GameStateOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(GameStateViewModel.TeamAScore):
+                OnPropertyChanged(nameof(TeamAScore));
+                break;
+            case nameof(GameStateViewModel.TeamBScore):
+                OnPropertyChanged(nameof(TeamBScore));
+                break;
+            case nameof(GameStateViewModel.TeamATimeoutsText):
+                OnPropertyChanged(nameof(TeamATimeoutsText));
+                break;
+            case nameof(GameStateViewModel.TeamBTimeoutsText):
+                OnPropertyChanged(nameof(TeamBTimeoutsText));
+                break;
+        }
+    }
+
+    public int TeamAScore => _main.GameState.TeamAScore;
+    public int TeamBScore => _main.GameState.TeamBScore;
+    public string TeamATimeoutsText => _main.GameState.TeamATimeoutsText;
+    public string TeamBTimeoutsText => _main.GameState.TeamBTimeoutsText;
 
     public string TeamAName
     {

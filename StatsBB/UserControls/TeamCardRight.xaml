@@ -20,7 +20,7 @@
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
             <Border Grid.RowSpan="2" Grid.Column="0" BorderBrush="#888" CornerRadius="0" BorderThickness="0,0,1,0">
-                <TextBlock Text="{Binding GameState.TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="{Binding TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
             <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Fill="Green" RadiusX="4" RadiusY="4"/>
@@ -40,7 +40,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <Border Background="#EEE" CornerRadius="3" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding GameState.TeamBTimeoutsText}" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TeamBTimeoutsText}" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
             </Grid>
