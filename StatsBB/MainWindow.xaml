@@ -1169,7 +1169,7 @@ Margin="4" />
                         </Grid>
                         <Grid Visibility="{Binding IsFouledPlayerSelectionActive, Converter={StaticResource BooleanToVisibilityConverter}}"
       Background="#33FFFFFF" Panel.ZIndex="10">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="White" Opacity="0.95">
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
