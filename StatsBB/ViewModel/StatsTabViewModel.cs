@@ -16,10 +16,16 @@ public class StatsTabViewModel : ViewModelBase
     }
 
     public ObservableCollection<Player> HomePlayers =>
-        new(Game.HomeTeam?.Players.Where(p => p.IsPlaying).Select(p => { p.IsTeamA = true; return p; }) ?? new());
+        new(Game.HomeTeam?.Players
+                .Where(p => p.IsPlaying)
+                .Select(p => { p.IsTeamA = true; return p; })
+            ?? Enumerable.Empty<Player>());
 
     public ObservableCollection<Player> AwayPlayers =>
-        new(Game.AwayTeam?.Players.Where(p => p.IsPlaying).Select(p => { p.IsTeamA = false; return p; }) ?? new());
+        new(Game.AwayTeam?.Players
+                .Where(p => p.IsPlaying)
+                .Select(p => { p.IsTeamA = false; return p; })
+            ?? Enumerable.Empty<Player>());
 
     public int HomeScore => Game.HomeTeam?.Points ?? 0;
     public int AwayScore => Game.AwayTeam?.Points ?? 0;
