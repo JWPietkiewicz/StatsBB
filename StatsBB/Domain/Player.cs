@@ -16,7 +16,7 @@ public class Player : INotifyPropertyChanged
     /// <c>IsPlaying</c> set to <c>true</c> should appear on the main view and in
     /// the stats tab.
     /// </summary>
-    private bool _isPlaying = true;
+    private bool _isPlaying = false;
     public bool IsPlaying
     {
         get => _isPlaying;
