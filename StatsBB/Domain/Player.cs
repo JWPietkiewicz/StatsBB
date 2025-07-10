@@ -1,8 +1,10 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace StatsBB.Domain;
 
-public class Player
+public class Player : INotifyPropertyChanged
 {
     public int Id { get; set; }
     public int Number { get; set; }
@@ -14,7 +16,19 @@ public class Player
     /// <c>IsPlaying</c> set to <c>true</c> should appear on the main view and in
     /// the stats tab.
     /// </summary>
-    public bool IsPlaying { get; set; } = true;
+    private bool _isPlaying = true;
+    public bool IsPlaying
+    {
+        get => _isPlaying;
+        set
+        {
+            if (_isPlaying != value)
+            {
+                _isPlaying = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
@@ -70,5 +84,12 @@ public class Player
     {
         FreeThrowsAttempted++;
         FreeThrowsMade++;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

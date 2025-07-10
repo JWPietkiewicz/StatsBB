@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using StatsBB.Domain;
+using System.ComponentModel;
 
 namespace StatsBB.ViewModel;
 
@@ -379,8 +380,9 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeamsFromInfo();
         //PlayerLayoutService.PopulateTeams(Players);
         RegenerateTeams();
-        
+
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
+        SubscribePlayerEvents();
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -471,6 +473,26 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeamsFromInfo();
     }
 
+    private void PlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Player.IsPlaying))
+        {
+            RegenerateTeamsFromInfo();
+        }
+    }
+
+    private void SubscribePlayerEvents()
+    {
+        foreach (var p in Game.HomeTeam.Players)
+            p.PropertyChanged -= PlayerPropertyChanged;
+        foreach (var p in Game.AwayTeam.Players)
+            p.PropertyChanged -= PlayerPropertyChanged;
+        foreach (var p in Game.HomeTeam.Players)
+            p.PropertyChanged += PlayerPropertyChanged;
+        foreach (var p in Game.AwayTeam.Players)
+            p.PropertyChanged += PlayerPropertyChanged;
+    }
+
     private void RegenerateTeams()
     {
         TeamAPlayers.Clear();
@@ -533,6 +555,8 @@ public class MainWindowViewModel : ViewModelBase
         }
         */
         RegenerateTeams();
+        SubscribePlayerEvents();
+        StatsVM?.Refresh();
     }
 
     private Player? _pendingShooter;
