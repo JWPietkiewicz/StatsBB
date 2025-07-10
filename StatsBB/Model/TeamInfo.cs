@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Net.Sockets;
 using StatsBB.Domain;
 using StatsBB.MVVM;
 
@@ -57,10 +56,17 @@ public class TeamInfo : ViewModelBase
         set { Team.TeamShortName = value; OnPropertyChanged(); }
     }
 
+    private TeamColorOption? _color;
     public TeamColorOption? Color
     {
-        get => Team.TeamColor;
-        set { Team.TeamColor = value; OnPropertyChanged(); }
+        get => _color;
+        set
+        {
+            if (_color == value) return;
+            _color = value;
+            OnPropertyChanged();
+            Team.TeamColorName = value?.Name ?? string.Empty;
+        }
     }
 
     public ObservableCollection<Player> Players { get => Team.Players; }

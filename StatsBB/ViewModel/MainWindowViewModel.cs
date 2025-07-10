@@ -57,7 +57,12 @@ public class MainWindowViewModel : ViewModelBase
 
     public StatsTabViewModel StatsVM { get; }
 
-    public ObservableCollection<PlayCardViewModel> PlayByPlayCards { get; } = new();
+    public PlayByPlayLogViewModel PlayLog { get; } = new();
+
+    /// <summary>
+    /// View model used by the scoreboard view.
+    /// </summary>
+    public ScoreBoardViewModel ScoreBoardVM { get; }
 
     public ObservableCollection<Player> TeamACourtPlayers =>
         new(Players.Where(p => p.IsTeamA && p.IsActive));
@@ -181,79 +186,8 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
-    private int _teamAScore;
-    public int TeamAScore
-    {
-        get => _teamAScore;
-        set
-        {
-            _teamAScore = value;
-            OnPropertyChanged();
-        }
-    }
 
-    private int _teamBScore;
-    public int TeamBScore
-    {
-        get => _teamBScore;
-        set
-        {
-            _teamBScore = value;
-            OnPropertyChanged();
-        }
-    }
-
-    private int _teamATimeOutsLeft = 3;
-    public int TeamATimeOutsLeft
-    {
-        get => _teamATimeOutsLeft;
-        set
-        {
-            _teamATimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    private int _teamATotalTimeouts = 3;
-    public int TeamATotalTimeouts
-    {
-        get => _teamATotalTimeouts;
-        set
-        {
-            _teamATotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamATimeoutsText));
-        }
-    }
-
-    public string TeamATimeoutsText => $"{TeamATimeOutsLeft}/{TeamATotalTimeouts}";
-
-    private int _teamBTimeOutsLeft = 3;
-    public int TeamBTimeOutsLeft
-    {
-        get => _teamBTimeOutsLeft;
-        set
-        {
-            _teamBTimeOutsLeft = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    private int _teamBTotalTimeouts = 3;
-    public int TeamBTotalTimeouts
-    {
-        get => _teamBTotalTimeouts;
-        set
-        {
-            _teamBTotalTimeouts = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(TeamBTimeoutsText));
-        }
-    }
-
-    public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
+    public GameStateViewModel GameState { get; } = new();
 
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
@@ -324,6 +258,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         _resources = resources;
         TeamInfoVM = new TeamInfoViewModel(this);
+        ScoreBoardVM = new ScoreBoardViewModel(this);
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
@@ -490,6 +425,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"{GameClockService.TimeLeftString} Timeout called by {team}");
         IsTimeOutSelectionActive = false;
         var isTeamA = team == "Team A";
+        UseTimeout(isTeamA);
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "TIMEOUT") });
     }
 
@@ -1021,6 +957,7 @@ public class MainWindowViewModel : ViewModelBase
 
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MADE");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
+            RecordPoints(_pendingShooter, _pendingIsThreePoint ? 3 : 2);
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
@@ -1689,6 +1626,8 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     actions.Add(CreateAction(SelectedFreeThrowAssist, "ASSIST"));
                 }
+                if (made > 0)
+                    RecordPoints(_pendingShooter, made);
                 AddPlayCard(actions);
             }
 
@@ -1865,19 +1804,44 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
+    private void RecordPoints(Player shooter, int points)
+    {
+        if (shooter.IsTeamA)
+        {
+            Game.HomeTeam.AddPoints(points);
+            GameState.TeamAScore = Game.HomeTeam.Points;
+        }
+        else
+        {
+            Game.AwayTeam.AddPoints(points);
+            GameState.TeamBScore = Game.AwayTeam.Points;
+        }
+        shooter.AddPoints(points);
+        StatsVM.Refresh();
+    }
+
+    private void UseTimeout(bool teamA)
+    {
+        var period = Game.GetCurrentPeriod();
+        if (teamA)
+        {
+            Game.HomeTeam.AddTimeout(period);
+            GameState.TeamATimeOutsLeft = Math.Max(0, GameState.TeamATimeOutsLeft - 1);
+        }
+        else
+        {
+            Game.AwayTeam.AddTimeout(period);
+            GameState.TeamBTimeOutsLeft = Math.Max(0, GameState.TeamBTimeOutsLeft - 1);
+        }
+    }
+
     private void AddPlayCard(IEnumerable<PlayActionViewModel> actions)
     {
-        var card = new PlayCardViewModel
-        {
-            Time = GameClockService.TimeLeftString,
-            TeamAScore = TeamAScore,
-            TeamBScore = TeamBScore
-        };
-        foreach (var a in actions)
-            card.Actions.Add(a);
-
-        PlayByPlayCards.Insert(0, card);
-        Debug.WriteLine($"Play card added: {card.Header}");
+        PlayLog.AddCard(
+            GameClockService.TimeLeftString,
+            GameState.TeamAScore,
+            GameState.TeamBScore,
+            actions);
     }
 
     private static string FormatShotAction(bool isThree, string result)
@@ -1907,6 +1871,7 @@ public class MainWindowViewModel : ViewModelBase
         if (Players.Count == 0) return;
 
         var shooter = Players.First();
+        RecordPoints(shooter, 2);
         AddPlayCard(new[] { CreateAction(shooter, FormatShotAction(false, "MADE")) });
 
         var missShooter = Players.ElementAtOrDefault(3);
@@ -1920,6 +1885,7 @@ public class MainWindowViewModel : ViewModelBase
             });
         }
 
+        UseTimeout(true);
         AddPlayCard(new[] { CreateTeamAction(true, "TIMEOUT") });
     }
 

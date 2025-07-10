@@ -15,7 +15,8 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" Fill="Orange" RadiusX="4" RadiusY="4"/>
+            <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
+                       Fill="{Binding TeamAColor}" RadiusX="4" RadiusY="4"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TeamAName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"/>
             <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
