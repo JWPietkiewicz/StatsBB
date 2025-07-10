@@ -2,27 +2,29 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Margin="10">
-        <Grid>
+        <Grid Width="1050">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition />
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="40"/>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding Game.HomeTeam.TeamName}" Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Text="{Binding HomeScore}" Grid.Column="1" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Text="{Binding AwayScore}" Grid.Column="2" HorizontalAlignment="Center" FontWeight="Bold"/>
-            <TextBlock Text="{Binding Game.AwayTeam.TeamName}" Grid.Column="3" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="{Binding Game.HomeTeam.TeamName}" Grid.Column="0" HorizontalAlignment="Left" Margin="10 10 10 10" FontWeight="Bold" FontSize="60"/>
+            <TextBlock Text="{Binding HomeScore}" Grid.Column="1" HorizontalAlignment="Center" Margin="10" FontWeight="Bold" FontSize="60"/>
+            <TextBlock Text=":" Grid.Column="2" FontWeight="Bold" FontSize="60" Margin="10"/>
+            <TextBlock Text="{Binding AwayScore}" Grid.Column="3" HorizontalAlignment="Center" Margin="10" FontWeight="Bold" FontSize="60" />
+            <TextBlock Text="{Binding Game.AwayTeam.TeamName}" Grid.Column="4" HorizontalAlignment="Right" Margin="10" FontWeight="Bold" FontSize="60"/>
         </Grid>
-
-        <Separator Margin="0,5"/>
-
-        <TextBlock Text="Team A Players Stats" FontWeight="Bold" Margin="0,0,0,5"/>
-        <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True">
+        <StackPanel Width="1070">
+        <Separator Margin="10"/>
+            <TextBlock Text="{Binding Game.HomeTeam.TeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
+            
+        <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" Width="1050">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="*"/>
+                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="160"/>
+                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="200"/>
                 <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                 <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                 <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
@@ -38,11 +40,11 @@
                 <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid ItemsSource="{Binding HomeTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True">
+        <DataGrid ItemsSource="{Binding HomeTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="*"/>
+                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="160"/>
+                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="200"/>
                 <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                 <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                 <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
@@ -59,14 +61,14 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Separator Margin="0,10"/>
+        <Separator Margin="10"/>
 
-        <TextBlock Text="Team B Players Stats" FontWeight="Bold" Margin="0,0,0,5"/>
-        <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True">
+        <TextBlock Text="{Binding Game.AwayTeam.TeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
+        <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True"  Width="1050">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="*"/>
+                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="160"/>
+                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="200"/>
                 <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                 <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                 <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
@@ -82,11 +84,11 @@
                 <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid ItemsSource="{Binding AwayTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True">
+        <DataGrid ItemsSource="{Binding AwayTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40"/>
-                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*"/>
-                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
+                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="*"/>
+                <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="160"/>
+                <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="200"/>
                 <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="50"/>
                 <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="50"/>
                 <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="50"/>
@@ -102,5 +104,6 @@
                 <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
             </DataGrid.Columns>
         </DataGrid>
+        </StackPanel>
     </StackPanel>
 </UserControl>
