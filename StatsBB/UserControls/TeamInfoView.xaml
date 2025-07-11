@@ -5,6 +5,7 @@
     <UserControl.Resources>
         <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
         <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="TeamColorButtonStyle" TargetType="RadioButton">
             <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="50"/>
@@ -54,7 +55,11 @@
         </Grid.ColumnDefinitions>
         <Border Grid.Column="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" Padding="20 0 20 0" Background="LightGray">
             <StackPanel >
-            <TextBlock Text="HOME" FontWeight="Bold" FontSize="36" Margin="5" Foreground="Gray" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="HOME" FontWeight="Bold" FontSize="36" Margin="5" Foreground="Gray"/>
+                <TextBlock Text="✔" FontSize="36" Margin="5,0,0,0" Foreground="Green"
+                           Visibility="{Binding HomeTeamConfirmed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
             <TextBlock Text="Team Name" FontWeight="Bold" FontSize="14" Margin="5"/>
             <TextBox Text="{Binding HomeTeamName, UpdateSourceTrigger=PropertyChanged}" Height="30" FontSize="18"  Width="250" HorizontalAlignment="Left"/>
             <TextBlock Text="Team Color" FontWeight="Bold" FontSize="14" Margin="5"/>
@@ -108,13 +113,17 @@
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Button Content="Load Team" Command="{Binding LoadHomeTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
                 <Button Content="Save Team" Command="{Binding SaveHomeTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
-                <Button Content="Confirm Team" Command="{Binding ConfirmHomeTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
+                <Button Content="Confirm Team" Command="{Binding ConfirmHomeTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5" IsEnabled="{Binding HomeColorEnabled}"/>
             </StackPanel>
         </StackPanel>
         </Border>
         <Border Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="10" Padding="20 0 20 0" Background="LightGray">
             <StackPanel>
-            <TextBlock Text="AWAY" FontWeight="Bold" FontSize="36" Margin="5" Foreground="Gray" HorizontalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Text="AWAY" FontWeight="Bold" FontSize="36" Margin="5" Foreground="Gray"/>
+                <TextBlock Text="✔" FontSize="36" Margin="5,0,0,0" Foreground="Green"
+                           Visibility="{Binding AwayTeamConfirmed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+            </StackPanel>
             <TextBlock Text="Team Name" FontWeight="Bold" FontSize="14" Margin="5"/>
             <TextBox Text="{Binding AwayTeamName, UpdateSourceTrigger=PropertyChanged}" Height="30" FontSize="18" Width="250" HorizontalAlignment="Left"/>
             <TextBlock Text="Team Color" FontWeight="Bold" FontSize="14" Margin="5"/>
@@ -168,7 +177,7 @@
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Button Content="Load Team" Command="{Binding LoadAwayTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
                 <Button Content="Save Team" Command="{Binding SaveAwayTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
-                <Button Content="Confirm Team" Command="{Binding ConfirmAwayTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5"/>
+                <Button Content="Confirm Team" Command="{Binding ConfirmAwayTeamCommand}" FontSize="16" FontWeight="Bold" Padding="10" Margin="5" IsEnabled="{Binding AwayColorEnabled}"/>
             </StackPanel>
         </StackPanel>
         </Border>
