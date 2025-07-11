@@ -60,6 +60,8 @@ public class StatsTabViewModel : ViewModelBase
                 result.Points += p.Points;
                 result.Assists += p.Assists;
                 result.Rebounds += p.Rebounds;
+                result.OffensiveRebounds += p.OffensiveRebounds;
+                result.DefensiveRebounds += p.DefensiveRebounds;
                 result.Blocks += p.Blocks;
                 result.Steals += p.Steals;
                 result.Turnovers += p.Turnovers;
@@ -76,6 +78,8 @@ public class StatsTabViewModel : ViewModelBase
         if (team != null)
         {
             result.Rebounds += team.TeamRebounds;
+            result.OffensiveRebounds += team.OffensiveTeamRebounds;
+            result.DefensiveRebounds += team.DefensiveTeamRebounds;
             result.Turnovers += team.TeamTurnovers;
             result.FoulsCommitted += team.CoachFouls + team.BenchFouls;
         }
@@ -93,6 +97,8 @@ public class StatsTabViewModel : ViewModelBase
         {
             LastName = "TEAM",
             Rebounds = team.TeamRebounds,
+            OffensiveRebounds = team.OffensiveTeamRebounds,
+            DefensiveRebounds = team.DefensiveTeamRebounds,
             Turnovers = team.TeamTurnovers,
             FoulsCommitted = team.CoachFouls + team.BenchFouls
         };
