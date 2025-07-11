@@ -248,6 +248,8 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility GamePanelVisibility =>
         IsGamePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    public bool AreTeamsConfirmed => TeamInfoVM.AreTeamsConfirmed;
+
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
@@ -416,6 +418,12 @@ public class MainWindowViewModel : ViewModelBase
                 TeamBShortName = TeamBInfo.ShortName;
             if (e.PropertyName == nameof(TeamInfo.Color) && TeamBColorOption != TeamBInfo.Color)
                 TeamBColorOption = TeamBInfo.Color;
+        };
+
+        TeamInfoVM.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(TeamInfoViewModel.AreTeamsConfirmed))
+                OnPropertyChanged(nameof(AreTeamsConfirmed));
         };
 
         Game.HomeTeam.Players.CollectionChanged += TeamPlayersChanged;
