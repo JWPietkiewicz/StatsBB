@@ -285,7 +285,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
-    
+
     private bool _isJumpBallPanelVisible;
     public bool IsJumpBallPanelVisible
     {
@@ -644,13 +644,13 @@ public class MainWindowViewModel : ViewModelBase
         IsAssistTeamSelectionActive = false;
         IsAssistSelectionActive = true;
     }
-    
+
     private void SelectFreeThrowTeam(bool teamA)
     {
         _freeThrowTeamIsTeamA = teamA;
         IsFreeThrowTeamSelectionActive = false;
         BeginFreeThrowsAwardedSelection();
-
+    }
     private void SelectStealTeam(bool teamA)
     {
         _stealTeamIsTeamA = teamA;
@@ -813,6 +813,7 @@ public class MainWindowViewModel : ViewModelBase
 
         UpdateStartingFiveLists();
     }
+
 
     private void RegenerateTeamsFromInfo()
     {
@@ -994,7 +995,7 @@ public class MainWindowViewModel : ViewModelBase
         _currentPlayActions.Clear();
 
         if (actionType == ActionButtonMode.Turnover)
-        {  
+        {
             _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
             IsTurnoverSelectionActive = true;
         }
@@ -1323,7 +1324,7 @@ public class MainWindowViewModel : ViewModelBase
                 var assist = assistPlayer != null
                 ? $"Assist by {assistPlayer.Number}.{assistPlayer.Name}"
                 : "No assist";
-            Debug.WriteLine($"{GameClockService.TimeLeftString} {assist}");
+                Debug.WriteLine($"{GameClockService.TimeLeftString} {assist}");
                 if (assistPlayer != null)
                     _currentPlayActions.Add(CreateAction(assistPlayer, "ASSIST"));
             }
@@ -2575,11 +2576,8 @@ public class MainWindowViewModel : ViewModelBase
         UseTimeout(true);
         AddPlayCard(new[] { CreateTeamAction(true, "TIMEOUT") });
     }
-
-
-
-
 }
+
 
 
 public class FreeThrowResult : ViewModelBase
