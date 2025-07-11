@@ -28,6 +28,8 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamASubOut { get; } = new();
     public ObservableCollection<Player> TeamBSubIn { get; } = new();
     public ObservableCollection<Player> TeamBSubOut { get; } = new();
+    public ObservableCollection<Player> TeamAJumpingPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBJumpingPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleCourtAssistPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleBenchAssistPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtReboundPlayers { get; } = new();
@@ -234,6 +236,7 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StartingFivePanelVisibility =>
         IsStartingFivePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+
     private bool _isGamePanelVisible = true;
     public bool IsGamePanelVisible
     {
@@ -249,11 +252,44 @@ public class MainWindowViewModel : ViewModelBase
         IsGamePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
     public bool AreTeamsConfirmed => TeamInfoVM.AreTeamsConfirmed;
+    
+    private bool _isJumpBallPanelVisible;
+    public bool IsJumpBallPanelVisible
+    {
+        get => _isJumpBallPanelVisible;
+        set
+        {
+            _isJumpBallPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallPanelVisibility));
+        }
+    }
+    public Visibility JumpBallPanelVisibility =>
+        IsJumpBallPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isJumpWinnerPanelVisible;
+    public bool IsJumpWinnerPanelVisible
+    {
+        get => _isJumpWinnerPanelVisible;
+        set
+        {
+            _isJumpWinnerPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpWinnerPanelVisibility));
+        }
+    }
+    public Visibility JumpWinnerPanelVisibility =>
+        IsJumpWinnerPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    public bool IsJumpEnabled =>
+        TeamAJumpingPlayers.Count == 1 && TeamBJumpingPlayers.Count == 1;
 
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
     public ICommand NoAssistCommand { get; }
+    public ICommand AssistTeamACommand { get; }
+    public ICommand AssistTeamBCommand { get; }
     public ICommand ReboundTeamACommand { get; }
     public ICommand ReboundTeamBCommand { get; }
     public ICommand BlockCommand { get; }
@@ -267,6 +303,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartFreeThrowsCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
+    public ICommand SelectReboundTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
     public ICommand StartSubstitutionCommand { get; }
     public ICommand StartStartingFiveCommand { get; }
@@ -279,6 +316,11 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
     public ICommand SetupGameCommand { get; }
+    public ICommand StartJumpBallCommand { get; }
+    public ICommand ToggleJumpPlayerCommand { get; }
+    public ICommand ConfirmJumpBallCommand { get; }
+    public ICommand JumpTeamACommand { get; }
+    public ICommand JumpTeamBCommand { get; }
     public ICommand CoachTechnicalTeamACommand { get; }
     public ICommand CoachTechnicalTeamBCommand { get; }
     public ICommand BenchTechnicalTeamACommand { get; }
@@ -315,6 +357,8 @@ public class MainWindowViewModel : ViewModelBase
             _ => CompleteAssistSelection(null),
             _ => IsAssistSelectionActive
         );
+        AssistTeamACommand = new RelayCommand(_ => SelectAssistTeam(true), _ => IsAssistTeamSelectionActive);
+        AssistTeamBCommand = new RelayCommand(_ => SelectAssistTeam(false), _ => IsAssistTeamSelectionActive);
         NoStealCommand = new RelayCommand(
             _ => CompleteStealSelection(null),
             _ => IsStealSelectionActive
@@ -324,12 +368,16 @@ public class MainWindowViewModel : ViewModelBase
             param => OnFoulTypeSelected(param?.ToString())
         );
 
+        SelectReboundTypeCommand = new RelayCommand(
+            param => OnReboundTypeSelected(param?.ToString())
+        );
+
         SelectFreeThrowCountCommand = new RelayCommand(
             param => SelectedFreeThrowCount = Convert.ToInt32(param)
         );
 
-        ReboundTeamACommand = new RelayCommand(_ => CompleteReboundSelection("TeamA"), _ => IsReboundSelectionActive);
-        ReboundTeamBCommand = new RelayCommand(_ => CompleteReboundSelection("TeamB"), _ => IsReboundSelectionActive);
+        ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
+        ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
     _ => EnterBlockerSelection(),
     _ => IsReboundSelectionActive
@@ -349,6 +397,11 @@ public class MainWindowViewModel : ViewModelBase
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
+        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall());
+        ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
+        ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
+        JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
+        JumpTeamBCommand = new RelayCommand(_ => CompleteJumpBall(false));
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
         StartAssistCommand = new RelayCommand(_ => BeginAssist());
         StartReboundCommand = new RelayCommand(_ => BeginRebound());
@@ -528,6 +581,20 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginAssist()
     {
         ResetSelectionState();
+        if (_pendingShooter == null)
+        {
+            IsAssistTeamSelectionActive = true;
+        }
+        else
+        {
+            IsAssistSelectionActive = true;
+        }
+    }
+
+    private void SelectAssistTeam(bool teamA)
+    {
+        _assistTeamIsTeamA = teamA;
+        IsAssistTeamSelectionActive = false;
         IsAssistSelectionActive = true;
     }
 
@@ -716,9 +783,12 @@ public class MainWindowViewModel : ViewModelBase
     private bool _freeThrowTeamIsTeamA;
     private bool _isRebound = true;
     private bool _pendingFreeThrowRebound;
+    private object? _pendingReboundSource;
+    private bool? _pendingReboundOffensive;
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
+    private bool _assistTeamIsTeamA;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
@@ -789,7 +859,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (IsReboundSelectionActive)
         {
-            CompleteReboundSelection(player);
+            OnReboundTargetSelected(player);
             return;
         }
 
@@ -857,6 +927,38 @@ public class MainWindowViewModel : ViewModelBase
         {
             ResetSelectionState();
         }
+    }
+
+    private void OnReboundTargetSelected(object reboundSource)
+    {
+        _pendingReboundSource = reboundSource;
+        IsReboundSelectionActive = false;
+
+        if (_pendingShooter == null)
+        {
+            // Manual rebound flow – ask for offensive/defensive type
+            IsReboundTypeSelectionActive = true;
+        }
+        else
+        {
+            // Rebound after a missed/blocked shot – use automatic logic
+            CompleteReboundSelection(reboundSource);
+            _pendingReboundSource = null;
+        }
+    }
+
+    private void OnReboundTypeSelected(string? reboundType)
+    {
+        if (_pendingReboundSource == null || string.IsNullOrWhiteSpace(reboundType))
+            return;
+
+        _pendingReboundOffensive = reboundType.ToLowerInvariant() == "offensive";
+        IsReboundTypeSelectionActive = false;
+
+        CompleteReboundSelection(_pendingReboundSource);
+
+        _pendingReboundSource = null;
+        _pendingReboundOffensive = null;
     }
 
     private void OnFoulTypeSelected(string? foulType)
@@ -1104,7 +1206,11 @@ public class MainWindowViewModel : ViewModelBase
         SelectedPoint = null;
         _pendingShooter = null;
         IsAssistSelectionActive = false;
+        IsAssistTeamSelectionActive = false;
         IsReboundSelectionActive = false;
+        IsReboundTypeSelectionActive = false;
+        _pendingReboundSource = null;
+        _pendingReboundOffensive = null;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
         IsQuickShotSelectionActive = false;
@@ -1143,11 +1249,19 @@ public class MainWindowViewModel : ViewModelBase
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
+        else if (assistPlayer != null)
+        {
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Assist by {assistPlayer.Number}.{assistPlayer.Name}");
+            AddPlayCard(new[] { CreateAction(assistPlayer, "ASSIST") });
+            _actionProcessor.Process(ActionType.Assist, assistPlayer);
+            StatsVM.Refresh();
+        }
 
         _pendingShooter = null;
         SelectedAction = null;
         SelectedPoint = null;
         IsAssistSelectionActive = false;
+        IsAssistTeamSelectionActive = false;
     }
 
     private void CompleteReboundSelection(object? reboundSource)
@@ -1168,7 +1282,7 @@ public class MainWindowViewModel : ViewModelBase
             if (reboundSource is Player rp)
             {
                 _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
-                bool offensive = rp.IsTeamA == _pendingShooter.IsTeamA;
+                bool offensive = _pendingReboundOffensive ?? (rp.IsTeamA == _pendingShooter.IsTeamA);
                 _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
                 StatsVM.Refresh();
             }
@@ -1176,7 +1290,7 @@ public class MainWindowViewModel : ViewModelBase
             {
                 bool teamA = team == "TeamA";
                 _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
-                bool offensive = _pendingShooter != null && (_pendingShooter.IsTeamA == teamA);
+                bool offensive = _pendingReboundOffensive ?? (_pendingShooter != null && (_pendingShooter.IsTeamA == teamA));
                 var t = teamA ? Game.HomeTeam : Game.AwayTeam;
                 _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
                 StatsVM.Refresh();
@@ -1194,6 +1308,27 @@ public class MainWindowViewModel : ViewModelBase
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
             _actionProcessor.Process(ActionType.ShotMissed, _pendingShooter, null, _pendingIsThreePoint);
             StatsVM.Refresh();
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+        }
+        else
+        {
+            if (reboundSource is Player rp)
+            {
+                _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
+                bool offensive = _pendingReboundOffensive ?? false;
+                _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
+                StatsVM.Refresh();
+            }
+            else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
+            {
+                bool teamA = team == "TeamA";
+                _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
+                bool offensive = _pendingReboundOffensive ?? false;
+                var t = teamA ? Game.HomeTeam : Game.AwayTeam;
+                _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
+                StatsVM.Refresh();
+            }
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
@@ -1401,6 +1536,18 @@ public class MainWindowViewModel : ViewModelBase
     public bool IsPlayerSelectionActive => SelectedPoint != null && !string.IsNullOrEmpty(SelectedAction);
     public bool IsActionSelectionActive => SelectedPoint != null;
 
+    private bool _isAssistTeamSelectionActive;
+    public bool IsAssistTeamSelectionActive
+    {
+        get => _isAssistTeamSelectionActive;
+        set
+        {
+            _isAssistTeamSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AssistTeamPanelVisibility));
+        }
+    }
+
     private bool _isAssistSelectionActive;
     public bool IsAssistSelectionActive
     {
@@ -1414,6 +1561,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public Visibility AssistTeamPanelVisibility =>
+        IsAssistTeamSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private void UpdateAssistPlayerStyles()
     {
         EligibleCourtAssistPlayers.Clear();
@@ -1421,6 +1571,24 @@ public class MainWindowViewModel : ViewModelBase
 
         if (_pendingShooter == null)
         {
+            if (!IsAssistSelectionActive)
+            {
+                OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
+                OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
+                return;
+            }
+
+            var players = _assistTeamIsTeamA ? TeamAPlayers : TeamBPlayers;
+            foreach (var vm in players)
+            {
+                vm.SetAssistSelectionMode(IsAssistSelectionActive);
+                vm.IsSelectedAsAssist = false;
+                if (vm.Player.IsActive)
+                    EligibleCourtAssistPlayers.Add(vm);
+                else
+                    EligibleBenchAssistPlayers.Add(vm);
+            }
+
             OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
             OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
             return;
@@ -1507,6 +1675,21 @@ public class MainWindowViewModel : ViewModelBase
 
     public Visibility ReboundPanelVisibility =>
         IsReboundSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isReboundTypeSelectionActive;
+    public bool IsReboundTypeSelectionActive
+    {
+        get => _isReboundTypeSelectionActive;
+        set
+        {
+            _isReboundTypeSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ReboundTypePanelVisibility));
+        }
+    }
+
+    public Visibility ReboundTypePanelVisibility =>
+        IsReboundTypeSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     private bool _isBlockerSelectionActive;
     public bool IsBlockerSelectionActive
@@ -2082,6 +2265,50 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(TeamAStartingBenchPlayers));
         OnPropertyChanged(nameof(TeamBStartingFivePlayers));
         OnPropertyChanged(nameof(TeamBStartingBenchPlayers));
+    }
+
+    private void BeginJumpBall()
+    {
+        TeamAJumpingPlayers.Clear();
+        TeamBJumpingPlayers.Clear();
+        IsJumpBallPanelVisible = true;
+        OnPropertyChanged(nameof(IsJumpEnabled));
+    }
+
+    private void ToggleJumpPlayer(Player? player)
+    {
+        if (player == null) return;
+        var list = player.IsTeamA ? TeamAJumpingPlayers : TeamBJumpingPlayers;
+
+        if (list.Contains(player))
+            list.Remove(player);
+        else
+        {
+            list.Clear();
+            list.Add(player);
+        }
+
+        OnPropertyChanged(nameof(IsJumpEnabled));
+    }
+
+    private void ConfirmJumpBall()
+    {
+        IsJumpBallPanelVisible = false;
+        IsJumpWinnerPanelVisible = true;
+    }
+
+    private void CompleteJumpBall(bool teamAWon)
+    {
+        AddPlayCard(new[]
+        {
+            CreateTeamAction(teamAWon, "JUMP BALL WON"),
+            CreateTeamAction(!teamAWon, "JUMP BALL LOST")
+        });
+
+        TeamAJumpingPlayers.Clear();
+        TeamBJumpingPlayers.Clear();
+        IsJumpWinnerPanelVisible = false;
+        OnPropertyChanged(nameof(IsJumpEnabled));
     }
 
     // ---- PlayByPlay log helpers ----

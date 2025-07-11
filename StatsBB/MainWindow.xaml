@@ -275,6 +275,8 @@
             <Setter Property="Height" Value="60" />
             <Setter Property="Width" Value="280" />
         </Style>
+        <!-- REBOUND TYPE BUTTON -->
+        <Style x:Key="ReboundTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}"/>
         <!-- FREE THROW COUNT BUTTON -->
         <Style x:Key="FreeThrowCountButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}">
             <Setter Property="Width" Value="60" />
@@ -542,6 +544,25 @@
                             </Grid>
                         </Grid>
 
+                        <!-- Assist Team Selection -->
+                        <Grid Visibility="{Binding AssistTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0">
+                                        <Button Content="{Binding TeamAName}" Command="{Binding AssistTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                    </Border>
+                                    <Border Grid.Column="1">
+                                        <Button Content="{Binding TeamBName}" Command="{Binding AssistTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
                         <!-- Assist Panel -->
                         <Grid Visibility="{Binding NoAssistButtonVisibility}"
       Panel.ZIndex="10" Background="#ccFFFFFF">
@@ -722,6 +743,16 @@ Margin="4" />
                                     </StackPanel>
                                 </Border>
                             </Grid>
+                        </Grid>
+
+                        <Grid Visibility="{Binding ReboundTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10" Width="400" Height="200">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="TYPE OF REBOUND" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
+                                <WrapPanel HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource ReboundTypeButtonStyle}" Content="OFFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="offensive"/>
+                                    <Button Style="{StaticResource ReboundTypeButtonStyle}" Content="DEFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="defensive"/>
+                                </WrapPanel>
+                            </StackPanel>
                         </Grid>
 
                         <Grid Visibility="{Binding BlockerSelectionVisibility}"
@@ -1310,6 +1341,127 @@ Margin="4" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
+                        <!-- Jump Ball Panel -->
+                        <Grid Visibility="{Binding JumpBallPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="160"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="400" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="COURT" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="JUMPING" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="3" Text="JUMPING" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="4" Text="COURT" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <!-- Team A Court -->
+                                    <Border Grid.Row="1" Grid.Column="0" Background="#cceeeeee" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamACourtPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <!-- Team A Jumping -->
+                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamAJumpingPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <!-- Jump Button -->
+                                    <WrapPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Button Content="JUMP" Width="60" Height="60" FontSize="16" FontWeight="Bold" Background="DarkGreen" Foreground="White" Command="{Binding ConfirmJumpBallCommand}" IsEnabled="{Binding IsJumpEnabled}"/>
+                                    </WrapPanel>
+
+                                    <!-- Team B Jumping -->
+                                    <Border Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamBJumpingPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <!-- Team B Court -->
+                                    <Border Grid.Row="1" Grid.Column="4" Background="#cceeeeee" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamBCourtPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                        <!-- Jump Winner Panel -->
+                        <Grid Visibility="{Binding JumpWinnerPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="WHO WON?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                                        <Button Content="{Binding TeamAName}" Command="{Binding JumpTeamACommand}" Style="{StaticResource TeamAReboundStyle}"/>
+                                    </Border>
+                                    <Border Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
+                                        <Button Content="{Binding TeamBName}" Command="{Binding JumpTeamBCommand}" Style="{StaticResource TeamBReboundStyle}"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
                         <!-- Starting Five Panel -->
                         <Grid Visibility="{Binding StartingFivePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
@@ -1648,7 +1800,7 @@ Margin="4" />
                         <Button Content="FOUL (E)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
                         <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
                         <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
-                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}"/>
+                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
                         <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
                         <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}"/>
                         <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
