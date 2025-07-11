@@ -568,8 +568,9 @@ public class MainWindowViewModel : ViewModelBase
         period.Status = PeriodStatus.Ended;
 
         bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
+        bool overtime = !period.IsRegular;
 
-        if (lastRegular && Game.HomeTeam.Points != Game.AwayTeam.Points)
+        if ((lastRegular || overtime) && Game.HomeTeam.Points != Game.AwayTeam.Points)
         {
             GameClockService.SetState("FINALIZE GAME", true);
             return;
