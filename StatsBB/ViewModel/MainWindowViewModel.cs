@@ -251,6 +251,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartFreeThrowsCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
+    public ICommand SelectReboundTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
     public ICommand StartSubstitutionCommand { get; }
     public ICommand StartStartingFiveCommand { get; }
@@ -307,12 +308,16 @@ public class MainWindowViewModel : ViewModelBase
             param => OnFoulTypeSelected(param?.ToString())
         );
 
+        SelectReboundTypeCommand = new RelayCommand(
+            param => OnReboundTypeSelected(param?.ToString())
+        );
+
         SelectFreeThrowCountCommand = new RelayCommand(
             param => SelectedFreeThrowCount = Convert.ToInt32(param)
         );
 
-        ReboundTeamACommand = new RelayCommand(_ => CompleteReboundSelection("TeamA"), _ => IsReboundSelectionActive);
-        ReboundTeamBCommand = new RelayCommand(_ => CompleteReboundSelection("TeamB"), _ => IsReboundSelectionActive);
+        ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
+        ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
     _ => EnterBlockerSelection(),
     _ => IsReboundSelectionActive
@@ -647,6 +652,8 @@ public class MainWindowViewModel : ViewModelBase
     private bool _freeThrowTeamIsTeamA;
     private bool _isRebound = true;
     private bool _pendingFreeThrowRebound;
+    private object? _pendingReboundSource;
+    private bool? _pendingReboundOffensive;
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
@@ -720,7 +727,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (IsReboundSelectionActive)
         {
-            CompleteReboundSelection(player);
+            OnReboundTargetSelected(player);
             return;
         }
 
@@ -788,6 +795,27 @@ public class MainWindowViewModel : ViewModelBase
         {
             ResetSelectionState();
         }
+    }
+
+    private void OnReboundTargetSelected(object reboundSource)
+    {
+        _pendingReboundSource = reboundSource;
+        IsReboundSelectionActive = false;
+        IsReboundTypeSelectionActive = true;
+    }
+
+    private void OnReboundTypeSelected(string? reboundType)
+    {
+        if (_pendingReboundSource == null || string.IsNullOrWhiteSpace(reboundType))
+            return;
+
+        _pendingReboundOffensive = reboundType.ToLowerInvariant() == "offensive";
+        IsReboundTypeSelectionActive = false;
+
+        CompleteReboundSelection(_pendingReboundSource);
+
+        _pendingReboundSource = null;
+        _pendingReboundOffensive = null;
     }
 
     private void OnFoulTypeSelected(string? foulType)
@@ -1036,6 +1064,9 @@ public class MainWindowViewModel : ViewModelBase
         _pendingShooter = null;
         IsAssistSelectionActive = false;
         IsReboundSelectionActive = false;
+        IsReboundTypeSelectionActive = false;
+        _pendingReboundSource = null;
+        _pendingReboundOffensive = null;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
         IsQuickShotSelectionActive = false;
@@ -1099,7 +1130,7 @@ public class MainWindowViewModel : ViewModelBase
             if (reboundSource is Player rp)
             {
                 _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
-                bool offensive = rp.IsTeamA == _pendingShooter.IsTeamA;
+                bool offensive = _pendingReboundOffensive ?? (rp.IsTeamA == _pendingShooter.IsTeamA);
                 _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
                 StatsVM.Refresh();
             }
@@ -1107,7 +1138,7 @@ public class MainWindowViewModel : ViewModelBase
             {
                 bool teamA = team == "TeamA";
                 _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
-                bool offensive = _pendingShooter != null && (_pendingShooter.IsTeamA == teamA);
+                bool offensive = _pendingReboundOffensive ?? (_pendingShooter != null && (_pendingShooter.IsTeamA == teamA));
                 var t = teamA ? Game.HomeTeam : Game.AwayTeam;
                 _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
                 StatsVM.Refresh();
@@ -1438,6 +1469,21 @@ public class MainWindowViewModel : ViewModelBase
 
     public Visibility ReboundPanelVisibility =>
         IsReboundSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isReboundTypeSelectionActive;
+    public bool IsReboundTypeSelectionActive
+    {
+        get => _isReboundTypeSelectionActive;
+        set
+        {
+            _isReboundTypeSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(ReboundTypePanelVisibility));
+        }
+    }
+
+    public Visibility ReboundTypePanelVisibility =>
+        IsReboundTypeSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     private bool _isBlockerSelectionActive;
     public bool IsBlockerSelectionActive
