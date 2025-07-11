@@ -67,8 +67,16 @@ public class TeamInfoViewModel : ViewModelBase
         SaveHomeTeamCommand = new RelayCommand(_ => SaveTeam(Game.HomeTeam));
         LoadAwayTeamCommand = new RelayCommand(_ => LoadTeam(Game.AwayTeam, false));
         SaveAwayTeamCommand = new RelayCommand(_ => SaveTeam(Game.AwayTeam));
-        ConfirmHomeTeamCommand = new RelayCommand(_ => HomeTeamConfirmed = true);
-        ConfirmAwayTeamCommand = new RelayCommand(_ => AwayTeamConfirmed = true);
+        ConfirmHomeTeamCommand = new RelayCommand(_ =>
+        {
+            HomeTeamConfirmed = true;
+            _main.RegenerateTeamsFromInfo();
+        });
+        ConfirmAwayTeamCommand = new RelayCommand(_ =>
+        {
+            AwayTeamConfirmed = true;
+            _main.RegenerateTeamsFromInfo();
+        });
     }
 
     private static void EnsurePlayers(Team team)
