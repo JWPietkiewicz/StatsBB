@@ -57,12 +57,6 @@ public class Player : INotifyPropertyChanged
 
     public void AddPoints(int points)
     {
-        if (points == 3)
-            AddShotMade(true);
-        else if (points == 2)
-            AddShotMade(false);
-        else
-            AddFreeThrowMade();
         Points += points;
     }
     public void AddAssist() => Assists++;
