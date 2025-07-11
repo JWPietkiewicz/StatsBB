@@ -271,6 +271,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public ICommand SelectActionCommand { get; }
     public ICommand NoAssistCommand { get; }
+    public ICommand AssistTeamACommand { get; }
+    public ICommand AssistTeamBCommand { get; }
     public ICommand ReboundTeamACommand { get; }
     public ICommand ReboundTeamBCommand { get; }
     public ICommand BlockCommand { get; }
@@ -336,6 +338,8 @@ public class MainWindowViewModel : ViewModelBase
             _ => CompleteAssistSelection(null),
             _ => IsAssistSelectionActive
         );
+        AssistTeamACommand = new RelayCommand(_ => SelectAssistTeam(true), _ => IsAssistTeamSelectionActive);
+        AssistTeamBCommand = new RelayCommand(_ => SelectAssistTeam(false), _ => IsAssistTeamSelectionActive);
         NoStealCommand = new RelayCommand(
             _ => CompleteStealSelection(null),
             _ => IsStealSelectionActive
@@ -502,6 +506,20 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginAssist()
     {
         ResetSelectionState();
+        if (_pendingShooter == null)
+        {
+            IsAssistTeamSelectionActive = true;
+        }
+        else
+        {
+            IsAssistSelectionActive = true;
+        }
+    }
+
+    private void SelectAssistTeam(bool teamA)
+    {
+        _assistTeamIsTeamA = teamA;
+        IsAssistTeamSelectionActive = false;
         IsAssistSelectionActive = true;
     }
 
@@ -693,6 +711,7 @@ public class MainWindowViewModel : ViewModelBase
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
+    private bool _assistTeamIsTeamA;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
@@ -1078,6 +1097,7 @@ public class MainWindowViewModel : ViewModelBase
         SelectedPoint = null;
         _pendingShooter = null;
         IsAssistSelectionActive = false;
+        IsAssistTeamSelectionActive = false;
         IsReboundSelectionActive = false;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
@@ -1117,11 +1137,19 @@ public class MainWindowViewModel : ViewModelBase
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
+        else if (assistPlayer != null)
+        {
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Assist by {assistPlayer.Number}.{assistPlayer.Name}");
+            AddPlayCard(new[] { CreateAction(assistPlayer, "ASSIST") });
+            _actionProcessor.Process(ActionType.Assist, assistPlayer);
+            StatsVM.Refresh();
+        }
 
         _pendingShooter = null;
         SelectedAction = null;
         SelectedPoint = null;
         IsAssistSelectionActive = false;
+        IsAssistTeamSelectionActive = false;
     }
 
     private void CompleteReboundSelection(object? reboundSource)
@@ -1375,6 +1403,18 @@ public class MainWindowViewModel : ViewModelBase
     public bool IsPlayerSelectionActive => SelectedPoint != null && !string.IsNullOrEmpty(SelectedAction);
     public bool IsActionSelectionActive => SelectedPoint != null;
 
+    private bool _isAssistTeamSelectionActive;
+    public bool IsAssistTeamSelectionActive
+    {
+        get => _isAssistTeamSelectionActive;
+        set
+        {
+            _isAssistTeamSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AssistTeamPanelVisibility));
+        }
+    }
+
     private bool _isAssistSelectionActive;
     public bool IsAssistSelectionActive
     {
@@ -1388,6 +1428,9 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public Visibility AssistTeamPanelVisibility =>
+        IsAssistTeamSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private void UpdateAssistPlayerStyles()
     {
         EligibleCourtAssistPlayers.Clear();
@@ -1395,6 +1438,24 @@ public class MainWindowViewModel : ViewModelBase
 
         if (_pendingShooter == null)
         {
+            if (!IsAssistSelectionActive)
+            {
+                OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
+                OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
+                return;
+            }
+
+            var players = _assistTeamIsTeamA ? TeamAPlayers : TeamBPlayers;
+            foreach (var vm in players)
+            {
+                vm.SetAssistSelectionMode(IsAssistSelectionActive);
+                vm.IsSelectedAsAssist = false;
+                if (vm.Player.IsActive)
+                    EligibleCourtAssistPlayers.Add(vm);
+                else
+                    EligibleBenchAssistPlayers.Add(vm);
+            }
+
             OnPropertyChanged(nameof(EligibleCourtAssistPlayers));
             OnPropertyChanged(nameof(EligibleBenchAssistPlayers));
             return;

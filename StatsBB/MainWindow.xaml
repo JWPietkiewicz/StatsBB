@@ -533,6 +533,25 @@
                             </Grid>
                         </Grid>
 
+                        <!-- Assist Team Selection -->
+                        <Grid Visibility="{Binding AssistTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0">
+                                        <Button Content="{Binding TeamAName}" Command="{Binding AssistTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                    </Border>
+                                    <Border Grid.Column="1">
+                                        <Button Content="{Binding TeamBName}" Command="{Binding AssistTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+
                         <!-- Assist Panel -->
                         <Grid Visibility="{Binding NoAssistButtonVisibility}"
       Panel.ZIndex="10" Background="#ccFFFFFF">
