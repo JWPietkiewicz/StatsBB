@@ -1113,8 +1113,8 @@ Margin="4" />
                             </Grid>
                         </Grid>
                         <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                            <StackPanel Orientation="Horizontal">
-                                
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 10">
+                                <CheckBox Content="Rebound After Miss" IsChecked="{Binding IsRebound}" FontSize="16" Margin="10"/>
                             </StackPanel>
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
