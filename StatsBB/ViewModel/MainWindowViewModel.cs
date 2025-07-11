@@ -499,6 +499,7 @@ public class MainWindowViewModel : ViewModelBase
         _actionProcessor.ProcessTeam(ActionType.CoachFoul, t);
         StatsVM.Refresh();
         _defaultFreeThrows = 1;
+        IsRebound = false;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
     }
@@ -513,6 +514,7 @@ public class MainWindowViewModel : ViewModelBase
         _actionProcessor.ProcessTeam(ActionType.BenchFoul, t);
         StatsVM.Refresh();
         _defaultFreeThrows = 1;
+        IsRebound = false;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
     }
@@ -643,6 +645,8 @@ public class MainWindowViewModel : ViewModelBase
     private string? _foulType;
     private int _defaultFreeThrows;
     private bool _freeThrowTeamIsTeamA;
+    private bool _isRebound = true;
+    private bool _pendingFreeThrowRebound;
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
@@ -800,6 +804,7 @@ public class MainWindowViewModel : ViewModelBase
 
         var lowerType = foulType.ToLowerInvariant();
         _defaultFreeThrows = 0;
+        IsRebound = !(lowerType.Contains("technical") || lowerType.Contains("unsportsmanlike"));
 
         switch (lowerType)
         {
@@ -867,6 +872,8 @@ public class MainWindowViewModel : ViewModelBase
         SelectedFreeThrowShooter = null;
         SelectedFreeThrowAssist = null;
         _defaultFreeThrows = 0;
+        _pendingFreeThrowRebound = false;
+        IsRebound = false;
         EligibleFreeThrowCourtPlayers.Clear();
         EligibleFreeThrowBenchPlayers.Clear();
         EligibleTeamACourtFoulCommitterPlayers.Clear();
@@ -1105,6 +1112,15 @@ public class MainWindowViewModel : ViewModelBase
                 _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
                 StatsVM.Refresh();
             }
+            if (_pendingFreeThrowRebound)
+            {
+                AddPlayCard(_currentPlayActions.ToList());
+                _currentPlayActions.Clear();
+                _pendingFreeThrowRebound = false;
+                ResetSelectionState();
+                return;
+            }
+
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MISSED");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
             _actionProcessor.Process(ActionType.ShotMissed, _pendingShooter, null, _pendingIsThreePoint);
@@ -1688,6 +1704,16 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public bool IsRebound
+    {
+        get => _isRebound;
+        set
+        {
+            _isRebound = value;
+            OnPropertyChanged();
+        }
+    }
+
     public Visibility FreeThrowsPanelVisibility =>
         IsFreeThrowsSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
@@ -1695,6 +1721,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         IsFreeThrowsAwardedSelectionActive = false;
         SelectedFreeThrowAssist = null;
+        _pendingFreeThrowRebound = false;
 
         if (count <= 0)
         {
@@ -1735,6 +1762,7 @@ public class MainWindowViewModel : ViewModelBase
             var made = FreeThrowResultRows.Count(r => r.Result == "MADE");
             var missed = FreeThrowResultRows.Count(r => r.Result == "MISSED");
 
+            var actions = new List<PlayActionViewModel>();
             if (_pendingShooter != null)
             {
                 Debug.WriteLine($"{GameClockService.TimeLeftString} Free throws by {_pendingShooter.Number}.{_pendingShooter.Name}: {made} made, {missed} missed");
@@ -1742,8 +1770,6 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     Debug.WriteLine($"{GameClockService.TimeLeftString} Assist by {SelectedFreeThrowAssist.Number}.{SelectedFreeThrowAssist.Name}");
                 }
-
-                var actions = new List<PlayActionViewModel>();
                 foreach (var r in FreeThrowResultRows)
                 {
                     actions.Add(CreateAction(_pendingShooter, $"FTA {r.Result}"));
@@ -1760,10 +1786,23 @@ public class MainWindowViewModel : ViewModelBase
                     GameState.TeamBScore = Game.AwayTeam.Points;
                     StatsVM.Refresh();
                 }
-                AddPlayCard(actions);
             }
 
-            ResetFoulState();
+            var lastResult = FreeThrowResultRows.Last().Result;
+            AddPlayCard(actions);
+
+            if (IsRebound && lastResult == "MISSED")
+            {
+                var shooter = _pendingShooter;
+                ResetFoulState();
+                _pendingShooter = shooter;
+                _pendingFreeThrowRebound = true;
+                BeginRebound();
+            }
+            else
+            {
+                ResetFoulState();
+            }
         }
     }
 

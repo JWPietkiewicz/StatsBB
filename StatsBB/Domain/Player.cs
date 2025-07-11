@@ -68,6 +68,8 @@ public class Player : INotifyPropertyChanged
     public int ShotsMade2pt { get; set; }
     public int ShotAttempts3pt { get; set; }
     public int ShotsMade3pt { get; set; }
+    public int FieldGoalsMade => ShotsMade2pt + ShotsMade3pt;
+    public int FieldGoalsAttempted => ShotAttempts2pt + ShotAttempts3pt;
     public int FreeThrowsAttempted { get; set; }
     public int FreeThrowsMade { get; set; }
 

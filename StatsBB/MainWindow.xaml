@@ -331,6 +331,48 @@
         <converters:IsTeamAToBenchStyleConverter x:Key="BenchPlayerStyleConverter"
                                      TeamAStyle="{StaticResource BenchAPlayerButtonStyle}"
                                      TeamBStyle="{StaticResource BenchBPlayerButtonStyle}" po:Freeze="False" />
+        <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <Border x:Name="Border"
+                                Width="24" Height="24"
+                                BorderBrush="Gray" BorderThickness="2"
+                                CornerRadius="4"
+                                Background="White"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0">
+                                <Path x:Name="CheckMark"
+                                  Visibility="Collapsed"
+                                  Stroke="Green"
+                                  StrokeThickness="2"
+                                  Data="M 4 10 L 8 14 L 16 6" />
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="Border" Property="Background" Value="#E0FFE0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
+                                <Setter Property="Foreground" Value="Gray"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -1113,9 +1155,6 @@ Margin="4" />
                             </Grid>
                         </Grid>
                         <Grid Visibility="{Binding FreeThrowsPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                            <StackPanel Orientation="Horizontal">
-                                
-                            </StackPanel>
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
@@ -1147,6 +1186,9 @@ Margin="4" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox Content="Rebound?" IsChecked="{Binding IsRebound}" Style="{StaticResource ModernCheckBoxStyle}" Margin="5,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="Shooter" FontSize="22" FontWeight="Bold" Margin="0 0 0 6" HorizontalAlignment="Center"/>
