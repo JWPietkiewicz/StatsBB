@@ -601,24 +601,13 @@ public class MainWindowViewModel : ViewModelBase
         var home = Game.HomeTeam.Players.Where(p => p.IsPlaying).ToList();
         var away = Game.AwayTeam.Players.Where(p => p.IsPlaying).ToList();
 
-        int s5 = 0;
         foreach (var p in home)
         {
-            bool starter = s5 < 5;
-            p.IsActive = starter;
-            p.S5 = starter;
-            s5++;
             p.IsTeamA = true;
             Players.Add(p);
         }
-
-        s5 = 0;
         foreach (var p in away)
         {
-            bool starter = s5 < 5;
-            p.IsActive = starter;
-            p.S5 = starter;
-            s5++;
             p.IsTeamA = false;
             Players.Add(p);
         }

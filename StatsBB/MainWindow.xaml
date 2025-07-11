@@ -1264,11 +1264,11 @@ Margin="4" />
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="240"/>
                                         <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="80"/>
                                         <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="240"/>
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="30" />
@@ -1280,10 +1280,10 @@ Margin="4" />
                                     <TextBlock Grid.Row="0" Grid.Column="4" Text="BENCH" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
                                     <Border Grid.Row="1" Grid.Column="0" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
-                                        <ItemsControl ItemsSource="{Binding TeamAStartingBenchPlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <ItemsControl ItemsSource="{Binding TeamAStartingBenchPlayers}" VerticalAlignment="Center" Margin="10">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360" HorizontalAlignment="Right"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1297,7 +1297,7 @@ Margin="4" />
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </Border>
-                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2" Background="#cceeeeee">
                                         <ItemsControl ItemsSource="{Binding TeamAStartingFivePlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -1340,10 +1340,10 @@ Margin="4" />
                                     </Border>
 
                                     <Border Grid.Row="1" Grid.Column="4" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
-                                        <ItemsControl ItemsSource="{Binding TeamBStartingBenchPlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <ItemsControl ItemsSource="{Binding TeamBStartingBenchPlayers}" VerticalAlignment="Center" Margin="10">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="LeftToRight" Height="360" HorizontalAlignment="Left"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1391,10 +1391,10 @@ Margin="4" />
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="8" Text="BENCH"/>
                                     <!-- Team A Bench -->
                                     <Border Grid.Row="1" Grid.Column="0" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
-                                        <ItemsControl ItemsSource="{Binding TeamABenchPlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <ItemsControl ItemsSource="{Binding TeamABenchPlayers}" VerticalAlignment="Center" Margin="0 0 5 0">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360" HorizontalAlignment="Right"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1534,10 +1534,10 @@ Margin="4" />
                                     <!-- Team B Bench -->
                                     <Border Grid.Row="1" Grid.Column="8" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
 
-                                        <ItemsControl ItemsSource="{Binding TeamBBenchPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <ItemsControl ItemsSource="{Binding TeamBBenchPlayers}"  VerticalAlignment="Center" Margin="5 0 0 0">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel Orientation="Vertical" FlowDirection="LeftToRight" Height="360"/>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="LeftToRight" Height="360" HorizontalAlignment="Left"/>
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
@@ -1591,19 +1591,19 @@ Margin="4" />
                         </ItemsControl>
                     </Border>
                     <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="5" Margin="0,10">
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5" Width="1000">
                         <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
                         <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
                         <Button Content="FOUL (E)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
                         <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
                         <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
-                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" IsEnabled="False"/>
+                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}"/>
+                        <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
                         <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}"/>
-                            <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}" IsEnabled="False"/>
-                            <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}" IsEnabled="False"/>
-                            <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}" IsEnabled="False"/>
-                            <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}" IsEnabled="False"/>
-                            <Button Content="STEAL" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}" IsEnabled="False"/>
+                        <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
+                        <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
+                        <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
+                        <Button Content="STEAL" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
                     </WrapPanel>
                     </Border>
                 </Grid>
