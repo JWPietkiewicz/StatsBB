@@ -471,6 +471,9 @@ public class MainWindowViewModel : ViewModelBase
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
         GameState.AddFoul(isTeamA);
+        var t = isTeamA ? Game.HomeTeam : Game.AwayTeam;
+        _actionProcessor.ProcessTeam(ActionType.CoachFoul, t);
+        StatsVM.Refresh();
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -482,6 +485,9 @@ public class MainWindowViewModel : ViewModelBase
         var isTeamA = team == "Team A";
         AddPlayCard(new[] { CreateTeamAction(isTeamA, "FOUL TECHNICAL") });
         GameState.AddFoul(isTeamA);
+        var t = isTeamA ? Game.HomeTeam : Game.AwayTeam;
+        _actionProcessor.ProcessTeam(ActionType.BenchFoul, t);
+        StatsVM.Refresh();
         _defaultFreeThrows = 1;
         _freeThrowTeamIsTeamA = team != "Team A";
         BeginFreeThrowsAwardedSelection();
@@ -1074,6 +1080,10 @@ public class MainWindowViewModel : ViewModelBase
             {
                 bool teamA = team == "TeamA";
                 _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
+                bool offensive = _pendingShooter != null && (_pendingShooter.IsTeamA == teamA);
+                var t = teamA ? Game.HomeTeam : Game.AwayTeam;
+                _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
+                StatsVM.Refresh();
             }
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MISSED");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));

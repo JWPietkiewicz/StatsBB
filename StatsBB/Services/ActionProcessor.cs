@@ -22,6 +22,11 @@ public class ActionProcessor
         return null;
     }
 
+    private Team? GetTeam(bool isHome)
+    {
+        return isHome ? _game.HomeTeam : _game.AwayTeam;
+    }
+
     public void Process(ActionType action, Player player, Player? assistingPlayer = null, bool isThreePoint = false)
     {
         var team = GetTeamOfPlayer(player);
@@ -95,6 +100,34 @@ public class ActionProcessor
             Description = $"{player.FirstName} {player.LastName} {action}",
             PlayerInvolved = player,
             AssistingPlayer = assistingPlayer,
+            ActionType = action
+        });
+    }
+
+    public void ProcessTeam(ActionType action, Team team, bool offensive = false)
+    {
+        var period = _game.GetCurrentPeriod();
+
+        switch (action)
+        {
+            case ActionType.TeamRebound:
+                team.AddTeamRebound(offensive);
+                break;
+            case ActionType.CoachFoul:
+                team.AddCoachFoul(period);
+                break;
+            case ActionType.BenchFoul:
+                team.AddBenchFoul(period);
+                break;
+            case ActionType.Timeout:
+                team.AddTimeout(period);
+                break;
+        }
+
+        _game.ActionLog.Add(new ActionLogEntry
+        {
+            Timestamp = DateTime.UtcNow,
+            Description = $"{team.TeamName} {action}",
             ActionType = action
         });
     }
