@@ -398,12 +398,12 @@
                 Command="{Binding StartTurnoverCommand}" />
     </Window.InputBindings>
 
-    <TabControl>
-        <TabItem Header="TEAM INFO">
+    <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+        <TabItem Header="TEAM INFO" IsEnabled="{Binding IsTeamInfoEnabled}">
 
             <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
         </TabItem>
-        <TabItem Header="MAIN" IsEnabled="{Binding AreTeamsConfirmed}">
+        <TabItem Header="MAIN" IsEnabled="{Binding IsMainTabEnabled}">
             <Grid x:Name="___No_Name_" Background="#F9F9F9">
                 <!-- Layout: Header, Event Buttons, Main Content -->
                 <Grid.RowDefinitions>
