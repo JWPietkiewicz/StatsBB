@@ -236,6 +236,19 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StartingFivePanelVisibility =>
         IsStartingFivePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isStartingFiveButtonEnabled = true;
+    public bool IsStartingFiveButtonEnabled
+    {
+        get => _isStartingFiveButtonEnabled;
+        set
+        {
+            if (_isStartingFiveButtonEnabled == value)
+                return;
+            _isStartingFiveButtonEnabled = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     private bool _isGamePanelVisible = true;
     public bool IsGamePanelVisible
@@ -538,6 +551,7 @@ public class MainWindowViewModel : ViewModelBase
         SubscribePlayerEvents();
         GameClockService.EndPeriodRequested += OnEndPeriodRequested;
         GameClockService.FinalizeGameRequested += OnFinalizeGameRequested;
+        GameClockService.ClockStarted += OnClockStarted;
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -559,6 +573,7 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
         IsGamePanelVisible = false;
+        IsStartingFiveButtonEnabled = true;
         BeginStartingFive();
     }
 
@@ -595,6 +610,16 @@ public class MainWindowViewModel : ViewModelBase
         GameClockService.SetState("FINALIZED", false);
         IsGameFinalized = true;
         SelectedTabIndex = 2; // switch to Stats tab
+    }
+
+    private void OnClockStarted()
+    {
+        var period = Game.GetCurrentPeriod();
+        if (period.Status != PeriodStatus.Active)
+        {
+            period.Status = PeriodStatus.Active;
+            GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
+        }
     }
 
     private void BeginTimeout()
@@ -2368,6 +2393,7 @@ public class MainWindowViewModel : ViewModelBase
         IsStartingFivePanelVisible = false;
         OnPropertyChanged(nameof(IsStartingFiveConfirmEnabled));
         StatsVM.Refresh();
+        BeginJumpBall();
     }
 
     private void UpdateStartingFiveLists()
@@ -2429,6 +2455,8 @@ public class MainWindowViewModel : ViewModelBase
     {
         IsJumpBallPanelVisible = false;
         IsJumpWinnerPanelVisible = true;
+        IsStartingFiveButtonEnabled = false;
+        GameClockService.Start();
     }
 
     private void CompleteJumpBall(bool teamAWon)

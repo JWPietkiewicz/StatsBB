@@ -23,6 +23,8 @@ public static class GameClockService
 
     public static event Action? EndPeriodRequested;
     public static event Action? FinalizeGameRequested;
+    public static event Action? ClockStarted;
+    public static event Action? ClockStopped;
 
     public static void SetState(string label, bool enabled)
     {
@@ -32,6 +34,12 @@ public static class GameClockService
     }
 
     public static event Action? TimeUpdated;
+
+    public static void SetPeriodDisplay(string text)
+    {
+        Period = text;
+        TimeUpdated?.Invoke();
+    }
 
     private static void Tick()
     {
@@ -50,6 +58,7 @@ public static class GameClockService
     {
         if (!IsRunning)
             _timer.Start();
+        ClockStarted?.Invoke();
         StartStopLabel = "STOP";
         StartStopEnabled = true;
         TimeUpdated?.Invoke();
@@ -59,6 +68,7 @@ public static class GameClockService
     {
         if (IsRunning)
             _timer.Stop();
+        ClockStopped?.Invoke();
 
         if (TimeLeft == TimeSpan.Zero)
         {
@@ -113,7 +123,7 @@ public static class GameClockService
 
     public static void Reset(TimeSpan? periodLength = null, string? periodName = null, string? label = "START")
     {
-        Period = periodName ?? "Q1";
+        SetPeriodDisplay(periodName ?? "Q1");
         _maxTime = periodLength ?? TimeSpan.FromMinutes(10);
         TimeLeft = _maxTime;
         StartStopLabel = label ?? "START";

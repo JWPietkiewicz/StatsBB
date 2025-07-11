@@ -1836,7 +1836,7 @@ Margin="4" />
                         <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
                         <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
                         <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
-                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}"/>
+                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveButtonEnabled}"/>
                         <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
                         <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
                         <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
