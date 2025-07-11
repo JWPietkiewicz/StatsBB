@@ -46,6 +46,8 @@ public class StatsTabViewModel : ViewModelBase
     public int AwayP3 => GetAwayPeriod(2);
     public int AwayP4 => GetAwayPeriod(3);
 
+    public ObservableCollection<Period> PeriodResults => new(Game.Periods);
+
     private Player CalculateTotals(bool home)
     {
         var players = home
@@ -136,5 +138,6 @@ public class StatsTabViewModel : ViewModelBase
         OnPropertyChanged(nameof(AwayTotalsCollection));
         OnPropertyChanged(nameof(HomeTeamStatsCollection));
         OnPropertyChanged(nameof(AwayTeamStatsCollection));
+        OnPropertyChanged(nameof(PeriodResults));
     }
 }
