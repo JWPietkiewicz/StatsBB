@@ -18,6 +18,40 @@ public class TeamInfoViewModel : ViewModelBase
     public RelayCommand SaveHomeTeamCommand { get; }
     public RelayCommand LoadAwayTeamCommand { get; }
     public RelayCommand SaveAwayTeamCommand { get; }
+    public RelayCommand ConfirmHomeTeamCommand { get; }
+    public RelayCommand ConfirmAwayTeamCommand { get; }
+
+    private bool _homeTeamConfirmed;
+    public bool HomeTeamConfirmed
+    {
+        get => _homeTeamConfirmed;
+        set
+        {
+            if (_homeTeamConfirmed == value) return;
+            _homeTeamConfirmed = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(HomeColorEnabled));
+            OnPropertyChanged(nameof(AreTeamsConfirmed));
+        }
+    }
+
+    private bool _awayTeamConfirmed;
+    public bool AwayTeamConfirmed
+    {
+        get => _awayTeamConfirmed;
+        set
+        {
+            if (_awayTeamConfirmed == value) return;
+            _awayTeamConfirmed = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(AwayColorEnabled));
+            OnPropertyChanged(nameof(AreTeamsConfirmed));
+        }
+    }
+
+    public bool AreTeamsConfirmed => HomeTeamConfirmed && AwayTeamConfirmed;
+    public bool HomeColorEnabled => !HomeTeamConfirmed;
+    public bool AwayColorEnabled => !AwayTeamConfirmed;
     public TeamInfoViewModel(MainWindowViewModel main)
     {
         _main = main;
@@ -33,6 +67,8 @@ public class TeamInfoViewModel : ViewModelBase
         SaveHomeTeamCommand = new RelayCommand(_ => SaveTeam(Game.HomeTeam));
         LoadAwayTeamCommand = new RelayCommand(_ => LoadTeam(Game.AwayTeam, false));
         SaveAwayTeamCommand = new RelayCommand(_ => SaveTeam(Game.AwayTeam));
+        ConfirmHomeTeamCommand = new RelayCommand(_ => HomeTeamConfirmed = true);
+        ConfirmAwayTeamCommand = new RelayCommand(_ => AwayTeamConfirmed = true);
     }
 
     private static void EnsurePlayers(Team team)

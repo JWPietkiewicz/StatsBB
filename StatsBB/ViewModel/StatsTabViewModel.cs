@@ -33,8 +33,8 @@ public class StatsTabViewModel : ViewModelBase
     public int HomeScore => Game.HomeTeam?.Points ?? 0;
     public int AwayScore => Game.AwayTeam?.Points ?? 0;
 
-    private int GetHomePeriod(int index) => Game.Periods.ElementAtOrDefault(index)?.HomeTeamPoints ?? 0;
-    private int GetAwayPeriod(int index) => Game.Periods.ElementAtOrDefault(index)?.AwayTeamPoints ?? 0;
+    private int GetHomePeriod(int index) => Game.Periods.ElementAtOrDefault(index)?.HomePeriodScore ?? 0;
+    private int GetAwayPeriod(int index) => Game.Periods.ElementAtOrDefault(index)?.AwayPeriodScore ?? 0;
 
     public int HomeP1 => GetHomePeriod(0);
     public int HomeP2 => GetHomePeriod(1);

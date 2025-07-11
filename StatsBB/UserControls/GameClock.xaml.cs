@@ -24,8 +24,11 @@ public partial class GameClock : UserControl
     {
         TimeText.Text = GameClockService.TimeLeftString;
         PeriodText.Text = GameClockService.Period;
-        StartStopButton.Content = GameClockService.IsRunning ? "STOP" : "START";
-        StartStopButton.Background = GameClockService.IsRunning ? Brushes.Green : Brushes.Red;
+        StartStopButton.Content = GameClockService.StartStopLabel;
+        StartStopButton.IsEnabled = GameClockService.StartStopEnabled;
+        StartStopButton.Background = GameClockService.IsRunning
+            ? Brushes.Green
+            : GameClockService.StartStopEnabled ? Brushes.Red : Brushes.LightGray;
     }
 
     public void Toggle() => StartStop_Click(this, new RoutedEventArgs());

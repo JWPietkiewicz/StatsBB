@@ -403,7 +403,7 @@
 
             <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
         </TabItem>
-        <TabItem Header="MAIN">
+        <TabItem Header="MAIN" IsEnabled="{Binding AreTeamsConfirmed}">
             <Grid x:Name="___No_Name_" Background="#F9F9F9">
                 <!-- Layout: Header, Event Buttons, Main Content -->
                 <Grid.RowDefinitions>
@@ -417,8 +417,9 @@
 
                 <!-- ========= Row 0: Team Cards & Clock ========= -->
 
-                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0" 
+                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0"
                                          DataContext="{Binding ScoreBoardVM}" />
+
 
                 <Grid Grid.Row="1" Grid.Column="0" Margin="10">
                     <Grid.RowDefinitions>
@@ -436,6 +437,14 @@
                         <controls:Court x:Name="CourtControl"
                     VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch" />
+
+                        <!-- Game Setup Panel -->
+                        <Grid Visibility="{Binding GamePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button Content="SETUP GAME" FontSize="24" FontWeight="Bold" Padding="20"
+                                        Command="{Binding SetupGameCommand}"/>
+                            </StackPanel>
+                        </Grid>
 
                         <!-- Quick Shot Panel -->
                         <Grid Visibility="{Binding QuickShotPanelVisibility}"
@@ -1807,7 +1816,7 @@ Margin="4" />
                 </Border>
             </Grid>
         </TabItem>
-        <TabItem Header="STATS">
+        <TabItem Header="STATS" IsEnabled="{Binding AreTeamsConfirmed}">
             <controls:StatsView DataContext="{Binding StatsVM}" />
         </TabItem>
     </TabControl>

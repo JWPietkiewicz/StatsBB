@@ -57,9 +57,9 @@ public class Team
     public void AddFoul(Period currentPeriod)
     {
         if (IsHomeTeam)
-            currentPeriod.HomeTeamFouls++;
+            currentPeriod.HomeFouls++;
         else
-            currentPeriod.AwayTeamFouls++;
+            currentPeriod.AwayFouls++;
     }
 
     public void AddTimeout(Period currentPeriod)
