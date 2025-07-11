@@ -302,6 +302,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartStealCommand { get; }
     public ICommand StartFreeThrowsCommand { get; }
     public ICommand NoStealCommand { get; }
+    public ICommand StealTeamACommand { get; }
+    public ICommand StealTeamBCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectReboundTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
@@ -363,6 +365,8 @@ public class MainWindowViewModel : ViewModelBase
             _ => CompleteStealSelection(null),
             _ => IsStealSelectionActive
         );
+        StealTeamACommand = new RelayCommand(_ => SelectStealTeam(true), _ => IsStealTeamSelectionActive);
+        StealTeamBCommand = new RelayCommand(_ => SelectStealTeam(false), _ => IsStealTeamSelectionActive);
 
         SelectFoulTypeCommand = new RelayCommand(
             param => OnFoulTypeSelected(param?.ToString())
@@ -598,6 +602,13 @@ public class MainWindowViewModel : ViewModelBase
         IsAssistSelectionActive = true;
     }
 
+    private void SelectStealTeam(bool teamA)
+    {
+        _stealTeamIsTeamA = teamA;
+        IsStealTeamSelectionActive = false;
+        IsStealSelectionActive = true;
+    }
+
     private void BeginRebound()
     {
         ResetSelectionState();
@@ -607,7 +618,15 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginSteal()
     {
         ResetSelectionState();
-        IsStealSelectionActive = true;
+        if (_pendingShooter == null)
+        {
+            IsStealTeamSelectionActive = true;
+        }
+        else
+        {
+            _stealTeamIsTeamA = !_pendingShooter.IsTeamA;
+            IsStealSelectionActive = true;
+        }
     }
 
     private void BeginFreeThrows()
@@ -789,6 +808,7 @@ public class MainWindowViewModel : ViewModelBase
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
     private bool _assistTeamIsTeamA;
+    private bool _stealTeamIsTeamA;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
@@ -1213,6 +1233,7 @@ public class MainWindowViewModel : ViewModelBase
         _pendingReboundOffensive = null;
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
+        IsStealTeamSelectionActive = false;
         IsQuickShotSelectionActive = false;
     }
 
@@ -1456,8 +1477,19 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteStealSelection(Player? stealer)
     {
+        // Standalone steal flow when there is no pending turnover
         if (_pendingShooter == null)
+        {
+            if (stealer != null)
+            {
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Steal by {stealer.Number}.{stealer.Name}");
+                AddPlayCard(new[] { CreateAction(stealer, "STEAL") });
+                _actionProcessor.Process(ActionType.Steal, stealer);
+                StatsVM.Refresh();
+            }
+            ResetSelectionState();
             return;
+        }
 
         if (stealer == null)
         {
@@ -1739,6 +1771,21 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StealPanelVisibility =>
         IsStealSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isStealTeamSelectionActive;
+    public bool IsStealTeamSelectionActive
+    {
+        get => _isStealTeamSelectionActive;
+        set
+        {
+            _isStealTeamSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StealTeamPanelVisibility));
+        }
+    }
+
+    public Visibility StealTeamPanelVisibility =>
+        IsStealTeamSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
     private bool _isQuickShotSelectionActive;
     public bool IsQuickShotSelectionActive
     {
@@ -1764,9 +1811,16 @@ public class MainWindowViewModel : ViewModelBase
         {
             bool isSelectable = false;
 
-            if (IsStealSelectionActive && _pendingShooter != null)
+            if (IsStealSelectionActive)
             {
-                isSelectable = vm.Player.IsTeamA != _pendingShooter.IsTeamA;
+                if (_pendingShooter != null)
+                {
+                    isSelectable = vm.Player.IsTeamA != _pendingShooter.IsTeamA;
+                }
+                else
+                {
+                    isSelectable = vm.Player.IsTeamA == _stealTeamIsTeamA;
+                }
             }
 
             vm.SetStealSelectionMode(isSelectable);
