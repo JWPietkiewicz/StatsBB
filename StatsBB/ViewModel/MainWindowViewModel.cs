@@ -625,7 +625,7 @@ public class MainWindowViewModel : ViewModelBase
     private string? _foulType;
     private int _defaultFreeThrows;
     private bool _freeThrowTeamIsTeamA;
-    private bool _isRebound;
+    private bool _isRebound = true;
     private bool _pendingFreeThrowRebound;
     private int _selectedFreeThrowCount;
     private Player? _selectedFreeThrowShooter;
