@@ -1812,18 +1812,18 @@ Margin="4" />
                     </Border>
                     <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="5" Margin="0,10">
                         <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5" Width="1000">
-                        <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="FOUL (E)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
-                        <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
-                        <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
-                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
-                        <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
-                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}"/>
-                        <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
-                        <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
-                        <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
-                        <Button Content="STEAL" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
+                        <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="FOUL (E)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="REBOUND" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
+                        <Button Content="STEAL" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}" IsEnabled="{Binding AreActionButtonsEnabled}"/>
                     </WrapPanel>
                     </Border>
                 </Grid>

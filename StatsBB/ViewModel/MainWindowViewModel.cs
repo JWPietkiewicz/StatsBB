@@ -203,6 +203,7 @@ public class MainWindowViewModel : ViewModelBase
             _isSubstitutionPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(SubstitutionPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility SubstitutionPanelVisibility =>
@@ -217,6 +218,7 @@ public class MainWindowViewModel : ViewModelBase
             _isTimeOutSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TimeOutPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility TimeOutPanelVisibility =>
@@ -231,6 +233,7 @@ public class MainWindowViewModel : ViewModelBase
             _isStartingFivePanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartingFivePanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility StartingFivePanelVisibility =>
@@ -246,12 +249,37 @@ public class MainWindowViewModel : ViewModelBase
             _isGamePanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(GamePanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility GamePanelVisibility =>
         IsGamePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
     public bool AreTeamsConfirmed => TeamInfoVM.AreTeamsConfirmed;
+
+    public bool IsAnyActionPanelVisible =>
+        IsSubstitutionPanelVisible ||
+        IsTimeOutSelectionActive ||
+        IsStartingFivePanelVisible ||
+        IsGamePanelVisible ||
+        IsJumpBallPanelVisible ||
+        IsJumpWinnerPanelVisible ||
+        IsAssistTeamSelectionActive ||
+        IsAssistSelectionActive ||
+        IsReboundSelectionActive ||
+        IsReboundTypeSelectionActive ||
+        IsBlockerSelectionActive ||
+        IsTurnoverSelectionActive ||
+        IsStealSelectionActive ||
+        IsStealTeamSelectionActive ||
+        IsQuickShotSelectionActive ||
+        IsFoulCommiterSelectionActive ||
+        IsFoulTypeSelectionActive ||
+        IsFouledPlayerSelectionActive ||
+        IsFreeThrowsAwardedSelectionActive ||
+        IsFreeThrowsSelectionActive;
+
+    public bool AreActionButtonsEnabled => IsActionSelectionActive && !IsAnyActionPanelVisible;
     
     private bool _isJumpBallPanelVisible;
     public bool IsJumpBallPanelVisible
@@ -262,6 +290,7 @@ public class MainWindowViewModel : ViewModelBase
             _isJumpBallPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(JumpBallPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility JumpBallPanelVisibility =>
@@ -276,6 +305,7 @@ public class MainWindowViewModel : ViewModelBase
             _isJumpWinnerPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(JumpWinnerPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     public Visibility JumpWinnerPanelVisibility =>
@@ -1577,6 +1607,7 @@ public class MainWindowViewModel : ViewModelBase
             _isAssistTeamSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(AssistTeamPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1590,6 +1621,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateAssistPlayerStyles();
             OnPropertyChanged(nameof(NoAssistButtonVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1659,6 +1691,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateReboundPlayerStyles();
             OnPropertyChanged(nameof(ReboundPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
     private void UpdateReboundPlayerStyles()
@@ -1717,6 +1750,7 @@ public class MainWindowViewModel : ViewModelBase
             _isReboundTypeSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(ReboundTypePanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1733,6 +1767,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateBlockerPlayerStyles();
             OnPropertyChanged(nameof(BlockerSelectionVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1749,6 +1784,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateTurnoverPlayerStyles();
             OnPropertyChanged(nameof(TurnoverPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1765,6 +1801,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateStealPlayerStyles();
             OnPropertyChanged(nameof(StealPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1780,6 +1817,7 @@ public class MainWindowViewModel : ViewModelBase
             _isStealTeamSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StealTeamPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1796,6 +1834,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateQuickShotPlayerStyles();
             OnPropertyChanged(nameof(QuickShotPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1892,6 +1931,7 @@ public class MainWindowViewModel : ViewModelBase
                 OnPropertyChanged(nameof(EligibleTeamBCourtFoulCommitterPlayers));
                 OnPropertyChanged(nameof(EligibleTeamBBenchFoulCommitterPlayers));
             }
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1907,6 +1947,7 @@ public class MainWindowViewModel : ViewModelBase
             _isFoulTypeSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(FoulTypePanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1926,6 +1967,7 @@ public class MainWindowViewModel : ViewModelBase
                 OnPropertyChanged(nameof(EligibleFoulOnCourtPlayers));
                 OnPropertyChanged(nameof(EligibleFoulOnBenchPlayers));
             }
+            NotifyPanelStateChanged();
         }
     }
 
@@ -1940,6 +1982,7 @@ public class MainWindowViewModel : ViewModelBase
             if (value)
                 UpdateFreeThrowPlayerStyles();
             OnPropertyChanged(nameof(FreeThrowsAwardedPanelVisibility));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -2007,6 +2050,7 @@ public class MainWindowViewModel : ViewModelBase
                 UpdateFreeThrowPlayerStyles();
             OnPropertyChanged(nameof(FreeThrowsPanelVisibility));
             OnPropertyChanged(nameof(FreeThrowResultRows));
+            NotifyPanelStateChanged();
         }
     }
 
@@ -2143,6 +2187,13 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(FreeThrowCount3Style));
     }
 
+    private void NotifyPanelStateChanged()
+    {
+        OnPropertyChanged(nameof(IsAnyActionPanelVisible));
+        OnPropertyChanged(nameof(AreActionButtonsEnabled));
+        UpdateActionButtonStyles();
+    }
+
 
 
     // Action button styles
@@ -2157,7 +2208,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private Style GetActionStyle(string action)
     {
-        if (!IsActionSelectionActive && action != "FOUL")
+        if ((!IsActionSelectionActive || IsAnyActionPanelVisible) && action != "FOUL")
             return (Style)_resources["ActionDisabledButtonStyle"];
 
         if (SelectedAction == action)
