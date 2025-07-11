@@ -801,7 +801,18 @@ public class MainWindowViewModel : ViewModelBase
     {
         _pendingReboundSource = reboundSource;
         IsReboundSelectionActive = false;
-        IsReboundTypeSelectionActive = true;
+
+        if (_pendingShooter == null)
+        {
+            // Manual rebound flow – ask for offensive/defensive type
+            IsReboundTypeSelectionActive = true;
+        }
+        else
+        {
+            // Rebound after a missed/blocked shot – use automatic logic
+            CompleteReboundSelection(reboundSource);
+            _pendingReboundSource = null;
+        }
     }
 
     private void OnReboundTypeSelected(string? reboundType)
