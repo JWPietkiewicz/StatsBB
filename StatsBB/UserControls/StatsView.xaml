@@ -36,6 +36,8 @@
                 <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
                 <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
                 <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="50"/>
+                <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="50"/>
                 <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
                 <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                 <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="50"/>
@@ -69,6 +71,8 @@
                     <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
                     <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
                     <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="50"/>
+                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
                     <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="50"/>
@@ -95,6 +99,8 @@
                     <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
                     <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
                     <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="50"/>
+                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
                     <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="50"/>
@@ -128,6 +134,8 @@
                     <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="50"/>
                     <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="50"/>
                     <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="50"/>
+                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="50"/>
+                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="50"/>
                     <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="50"/>
                     <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="50"/>
