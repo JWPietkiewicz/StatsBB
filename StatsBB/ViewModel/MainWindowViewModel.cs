@@ -2205,9 +2205,9 @@ public class MainWindowViewModel : ViewModelBase
             FreeThrowResultRows.Add(item);
         }
 
-        UpdateAssistPlayerStyles();
-
         IsFreeThrowsSelectionActive = true;
+
+        UpdateAssistPlayerStyles();
     }
 
     private void OnFreeThrowResultSelected(int index, string result)
