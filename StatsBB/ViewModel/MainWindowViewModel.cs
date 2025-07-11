@@ -807,7 +807,6 @@ public class MainWindowViewModel : ViewModelBase
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
     private bool _assistTeamIsTeamA;
-    private bool _isFreeThrowTeamSelectionActive;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
