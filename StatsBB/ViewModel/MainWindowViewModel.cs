@@ -1578,8 +1578,8 @@ public class MainWindowViewModel : ViewModelBase
                 return;
             }
 
-            var players = _assistTeamIsTeamA ? TeamAPlayers : TeamBPlayers;
-            foreach (var vm in players)
+            var playerList = _assistTeamIsTeamA ? TeamAPlayers : TeamBPlayers;
+            foreach (var vm in playerList)
             {
                 vm.SetAssistSelectionMode(IsAssistSelectionActive);
                 vm.IsSelectedAsAssist = false;
