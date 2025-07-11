@@ -51,8 +51,8 @@ public class StatsTabViewModel : ViewModelBase
         var players = home
             ? Game.HomeTeam?.Players?.Where(p => p.IsPlaying)
             : Game.AwayTeam?.Players?.Where(p => p.IsPlaying);
-
         var result = new Player { LastName = "TOTAL" };
+        Team? team = home ? Game.HomeTeam : Game.AwayTeam;
         if (players != null)
         {
             foreach (var p in players)
@@ -60,6 +60,8 @@ public class StatsTabViewModel : ViewModelBase
                 result.Points += p.Points;
                 result.Assists += p.Assists;
                 result.Rebounds += p.Rebounds;
+                result.OffensiveRebounds += p.OffensiveRebounds;
+                result.DefensiveRebounds += p.DefensiveRebounds;
                 result.Blocks += p.Blocks;
                 result.Steals += p.Steals;
                 result.Turnovers += p.Turnovers;
@@ -73,7 +75,33 @@ public class StatsTabViewModel : ViewModelBase
             }
         }
 
+        if (team != null)
+        {
+            result.Rebounds += team.TeamRebounds;
+            result.OffensiveRebounds += team.OffensiveTeamRebounds;
+            result.DefensiveRebounds += team.DefensiveTeamRebounds;
+            result.Turnovers += team.TeamTurnovers;
+            result.FoulsCommitted += team.CoachFouls + team.BenchFouls;
+        }
+
         return result;
+    }
+
+    private Player CalculateTeamStats(bool home)
+    {
+        Team? team = home ? Game.HomeTeam : Game.AwayTeam;
+        if (team == null)
+            return new Player { LastName = "TEAM" };
+
+        return new Player
+        {
+            LastName = "TEAM",
+            Rebounds = team.TeamRebounds,
+            OffensiveRebounds = team.OffensiveTeamRebounds,
+            DefensiveRebounds = team.DefensiveTeamRebounds,
+            Turnovers = team.TeamTurnovers,
+            FoulsCommitted = team.CoachFouls + team.BenchFouls
+        };
     }
 
     public ObservableCollection<Player> HomeTotalsCollection =>
@@ -81,6 +109,12 @@ public class StatsTabViewModel : ViewModelBase
 
     public ObservableCollection<Player> AwayTotalsCollection =>
         new() { CalculateTotals(false) };
+
+    public ObservableCollection<Player> HomeTeamStatsCollection =>
+        new() { CalculateTeamStats(true) };
+
+    public ObservableCollection<Player> AwayTeamStatsCollection =>
+        new() { CalculateTeamStats(false) };
 
     public void Refresh()
     {
@@ -100,5 +134,7 @@ public class StatsTabViewModel : ViewModelBase
         OnPropertyChanged(nameof(AwayP4));
         OnPropertyChanged(nameof(HomeTotalsCollection));
         OnPropertyChanged(nameof(AwayTotalsCollection));
+        OnPropertyChanged(nameof(HomeTeamStatsCollection));
+        OnPropertyChanged(nameof(AwayTeamStatsCollection));
     }
 }

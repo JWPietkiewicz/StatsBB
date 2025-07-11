@@ -42,6 +42,8 @@ public class Player : INotifyPropertyChanged
     public int Points { get; set; }
     public int Assists { get; set; }
     public int Rebounds { get; set; }
+    public int OffensiveRebounds { get; set; }
+    public int DefensiveRebounds { get; set; }
     public int Blocks { get; set; }
     public int Steals { get; set; }
     public int Turnovers { get; set; }
@@ -55,16 +57,17 @@ public class Player : INotifyPropertyChanged
 
     public void AddPoints(int points)
     {
-        if (points == 3)
-            AddShotMade(true);
-        else if (points == 2)
-            AddShotMade(false);
-        else
-            AddFreeThrowMade();
         Points += points;
     }
     public void AddAssist() => Assists++;
-    public void AddRebound() => Rebounds++;
+    public void AddRebound(bool offensive)
+    {
+        Rebounds++;
+        if (offensive)
+            OffensiveRebounds++;
+        else
+            DefensiveRebounds++;
+    }
     public void AddBlock() => Blocks++;
     public void AddSteal() => Steals++;
     public void AddTurnover() => Turnovers++;
