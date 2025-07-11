@@ -1085,14 +1085,31 @@ Margin="4" />
                                     <Button Style="{StaticResource FoulTypeButtonStyle}" Content="TECHNICAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical"/>
                                     <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DOUBLE PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal"/>
                                     <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
-                                </WrapPanel>
-                            </StackPanel>
-                        </Grid>
-                        <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                                
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Visibility="{Binding FreeThrowTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                            <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0">
+                                    <Button Content="{Binding TeamAName}" Command="{Binding FreeThrowTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                </Border>
+                                <Border Grid.Column="1">
+                                    <Button Content="{Binding TeamBName}" Command="{Binding FreeThrowTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <Grid Visibility="{Binding FreeThrowsAwardedPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Border Background="#cceeeeee" Padding="10" Margin="2">
                                     <StackPanel>
                                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>

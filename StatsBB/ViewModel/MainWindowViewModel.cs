@@ -301,6 +301,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartReboundCommand { get; }
     public ICommand StartStealCommand { get; }
     public ICommand StartFreeThrowsCommand { get; }
+    public ICommand FreeThrowTeamACommand { get; }
+    public ICommand FreeThrowTeamBCommand { get; }
     public ICommand NoStealCommand { get; }
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectReboundTypeCommand { get; }
@@ -407,6 +409,8 @@ public class MainWindowViewModel : ViewModelBase
         StartReboundCommand = new RelayCommand(_ => BeginRebound());
         StartStealCommand = new RelayCommand(_ => BeginSteal());
         StartFreeThrowsCommand = new RelayCommand(_ => BeginFreeThrows());
+        FreeThrowTeamACommand = new RelayCommand(_ => SelectFreeThrowTeam(true), _ => IsFreeThrowTeamSelectionActive);
+        FreeThrowTeamBCommand = new RelayCommand(_ => SelectFreeThrowTeam(false), _ => IsFreeThrowTeamSelectionActive);
 
         CoachTechnicalTeamACommand = new RelayCommand(_ => OnCoachTechnical("Team A"));
         CoachTechnicalTeamBCommand = new RelayCommand(_ => OnCoachTechnical("Team B"));
@@ -598,6 +602,13 @@ public class MainWindowViewModel : ViewModelBase
         IsAssistSelectionActive = true;
     }
 
+    private void SelectFreeThrowTeam(bool teamA)
+    {
+        _freeThrowTeamIsTeamA = teamA;
+        IsFreeThrowTeamSelectionActive = false;
+        BeginFreeThrowsAwardedSelection();
+    }
+
     private void BeginRebound()
     {
         ResetSelectionState();
@@ -613,7 +624,14 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginFreeThrows()
     {
         ResetSelectionState();
-        BeginFreeThrowsAwardedSelection();
+        if (_fouledPlayer == null)
+        {
+            IsFreeThrowTeamSelectionActive = true;
+        }
+        else
+        {
+            BeginFreeThrowsAwardedSelection();
+        }
     }
 
     private void CompleteTimeoutSelection(string team)
@@ -789,6 +807,7 @@ public class MainWindowViewModel : ViewModelBase
     private Player? _selectedFreeThrowShooter;
     private Player? _selectedFreeThrowAssist;
     private bool _assistTeamIsTeamA;
+    private bool _isFreeThrowTeamSelectionActive;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
 
     private void OnPlayerSelected(Player player)
@@ -1036,6 +1055,7 @@ public class MainWindowViewModel : ViewModelBase
         IsFoulCommiterSelectionActive = false;
         IsFoulTypeSelectionActive = false;
         IsFouledPlayerSelectionActive = false;
+        IsFreeThrowTeamSelectionActive = false;
         IsFreeThrowsAwardedSelectionActive = false;
         FreeThrowResultRows.Clear();
         IsFreeThrowsSelectionActive = false;
@@ -1563,6 +1583,21 @@ public class MainWindowViewModel : ViewModelBase
 
     public Visibility AssistTeamPanelVisibility =>
         IsAssistTeamSelectionActive ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isFreeThrowTeamSelectionActive;
+    public bool IsFreeThrowTeamSelectionActive
+    {
+        get => _isFreeThrowTeamSelectionActive;
+        set
+        {
+            _isFreeThrowTeamSelectionActive = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(FreeThrowTeamPanelVisibility));
+        }
+    }
+
+    public Visibility FreeThrowTeamPanelVisibility =>
+        IsFreeThrowTeamSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
     private void UpdateAssistPlayerStyles()
     {
