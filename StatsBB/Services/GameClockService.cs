@@ -104,5 +104,5 @@ public static class GameClockService
         TimeUpdated?.Invoke();
     }
 
-    public static string TimeLeftString => $"{Period} {(int)TimeLeft.TotalMinutes:D2}:{TimeLeft.Seconds:D2}";
+    public static string TimeLeftString => $"{(int)TimeLeft.TotalMinutes:D2}:{TimeLeft.Seconds:D2}";
 }
