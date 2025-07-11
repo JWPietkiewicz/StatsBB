@@ -884,6 +884,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public bool IsActionInProgress =>
         _pendingShooter != null ||
+        IsQuickShotSelectionActive ||
+        IsBlockerSelectionActive ||
         IsSubstitutionPanelVisible ||
         IsStartingFivePanelVisible ||
         IsTimeOutSelectionActive ||
@@ -1333,6 +1335,7 @@ public class MainWindowViewModel : ViewModelBase
         IsTurnoverSelectionActive = false;
         IsStealSelectionActive = false;
         IsStealTeamSelectionActive = false;
+        IsBlockerSelectionActive = false;
         IsQuickShotSelectionActive = false;
     }
 
@@ -1857,6 +1860,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateBlockerPlayerStyles();
             OnPropertyChanged(nameof(BlockerSelectionVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1923,6 +1927,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateQuickShotPlayerStyles();
             OnPropertyChanged(nameof(QuickShotPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
