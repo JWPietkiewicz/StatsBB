@@ -58,6 +58,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public StatsTabViewModel StatsVM { get; }
 
+    private readonly ActionProcessor _actionProcessor;
+
     public PlayByPlayLogViewModel PlayLog { get; } = new();
 
     /// <summary>
@@ -386,6 +388,7 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeams();
 
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
+        _actionProcessor = new ActionProcessor(TeamInfoVM.Game);
         SubscribePlayerEvents();
         // StatsVM = new StatsTabViewModel(Players);
 
@@ -1034,7 +1037,7 @@ public class MainWindowViewModel : ViewModelBase
 
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MADE");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
-            RecordPoints(_pendingShooter, _pendingIsThreePoint ? 3 : 2);
+            RecordPoints(_pendingShooter, _pendingIsThreePoint ? 3 : 2, assistPlayer, _pendingIsThreePoint);
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
@@ -1063,6 +1066,9 @@ public class MainWindowViewModel : ViewModelBase
             if (reboundSource is Player rp)
             {
                 _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
+                bool offensive = rp.IsTeamA == _pendingShooter.IsTeamA;
+                _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
+                StatsVM.Refresh();
             }
             else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
             {
@@ -1071,6 +1077,8 @@ public class MainWindowViewModel : ViewModelBase
             }
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MISSED");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
+            _actionProcessor.Process(ActionType.ShotMissed, _pendingShooter, null, _pendingIsThreePoint);
+            StatsVM.Refresh();
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
@@ -1703,8 +1711,14 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     actions.Add(CreateAction(SelectedFreeThrowAssist, "ASSIST"));
                 }
-                if (made > 0)
-                    RecordPoints(_pendingShooter, made);
+                if (made > 0 && _pendingShooter != null)
+                {
+                    for (int i = 0; i < made; i++)
+                        _actionProcessor.Process(ActionType.FreeThrowMade, _pendingShooter);
+                    GameState.TeamAScore = Game.HomeTeam.Points;
+                    GameState.TeamBScore = Game.AwayTeam.Points;
+                    StatsVM.Refresh();
+                }
                 AddPlayCard(actions);
             }
 
@@ -1881,19 +1895,11 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
-    private void RecordPoints(Player shooter, int points)
+    private void RecordPoints(Player shooter, int points, Player? assist = null, bool isThreePoint = false)
     {
-        if (shooter.IsTeamA)
-        {
-            Game.HomeTeam.AddPoints(points);
-            GameState.TeamAScore = Game.HomeTeam.Points;
-        }
-        else
-        {
-            Game.AwayTeam.AddPoints(points);
-            GameState.TeamBScore = Game.AwayTeam.Points;
-        }
-        shooter.AddPoints(points);
+        _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
+        GameState.TeamAScore = Game.HomeTeam.Points;
+        GameState.TeamBScore = Game.AwayTeam.Points;
         StatsVM.Refresh();
     }
 

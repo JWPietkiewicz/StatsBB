@@ -47,8 +47,14 @@ public class ActionProcessor
             case ActionType.ShotMissed:
                 player.AddShotAttempt(isThreePoint);
                 break;
+            case ActionType.OffensiveRebound:
+                player.AddRebound(true);
+                break;
+            case ActionType.DefensiveRebound:
+                player.AddRebound(false);
+                break;
             case ActionType.Rebound:
-                player.AddRebound();
+                player.AddRebound(true);
                 break;
             case ActionType.Assist:
                 player.AddAssist();
