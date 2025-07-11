@@ -8,6 +8,7 @@ public enum ActionType
     OffensiveRebound,
     DefensiveRebound,
     TeamRebound,
+    TeamTurnover,
     Assist,
     CoachFoul,
     BenchFoul,

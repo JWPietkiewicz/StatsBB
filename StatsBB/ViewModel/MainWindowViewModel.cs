@@ -1169,6 +1169,12 @@ public class MainWindowViewModel : ViewModelBase
             Debug.WriteLine($"{GameClockService.TimeLeftString} Team turnover by {team}");
             bool teamA = team == "TeamA" || team == "Team A";
             AddPlayCard(new[] { CreateTeamAction(teamA, "TURNOVER") });
+            var t = teamA ? Game.HomeTeam : Game.AwayTeam;
+            if (t != null)
+            {
+                _actionProcessor.ProcessTeam(ActionType.TeamTurnover, t);
+                StatsVM.Refresh();
+            }
             ResetSelectionState();
         }
     }
@@ -1216,8 +1222,10 @@ public class MainWindowViewModel : ViewModelBase
         if (stealer == null)
         {
             Debug.WriteLine($"{GameClockService.TimeLeftString} No steal awarded on turnover by {_pendingShooter.Number}.{_pendingShooter.Name}");
+            _actionProcessor.Process(ActionType.Turnover, _pendingShooter);
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
+            StatsVM.Refresh();
             ResetSelectionState();
             return;
         }
@@ -1232,8 +1240,11 @@ public class MainWindowViewModel : ViewModelBase
         // Valid steal
         Debug.WriteLine($"{GameClockService.TimeLeftString} Steal by {stealer.Number}.{stealer.Name} from {_pendingShooter.Number}.{_pendingShooter.Name}");
         _currentPlayActions.Add(CreateAction(stealer, "STEAL"));
+        _actionProcessor.Process(ActionType.Turnover, _pendingShooter);
+        _actionProcessor.Process(ActionType.Steal, stealer);
         AddPlayCard(_currentPlayActions.ToList());
         _currentPlayActions.Clear();
+        StatsVM.Refresh();
         ResetSelectionState();
     }
 

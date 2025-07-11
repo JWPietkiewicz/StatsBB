@@ -22,6 +22,7 @@ public class Team
     public int DefensiveTeamRebounds { get; set; }
     public int CoachFouls { get; set; }
     public int BenchFouls { get; set; }
+    public int TeamTurnovers { get; set; }
 
     public bool IsHomeTeam { get; set; }
 
@@ -46,6 +47,11 @@ public class Team
     {
         BenchFouls++;
         AddFoul(currentPeriod);
+    }
+
+    public void AddTeamTurnover()
+    {
+        TeamTurnovers++;
     }
 
     public void AddFoul(Period currentPeriod)

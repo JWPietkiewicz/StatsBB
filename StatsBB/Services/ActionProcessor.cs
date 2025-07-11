@@ -119,6 +119,9 @@ public class ActionProcessor
             case ActionType.BenchFoul:
                 team.AddBenchFoul(period);
                 break;
+            case ActionType.TeamTurnover:
+                team.AddTeamTurnover();
+                break;
             case ActionType.Timeout:
                 team.AddTimeout(period);
                 break;
