@@ -6,6 +6,7 @@ namespace StatsBB.Services;
 public static class GameClockService
 {
     private static readonly DispatcherTimer _timer;
+    private static TimeSpan _maxTime = TimeSpan.FromMinutes(10);
 
     static GameClockService()
     {
@@ -95,10 +96,26 @@ public static class GameClockService
             Start();
     }
 
+    private static void AddTime(TimeSpan delta)
+    {
+        TimeLeft += delta;
+        if (TimeLeft < TimeSpan.Zero)
+            TimeLeft = TimeSpan.Zero;
+        if (TimeLeft > _maxTime)
+            TimeLeft = _maxTime;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void AddMinute() => AddTime(TimeSpan.FromMinutes(1));
+    public static void SubtractMinute() => AddTime(TimeSpan.FromMinutes(-1));
+    public static void AddSecond() => AddTime(TimeSpan.FromSeconds(1));
+    public static void SubtractSecond() => AddTime(TimeSpan.FromSeconds(-1));
+
     public static void Reset(TimeSpan? periodLength = null, string? periodName = null, string? label = "START")
     {
         Period = periodName ?? "Q1";
-        TimeLeft = periodLength ?? TimeSpan.FromMinutes(10);
+        _maxTime = periodLength ?? TimeSpan.FromMinutes(10);
+        TimeLeft = _maxTime;
         StartStopLabel = label ?? "START";
         StartStopEnabled = true;
         TimeUpdated?.Invoke();

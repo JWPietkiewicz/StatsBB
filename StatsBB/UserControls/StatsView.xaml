@@ -26,14 +26,23 @@
             <TextBlock Text="-" Grid.Column="2" Grid.Row="0" FontWeight="Bold" VerticalAlignment="Bottom" FontSize="48" Margin="10"/>
             <TextBlock Text="{Binding AwayScore}" Grid.Row="0" Grid.Column="3" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" FontWeight="Bold" FontSize="48" />
             <TextBlock Text="{Binding AwayTeamName}" Grid.Row="0" Grid.Column="4" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" FontWeight="Bold" FontSize="32"/>
-            <Border  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
-                <StackPanel x:Name="PeriodResults" Orientation="Horizontal">
-                    <StackPanel Orientation="Horizontal" Margin="2">
-                        <TextBlock Style="{StaticResource PeriodResult}" Text="0"/>
-                        <TextBlock Style="{StaticResource PeriodResult}" Text=" : "/>
-                        <TextBlock Style="{StaticResource PeriodResult}" Text="0"/>
-                    </StackPanel>
-                </StackPanel>
+            <Border Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3">
+                <ItemsControl x:Name="PeriodResults" ItemsSource="{Binding PeriodResults}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding HomePeriodScore}" />
+                                <TextBlock Style="{StaticResource PeriodResult}" Text=" : " />
+                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding AwayPeriodScore}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
             </Border>
         </Grid>
         <StackPanel Width="1070">

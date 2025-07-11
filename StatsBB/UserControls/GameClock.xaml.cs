@@ -20,6 +20,11 @@ public partial class GameClock : UserControl
         UpdateDisplay();
     }
 
+    private void AddMinute_Click(object sender, RoutedEventArgs e) => GameClockService.AddMinute();
+    private void SubtractMinute_Click(object sender, RoutedEventArgs e) => GameClockService.SubtractMinute();
+    private void AddSecond_Click(object sender, RoutedEventArgs e) => GameClockService.AddSecond();
+    private void SubtractSecond_Click(object sender, RoutedEventArgs e) => GameClockService.SubtractSecond();
+
     private void UpdateDisplay()
     {
         TimeText.Text = GameClockService.TimeLeftString;
