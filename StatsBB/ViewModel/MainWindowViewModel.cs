@@ -28,6 +28,8 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamASubOut { get; } = new();
     public ObservableCollection<Player> TeamBSubIn { get; } = new();
     public ObservableCollection<Player> TeamBSubOut { get; } = new();
+    public ObservableCollection<Player> TeamAJumpingPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBJumpingPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleCourtAssistPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleBenchAssistPlayers { get; } = new();
     public ObservableCollection<PlayerPositionViewModel> EligibleTeamACourtReboundPlayers { get; } = new();
@@ -234,6 +236,37 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StartingFivePanelVisibility =>
         IsStartingFivePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isJumpBallPanelVisible;
+    public bool IsJumpBallPanelVisible
+    {
+        get => _isJumpBallPanelVisible;
+        set
+        {
+            _isJumpBallPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallPanelVisibility));
+        }
+    }
+    public Visibility JumpBallPanelVisibility =>
+        IsJumpBallPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isJumpWinnerPanelVisible;
+    public bool IsJumpWinnerPanelVisible
+    {
+        get => _isJumpWinnerPanelVisible;
+        set
+        {
+            _isJumpWinnerPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpWinnerPanelVisibility));
+        }
+    }
+    public Visibility JumpWinnerPanelVisibility =>
+        IsJumpWinnerPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    public bool IsJumpEnabled =>
+        TeamAJumpingPlayers.Count == 1 && TeamBJumpingPlayers.Count == 1;
+
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
@@ -262,6 +295,11 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
+    public ICommand StartJumpBallCommand { get; }
+    public ICommand ToggleJumpPlayerCommand { get; }
+    public ICommand ConfirmJumpBallCommand { get; }
+    public ICommand JumpTeamACommand { get; }
+    public ICommand JumpTeamBCommand { get; }
     public ICommand CoachTechnicalTeamACommand { get; }
     public ICommand CoachTechnicalTeamBCommand { get; }
     public ICommand BenchTechnicalTeamACommand { get; }
@@ -331,6 +369,11 @@ public class MainWindowViewModel : ViewModelBase
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
+        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall());
+        ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
+        ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
+        JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
+        JumpTeamBCommand = new RelayCommand(_ => CompleteJumpBall(false));
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
         StartAssistCommand = new RelayCommand(_ => BeginAssist());
         StartReboundCommand = new RelayCommand(_ => BeginRebound());
@@ -2013,6 +2056,50 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(TeamAStartingBenchPlayers));
         OnPropertyChanged(nameof(TeamBStartingFivePlayers));
         OnPropertyChanged(nameof(TeamBStartingBenchPlayers));
+    }
+
+    private void BeginJumpBall()
+    {
+        TeamAJumpingPlayers.Clear();
+        TeamBJumpingPlayers.Clear();
+        IsJumpBallPanelVisible = true;
+        OnPropertyChanged(nameof(IsJumpEnabled));
+    }
+
+    private void ToggleJumpPlayer(Player? player)
+    {
+        if (player == null) return;
+        var list = player.IsTeamA ? TeamAJumpingPlayers : TeamBJumpingPlayers;
+
+        if (list.Contains(player))
+            list.Remove(player);
+        else
+        {
+            list.Clear();
+            list.Add(player);
+        }
+
+        OnPropertyChanged(nameof(IsJumpEnabled));
+    }
+
+    private void ConfirmJumpBall()
+    {
+        IsJumpBallPanelVisible = false;
+        IsJumpWinnerPanelVisible = true;
+    }
+
+    private void CompleteJumpBall(bool teamAWon)
+    {
+        AddPlayCard(new[]
+        {
+            CreateTeamAction(teamAWon, "JUMP BALL WON"),
+            CreateTeamAction(!teamAWon, "JUMP BALL LOST")
+        });
+
+        TeamAJumpingPlayers.Clear();
+        TeamBJumpingPlayers.Clear();
+        IsJumpWinnerPanelVisible = false;
+        OnPropertyChanged(nameof(IsJumpEnabled));
     }
 
     // ---- PlayByPlay log helpers ----
