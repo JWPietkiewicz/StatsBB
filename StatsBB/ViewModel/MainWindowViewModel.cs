@@ -234,6 +234,20 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility StartingFivePanelVisibility =>
         IsStartingFivePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isGamePanelVisible = true;
+    public bool IsGamePanelVisible
+    {
+        get => _isGamePanelVisible;
+        set
+        {
+            _isGamePanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(GamePanelVisibility));
+        }
+    }
+    public Visibility GamePanelVisibility =>
+        IsGamePanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
@@ -262,6 +276,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
+    public ICommand SetupGameCommand { get; }
     public ICommand CoachTechnicalTeamACommand { get; }
     public ICommand CoachTechnicalTeamBCommand { get; }
     public ICommand BenchTechnicalTeamACommand { get; }
@@ -323,6 +338,7 @@ public class MainWindowViewModel : ViewModelBase
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
         StartStartingFiveCommand = new RelayCommand(_ => BeginStartingFive());
+        SetupGameCommand = new RelayCommand(_ => SetupGame());
         ConfirmSubstitutionCommand = new RelayCommand(_ => ConfirmSubstitution(), _ => IsSubstitutionConfirmEnabled);
         ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
@@ -414,6 +430,8 @@ public class MainWindowViewModel : ViewModelBase
         StatsVM = new StatsTabViewModel(TeamInfoVM.Game);
         _actionProcessor = new ActionProcessor(TeamInfoVM.Game);
         SubscribePlayerEvents();
+        GameClockService.EndPeriodRequested += OnEndPeriodRequested;
+        GameClockService.FinalizeGameRequested += OnFinalizeGameRequested;
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -426,6 +444,49 @@ public class MainWindowViewModel : ViewModelBase
         TeamBSubOut.Clear();
 
         IsSubstitutionPanelVisible = true;
+    }
+
+    private void SetupGame()
+    {
+        Game.InitializePeriods(Game.DefaultPeriods);
+        Game.CurrentPeriod = 0;
+        var period = Game.GetCurrentPeriod();
+        GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
+        IsGamePanelVisible = false;
+        BeginStartingFive();
+    }
+
+    private void OnEndPeriodRequested()
+    {
+        var period = Game.GetCurrentPeriod();
+        period.Status = PeriodStatus.Ended;
+
+        bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
+
+        if (lastRegular && Game.HomeTeam.Points != Game.AwayTeam.Points)
+        {
+            GameClockService.SetState("Finalize Game", true);
+            return;
+        }
+
+        if (period.PeriodNumber == Game.Periods.Count && Game.HomeTeam.Points == Game.AwayTeam.Points)
+        {
+            period = Game.AddOvertimePeriod();
+            Game.CurrentPeriod = Game.Periods.Count - 1;
+        }
+        else if (period.PeriodNumber < Game.Periods.Count)
+        {
+            Game.CurrentPeriod++;
+            period = Game.GetCurrentPeriod();
+        }
+
+        period.Status = PeriodStatus.Setup;
+        GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Period");
+    }
+
+    private void OnFinalizeGameRequested()
+    {
+        GameClockService.SetState("FINALIZED", false);
     }
 
     private void BeginTimeout()

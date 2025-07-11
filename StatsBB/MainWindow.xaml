@@ -415,8 +415,17 @@
 
                 <!-- ========= Row 0: Team Cards & Clock ========= -->
 
-                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0" 
+                <controls:ScoreBoardView Grid.Row="0" Grid.Column="0"
                                          DataContext="{Binding ScoreBoardVM}" />
+
+                <!-- Game Setup Panel -->
+                <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                      Visibility="{Binding GamePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="20">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Button Content="SETUP GAME" FontSize="24" FontWeight="Bold" Padding="20"
+                                Command="{Binding SetupGameCommand}"/>
+                    </StackPanel>
+                </Grid>
 
                 <Grid Grid.Row="1" Grid.Column="0" Margin="10">
                     <Grid.RowDefinitions>
