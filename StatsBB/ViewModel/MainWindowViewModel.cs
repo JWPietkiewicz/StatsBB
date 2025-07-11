@@ -1344,8 +1344,19 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteStealSelection(Player? stealer)
     {
+        // Standalone steal flow when there is no pending turnover
         if (_pendingShooter == null)
+        {
+            if (stealer != null)
+            {
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Steal by {stealer.Number}.{stealer.Name}");
+                AddPlayCard(new[] { CreateAction(stealer, "STEAL") });
+                _actionProcessor.Process(ActionType.Steal, stealer);
+                StatsVM.Refresh();
+            }
+            ResetSelectionState();
             return;
+        }
 
         if (stealer == null)
         {
