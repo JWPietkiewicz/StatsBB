@@ -203,6 +203,7 @@ public class MainWindowViewModel : ViewModelBase
             _isSubstitutionPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(SubstitutionPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     public Visibility SubstitutionPanelVisibility =>
@@ -217,6 +218,7 @@ public class MainWindowViewModel : ViewModelBase
             _isTimeOutSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TimeOutPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     public Visibility TimeOutPanelVisibility =>
@@ -231,6 +233,7 @@ public class MainWindowViewModel : ViewModelBase
             _isStartingFivePanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StartingFivePanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     public Visibility StartingFivePanelVisibility =>
@@ -295,6 +298,7 @@ public class MainWindowViewModel : ViewModelBase
             _isJumpBallPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(JumpBallPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     public Visibility JumpBallPanelVisibility =>
@@ -309,6 +313,7 @@ public class MainWindowViewModel : ViewModelBase
             _isJumpWinnerPanelVisible = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(JumpWinnerPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     public Visibility JumpWinnerPanelVisibility =>
@@ -382,13 +387,14 @@ public class MainWindowViewModel : ViewModelBase
         ScoreBoardVM = new ScoreBoardViewModel(this);
         SelectedTabIndex = 0;
 
-        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
+        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution(), _ => !IsActionInProgress);
 
         SelectActionCommand = new RelayCommand(
             param => SelectAction(param?.ToString()),
-            param => IsActionSelectionActive ||
+            param => (IsActionSelectionActive ||
                      (param?.ToString()?.Equals("Foul",
-                         StringComparison.InvariantCultureIgnoreCase) ?? false)
+                         StringComparison.InvariantCultureIgnoreCase) ?? false)) &&
+                     !IsActionInProgress
         );
 
         NoAssistCommand = new RelayCommand(
@@ -426,27 +432,27 @@ public class MainWindowViewModel : ViewModelBase
         TurnoverTeamACommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamA"), _ => IsTurnoverSelectionActive);
         TurnoverTeamBCommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamB"), _ => IsTurnoverSelectionActive);
 
-        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
-        StartStartingFiveCommand = new RelayCommand(_ => BeginStartingFive());
+        StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution(), _ => !IsActionInProgress);
+        StartStartingFiveCommand = new RelayCommand(_ => BeginStartingFive(), _ => !IsActionInProgress);
         SetupGameCommand = new RelayCommand(_ => SetupGame());
         ConfirmSubstitutionCommand = new RelayCommand(_ => ConfirmSubstitution(), _ => IsSubstitutionConfirmEnabled);
         ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
-        StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
+        StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
-        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall());
+        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall(), _ => !IsActionInProgress);
         ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
         ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
         JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
         JumpTeamBCommand = new RelayCommand(_ => CompleteJumpBall(false));
-        StartTurnoverCommand = new RelayCommand(_ => BeginTurnover());
-        StartAssistCommand = new RelayCommand(_ => BeginAssist());
-        StartReboundCommand = new RelayCommand(_ => BeginRebound());
-        StartStealCommand = new RelayCommand(_ => BeginSteal());
-        StartFreeThrowsCommand = new RelayCommand(_ => BeginFreeThrows());
+        StartTurnoverCommand = new RelayCommand(_ => BeginTurnover(), _ => !IsActionInProgress);
+        StartAssistCommand = new RelayCommand(_ => BeginAssist(), _ => !IsActionInProgress);
+        StartReboundCommand = new RelayCommand(_ => BeginRebound(), _ => !IsActionInProgress);
+        StartStealCommand = new RelayCommand(_ => BeginSteal(), _ => !IsActionInProgress);
+        StartFreeThrowsCommand = new RelayCommand(_ => BeginFreeThrows(), _ => !IsActionInProgress);
         FreeThrowTeamACommand = new RelayCommand(_ => SelectFreeThrowTeam(true), _ => IsFreeThrowTeamSelectionActive);
         FreeThrowTeamBCommand = new RelayCommand(_ => SelectFreeThrowTeam(false), _ => IsFreeThrowTeamSelectionActive);
 
@@ -875,6 +881,33 @@ public class MainWindowViewModel : ViewModelBase
     private bool _assistTeamIsTeamA;
     private bool _stealTeamIsTeamA;
     private readonly List<PlayActionViewModel> _currentPlayActions = new();
+
+    public bool IsActionInProgress =>
+        _pendingShooter != null ||
+        IsSubstitutionPanelVisible ||
+        IsStartingFivePanelVisible ||
+        IsTimeOutSelectionActive ||
+        IsJumpBallPanelVisible ||
+        IsJumpWinnerPanelVisible ||
+        IsTurnoverSelectionActive ||
+        IsAssistSelectionActive ||
+        IsAssistTeamSelectionActive ||
+        IsReboundSelectionActive ||
+        IsReboundTypeSelectionActive ||
+        IsStealSelectionActive ||
+        IsStealTeamSelectionActive ||
+        IsFoulCommiterSelectionActive ||
+        IsFoulTypeSelectionActive ||
+        IsFouledPlayerSelectionActive ||
+        IsFreeThrowTeamSelectionActive ||
+        IsFreeThrowsAwardedSelectionActive ||
+        IsFreeThrowsSelectionActive;
+
+    private void NotifyActionInProgressChanged()
+    {
+        OnPropertyChanged(nameof(IsActionInProgress));
+        CommandManager.InvalidateRequerySuggested();
+    }
 
     private void OnPlayerSelected(Player player)
     {
@@ -1305,6 +1338,11 @@ public class MainWindowViewModel : ViewModelBase
 
     public void CancelCurrentAction()
     {
+        if ((IsAssistSelectionActive && _pendingShooter != null) ||
+            (IsReboundSelectionActive && _pendingShooter != null) ||
+            (IsStealSelectionActive && _pendingShooter != null))
+            return;
+
         TempMarkerRemoved?.Invoke();
         ResetSelectionState();
     }
@@ -1643,6 +1681,7 @@ public class MainWindowViewModel : ViewModelBase
             _isAssistTeamSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(AssistTeamPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1656,6 +1695,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateAssistPlayerStyles();
             OnPropertyChanged(nameof(NoAssistButtonVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1671,6 +1711,7 @@ public class MainWindowViewModel : ViewModelBase
             _isFreeThrowTeamSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(FreeThrowTeamPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1740,6 +1781,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateReboundPlayerStyles();
             OnPropertyChanged(nameof(ReboundPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
     private void UpdateReboundPlayerStyles()
@@ -1798,6 +1840,7 @@ public class MainWindowViewModel : ViewModelBase
             _isReboundTypeSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(ReboundTypePanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1830,6 +1873,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateTurnoverPlayerStyles();
             OnPropertyChanged(nameof(TurnoverPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1846,6 +1890,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateStealPlayerStyles();
             OnPropertyChanged(nameof(StealPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1861,6 +1906,7 @@ public class MainWindowViewModel : ViewModelBase
             _isStealTeamSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(StealTeamPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -1962,6 +2008,7 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             UpdateFoulCommiterPlayerStyles();
             OnPropertyChanged(nameof(FoulCommiterPanelVisibility));
+            NotifyActionInProgressChanged();
             if (!value)
             {
                 EligibleTeamACourtFoulCommitterPlayers.Clear();
@@ -1988,6 +2035,7 @@ public class MainWindowViewModel : ViewModelBase
             _isFoulTypeSelectionActive = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(FoulTypePanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -2000,6 +2048,7 @@ public class MainWindowViewModel : ViewModelBase
             _isFouledPlayerSelectionActive = value;
             OnPropertyChanged();
             UpdateFouledPlayerStyles();
+            NotifyActionInProgressChanged();
             if (!value)
             {
                 EligibleFoulOnCourtPlayers.Clear();
@@ -2021,6 +2070,7 @@ public class MainWindowViewModel : ViewModelBase
             if (value)
                 UpdateFreeThrowPlayerStyles();
             OnPropertyChanged(nameof(FreeThrowsAwardedPanelVisibility));
+            NotifyActionInProgressChanged();
         }
     }
 
@@ -2088,6 +2138,7 @@ public class MainWindowViewModel : ViewModelBase
                 UpdateFreeThrowPlayerStyles();
             OnPropertyChanged(nameof(FreeThrowsPanelVisibility));
             OnPropertyChanged(nameof(FreeThrowResultRows));
+            NotifyActionInProgressChanged();
         }
     }
 
