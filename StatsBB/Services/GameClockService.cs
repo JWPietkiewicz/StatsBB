@@ -113,6 +113,11 @@ public static class GameClockService
             TimeLeft = TimeSpan.Zero;
         if (TimeLeft > _maxTime)
             TimeLeft = _maxTime;
+        if (TimeLeft > TimeSpan.Zero && (StartStopLabel == "END PERIOD" || StartStopLabel == "FINALIZE GAME"))
+        {
+            StartStopLabel = "START";
+            StartStopEnabled = true;
+        }
         TimeUpdated?.Invoke();
     }
 
