@@ -1159,6 +1159,27 @@ public class MainWindowViewModel : ViewModelBase
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
         }
+        else
+        {
+            if (reboundSource is Player rp)
+            {
+                _currentPlayActions.Add(CreateAction(rp, "REBOUND"));
+                bool offensive = _pendingReboundOffensive ?? false;
+                _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
+                StatsVM.Refresh();
+            }
+            else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
+            {
+                bool teamA = team == "TeamA";
+                _currentPlayActions.Add(CreateTeamAction(teamA, "REBOUND"));
+                bool offensive = _pendingReboundOffensive ?? false;
+                var t = teamA ? Game.HomeTeam : Game.AwayTeam;
+                _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
+                StatsVM.Refresh();
+            }
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+        }
 
         ResetSelectionState();
     }
