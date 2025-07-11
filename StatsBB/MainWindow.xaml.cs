@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using StatsBB.Model;
+using StatsBB.Services;
 using StatsBB.UserControls;
 using StatsBB.ViewModel;
 
@@ -51,9 +52,10 @@ namespace StatsBB
                 return;
             }
 
-            if (e.Key == Key.Space)
+            if (e.Key == Key.Space && Keyboard.FocusedElement is not TextBox)
             {
-                GameClockControl.Toggle();
+                GameClockService.Toggle();
+                //GameClockControl.Toggle();
                 e.Handled = true;
             }
         }

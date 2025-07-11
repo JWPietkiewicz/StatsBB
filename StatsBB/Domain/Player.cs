@@ -1,14 +1,50 @@
 using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace StatsBB.Domain;
 
-public class Player
+public class Player : INotifyPropertyChanged
 {
     public int Id { get; set; }
     public int Number { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    private bool _s5;
+    /// <summary>
+    /// Indicates whether the player belongs to the starting five.
+    /// </summary>
+    public bool S5
+    {
+        get => _s5;
+        set
+        {
+            if (_s5 != value)
+            {
+                _s5 = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+    /// <summary>
+    /// Indicates whether the player is on the game roster. Only players with
+    /// <c>IsPlaying</c> set to <c>true</c> should appear on the main view and in
+    /// the stats tab.
+    /// </summary>
+    private bool _isPlaying = false;
+    public bool IsPlaying
+    {
+        get => _isPlaying;
+        set
+        {
+            if (_isPlaying != value)
+            {
+                _isPlaying = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
@@ -22,6 +58,8 @@ public class Player
     public int Points { get; set; }
     public int Assists { get; set; }
     public int Rebounds { get; set; }
+    public int OffensiveRebounds { get; set; }
+    public int DefensiveRebounds { get; set; }
     public int Blocks { get; set; }
     public int Steals { get; set; }
     public int Turnovers { get; set; }
@@ -30,12 +68,24 @@ public class Player
     public int ShotsMade2pt { get; set; }
     public int ShotAttempts3pt { get; set; }
     public int ShotsMade3pt { get; set; }
+    public int FieldGoalsMade => ShotsMade2pt + ShotsMade3pt;
+    public int FieldGoalsAttempted => ShotAttempts2pt + ShotAttempts3pt;
     public int FreeThrowsAttempted { get; set; }
     public int FreeThrowsMade { get; set; }
 
-    public void AddPoints(int points) => Points += points;
+    public void AddPoints(int points)
+    {
+        Points += points;
+    }
     public void AddAssist() => Assists++;
-    public void AddRebound() => Rebounds++;
+    public void AddRebound(bool offensive)
+    {
+        Rebounds++;
+        if (offensive)
+            OffensiveRebounds++;
+        else
+            DefensiveRebounds++;
+    }
     public void AddBlock() => Blocks++;
     public void AddSteal() => Steals++;
     public void AddTurnover() => Turnovers++;
@@ -64,5 +114,12 @@ public class Player
     {
         FreeThrowsAttempted++;
         FreeThrowsMade++;
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

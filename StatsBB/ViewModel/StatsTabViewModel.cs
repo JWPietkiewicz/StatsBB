@@ -15,8 +15,20 @@ public class StatsTabViewModel : ViewModelBase
         Game = game;
     }
 
-    public ObservableCollection<Player> HomePlayers => Game.HomeTeam?.GetPlayers() ?? new();
-    public ObservableCollection<Player> AwayPlayers => Game.AwayTeam?.GetPlayers() ?? new();
+    public string HomeTeamName => Game.HomeTeam?.TeamName ?? string.Empty;
+    public string AwayTeamName => Game.AwayTeam?.TeamName ?? string.Empty;
+
+    public ObservableCollection<Player> HomePlayers =>
+        new(Game.HomeTeam?.Players
+                .Where(p => p.IsPlaying)
+                .Select(p => { p.IsTeamA = true; return p; })
+            ?? Enumerable.Empty<Player>());
+
+    public ObservableCollection<Player> AwayPlayers =>
+        new(Game.AwayTeam?.Players
+                .Where(p => p.IsPlaying)
+                .Select(p => { p.IsTeamA = false; return p; })
+            ?? Enumerable.Empty<Player>());
 
     public int HomeScore => Game.HomeTeam?.Points ?? 0;
     public int AwayScore => Game.AwayTeam?.Points ?? 0;
@@ -34,10 +46,82 @@ public class StatsTabViewModel : ViewModelBase
     public int AwayP3 => GetAwayPeriod(2);
     public int AwayP4 => GetAwayPeriod(3);
 
+    private Player CalculateTotals(bool home)
+    {
+        var players = home
+            ? Game.HomeTeam?.Players?.Where(p => p.IsPlaying)
+            : Game.AwayTeam?.Players?.Where(p => p.IsPlaying);
+        var result = new Player { LastName = "TOTAL" };
+        Team? team = home ? Game.HomeTeam : Game.AwayTeam;
+        if (players != null)
+        {
+            foreach (var p in players)
+            {
+                result.Points += p.Points;
+                result.Assists += p.Assists;
+                result.Rebounds += p.Rebounds;
+                result.OffensiveRebounds += p.OffensiveRebounds;
+                result.DefensiveRebounds += p.DefensiveRebounds;
+                result.Blocks += p.Blocks;
+                result.Steals += p.Steals;
+                result.Turnovers += p.Turnovers;
+                result.FoulsCommitted += p.FoulsCommitted;
+                result.ShotsMade2pt += p.ShotsMade2pt;
+                result.ShotAttempts2pt += p.ShotAttempts2pt;
+                result.ShotsMade3pt += p.ShotsMade3pt;
+                result.ShotAttempts3pt += p.ShotAttempts3pt;
+                result.FreeThrowsMade += p.FreeThrowsMade;
+                result.FreeThrowsAttempted += p.FreeThrowsAttempted;
+            }
+        }
+
+        if (team != null)
+        {
+            result.Rebounds += team.TeamRebounds;
+            result.OffensiveRebounds += team.OffensiveTeamRebounds;
+            result.DefensiveRebounds += team.DefensiveTeamRebounds;
+            result.Turnovers += team.TeamTurnovers;
+            result.FoulsCommitted += team.CoachFouls + team.BenchFouls;
+        }
+
+        return result;
+    }
+
+    private Player CalculateTeamStats(bool home)
+    {
+        Team? team = home ? Game.HomeTeam : Game.AwayTeam;
+        if (team == null)
+            return new Player { LastName = "TEAM" };
+
+        return new Player
+        {
+            LastName = "TEAM",
+            Rebounds = team.TeamRebounds,
+            OffensiveRebounds = team.OffensiveTeamRebounds,
+            DefensiveRebounds = team.DefensiveTeamRebounds,
+            Turnovers = team.TeamTurnovers,
+            FoulsCommitted = team.CoachFouls + team.BenchFouls
+        };
+    }
+
+    public ObservableCollection<Player> HomeTotalsCollection =>
+        new() { CalculateTotals(true) };
+
+    public ObservableCollection<Player> AwayTotalsCollection =>
+        new() { CalculateTotals(false) };
+
+    public ObservableCollection<Player> HomeTeamStatsCollection =>
+        new() { CalculateTeamStats(true) };
+
+    public ObservableCollection<Player> AwayTeamStatsCollection =>
+        new() { CalculateTeamStats(false) };
+
     public void Refresh()
     {
         OnPropertyChanged(nameof(HomePlayers));
         OnPropertyChanged(nameof(AwayPlayers));
+        OnPropertyChanged(nameof(HomeTeamName));
+        OnPropertyChanged(nameof(AwayTeamName));
         OnPropertyChanged(nameof(HomeScore));
         OnPropertyChanged(nameof(AwayScore));
         OnPropertyChanged(nameof(HomeP1));
@@ -48,5 +132,9 @@ public class StatsTabViewModel : ViewModelBase
         OnPropertyChanged(nameof(AwayP2));
         OnPropertyChanged(nameof(AwayP3));
         OnPropertyChanged(nameof(AwayP4));
+        OnPropertyChanged(nameof(HomeTotalsCollection));
+        OnPropertyChanged(nameof(AwayTotalsCollection));
+        OnPropertyChanged(nameof(HomeTeamStatsCollection));
+        OnPropertyChanged(nameof(AwayTeamStatsCollection));
     }
 }
