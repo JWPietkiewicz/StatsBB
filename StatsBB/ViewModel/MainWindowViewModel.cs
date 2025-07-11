@@ -71,6 +71,10 @@ public class MainWindowViewModel : ViewModelBase
     public ObservableCollection<Player> TeamBCourtPlayers { get; } = new();
     public ObservableCollection<Player> TeamABenchPlayers { get; } = new();
     public ObservableCollection<Player> TeamBBenchPlayers { get; } = new();
+    public ObservableCollection<Player> TeamAStartingFivePlayers { get; } = new();
+    public ObservableCollection<Player> TeamAStartingBenchPlayers { get; } = new();
+    public ObservableCollection<Player> TeamBStartingFivePlayers { get; } = new();
+    public ObservableCollection<Player> TeamBStartingBenchPlayers { get; } = new();
 
     public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
 
@@ -216,6 +220,20 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility TimeOutPanelVisibility =>
         IsTimeOutSelectionActive ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isStartingFivePanelVisible;
+    public bool IsStartingFivePanelVisible
+    {
+        get => _isStartingFivePanelVisible;
+        set
+        {
+            _isStartingFivePanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(StartingFivePanelVisibility));
+        }
+    }
+    public Visibility StartingFivePanelVisibility =>
+        IsStartingFivePanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
     private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
@@ -235,9 +253,12 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectFoulTypeCommand { get; }
     public ICommand SelectFreeThrowCountCommand { get; }
     public ICommand StartSubstitutionCommand { get; }
+    public ICommand StartStartingFiveCommand { get; }
     public ICommand ConfirmSubstitutionCommand { get; }
+    public ICommand ConfirmStartingFiveCommand { get; }
     public ICommand ToggleSubInCommand { get; }
     public ICommand ToggleSubOutCommand { get; }
+    public ICommand ToggleStartingFiveCommand { get; }
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
     public ICommand TimeoutTeamBCommand { get; }
@@ -301,9 +322,12 @@ public class MainWindowViewModel : ViewModelBase
         TurnoverTeamBCommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamB"), _ => IsTurnoverSelectionActive);
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
+        StartStartingFiveCommand = new RelayCommand(_ => BeginStartingFive());
         ConfirmSubstitutionCommand = new RelayCommand(_ => ConfirmSubstitution(), _ => IsSubstitutionConfirmEnabled);
+        ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+        ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout());
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
@@ -566,6 +590,8 @@ public class MainWindowViewModel : ViewModelBase
             else
                 TeamBBenchPlayers.Add(p.Player);
         }
+
+        UpdateStartingFiveLists();
     }
 
     private void RegenerateTeamsFromInfo()
@@ -578,7 +604,9 @@ public class MainWindowViewModel : ViewModelBase
         int s5 = 0;
         foreach (var p in home)
         {
-            p.IsActive = s5 < 5;
+            bool starter = s5 < 5;
+            p.IsActive = starter;
+            p.S5 = starter;
             s5++;
             p.IsTeamA = true;
             Players.Add(p);
@@ -587,7 +615,9 @@ public class MainWindowViewModel : ViewModelBase
         s5 = 0;
         foreach (var p in away)
         {
-            p.IsActive = s5 < 5;
+            bool starter = s5 < 5;
+            p.IsActive = starter;
+            p.S5 = starter;
             s5++;
             p.IsTeamA = false;
             Players.Add(p);
@@ -612,6 +642,7 @@ public class MainWindowViewModel : ViewModelBase
         RegenerateTeams();
         SubscribePlayerEvents();
         StatsVM?.Refresh();
+        UpdateStartingFiveLists();
     }
 
     private Player? _pendingShooter;
@@ -1885,6 +1916,75 @@ public class MainWindowViewModel : ViewModelBase
 
         foreach (var p in subIn)
             p.IsActive = true;
+    }
+
+    private void BeginStartingFive()
+    {
+        UpdateStartingFiveLists();
+        IsStartingFivePanelVisible = true;
+    }
+
+    private void ToggleStartingFive(Player? player)
+    {
+        if (player == null) return;
+        var list = player.IsTeamA ? TeamAStartingFivePlayers : TeamBStartingFivePlayers;
+
+        if (player.S5)
+        {
+            player.S5 = false;
+        }
+        else if (list.Count < 5)
+        {
+            player.S5 = true;
+        }
+
+        UpdateStartingFiveLists();
+        OnPropertyChanged(nameof(IsStartingFiveConfirmEnabled));
+    }
+
+    public bool IsStartingFiveConfirmEnabled =>
+        TeamAStartingFivePlayers.Count == 5 && TeamBStartingFivePlayers.Count == 5;
+
+    private void ConfirmStartingFive()
+    {
+        foreach (var p in Players)
+            p.IsActive = p.S5;
+
+        RegenerateTeams();
+        IsStartingFivePanelVisible = false;
+        OnPropertyChanged(nameof(IsStartingFiveConfirmEnabled));
+        StatsVM.Refresh();
+    }
+
+    private void UpdateStartingFiveLists()
+    {
+        TeamAStartingFivePlayers.Clear();
+        TeamAStartingBenchPlayers.Clear();
+        TeamBStartingFivePlayers.Clear();
+        TeamBStartingBenchPlayers.Clear();
+
+        foreach (var p in Players)
+        {
+            if (p.IsTeamA)
+            {
+                if (p.S5)
+                    TeamAStartingFivePlayers.Add(p);
+                else
+                    TeamAStartingBenchPlayers.Add(p);
+            }
+            else
+            {
+                if (p.S5)
+                    TeamBStartingFivePlayers.Add(p);
+                else
+                    TeamBStartingBenchPlayers.Add(p);
+            }
+        }
+
+        OnPropertyChanged(nameof(TeamAStartingFivePlayers));
+        OnPropertyChanged(nameof(TeamAStartingBenchPlayers));
+        OnPropertyChanged(nameof(TeamBStartingFivePlayers));
+        OnPropertyChanged(nameof(TeamBStartingBenchPlayers));
     }
 
     // ---- PlayByPlay log helpers ----

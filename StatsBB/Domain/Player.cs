@@ -11,6 +11,22 @@ public class Player : INotifyPropertyChanged
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
+    private bool _s5;
+    /// <summary>
+    /// Indicates whether the player belongs to the starting five.
+    /// </summary>
+    public bool S5
+    {
+        get => _s5;
+        set
+        {
+            if (_s5 != value)
+            {
+                _s5 = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     /// <summary>
     /// Indicates whether the player is on the game roster. Only players with
     /// <c>IsPlaying</c> set to <c>true</c> should appear on the main view and in
