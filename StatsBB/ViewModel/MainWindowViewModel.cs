@@ -252,6 +252,39 @@ public class MainWindowViewModel : ViewModelBase
         IsGamePanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
     public bool AreTeamsConfirmed => TeamInfoVM.AreTeamsConfirmed;
+
+    private bool _isGameFinalized;
+    public bool IsGameFinalized
+    {
+        get => _isGameFinalized;
+        set
+        {
+            if (_isGameFinalized == value)
+                return;
+
+            _isGameFinalized = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsTeamInfoEnabled));
+            OnPropertyChanged(nameof(IsMainTabEnabled));
+        }
+    }
+
+    public bool IsTeamInfoEnabled => !IsGameFinalized;
+    public bool IsMainTabEnabled => AreTeamsConfirmed && !IsGameFinalized;
+
+    private int _selectedTabIndex;
+    public int SelectedTabIndex
+    {
+        get => _selectedTabIndex;
+        set
+        {
+            if (_selectedTabIndex == value)
+                return;
+
+            _selectedTabIndex = value;
+            OnPropertyChanged();
+        }
+    }
     
     private bool _isJumpBallPanelVisible;
     public bool IsJumpBallPanelVisible
@@ -345,6 +378,7 @@ public class MainWindowViewModel : ViewModelBase
         _resources = resources;
         TeamInfoVM = new TeamInfoViewModel(this);
         ScoreBoardVM = new ScoreBoardViewModel(this);
+        SelectedTabIndex = 0;
 
         StartSubstitutionCommand = new RelayCommand(_ => BeginSubstitution());
 
@@ -480,7 +514,10 @@ public class MainWindowViewModel : ViewModelBase
         TeamInfoVM.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(TeamInfoViewModel.AreTeamsConfirmed))
+            {
                 OnPropertyChanged(nameof(AreTeamsConfirmed));
+                OnPropertyChanged(nameof(IsMainTabEnabled));
+            }
         };
 
         Game.HomeTeam.Players.CollectionChanged += TeamPlayersChanged;
@@ -552,6 +589,8 @@ public class MainWindowViewModel : ViewModelBase
     private void OnFinalizeGameRequested()
     {
         GameClockService.SetState("FINALIZED", false);
+        IsGameFinalized = true;
+        SelectedTabIndex = 2; // switch to Stats tab
     }
 
     private void BeginTimeout()
