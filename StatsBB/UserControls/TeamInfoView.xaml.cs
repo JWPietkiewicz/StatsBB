@@ -39,7 +39,6 @@ public partial class TeamInfoView : UserControl
             if (r < 0 || r >= grid.Items.Count || c < 0 || c >= grid.Columns.Count)
                 return;
             grid.CommitEdit(DataGridEditingUnit.Cell, true);
-            grid.SelectedIndex = r;
             grid.CurrentCell = new DataGridCellInfo(grid.Items[r], grid.Columns[c]);
             grid.ScrollIntoView(grid.Items[r]);
             grid.BeginEdit();
