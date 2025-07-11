@@ -1259,6 +1259,107 @@ Margin="4" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
+                        <!-- Starting Five Panel -->
+                        <Grid Visibility="{Binding StartingFivePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="160"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="160"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="400" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="BENCH" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="1" Text="S5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="3" Text="S5" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                    <TextBlock Grid.Row="0" Grid.Column="4" Text="BENCH" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                                    <Border Grid.Row="1" Grid.Column="0" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamAStartingBenchPlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamAStartingFivePlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <WrapPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                        <Button Content="OK" Width="60" Height="60" FontSize="16" FontWeight="Bold" Background="DarkGreen" Foreground="White" Command="{Binding ConfirmStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveConfirmEnabled}"/>
+                                    </WrapPanel>
+
+                                    <Border Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2" Background="#cceeeeee">
+                                        <ItemsControl ItemsSource="{Binding TeamBStartingFivePlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+
+                                    <Border Grid.Row="1" Grid.Column="4" Background="#ccd3d3d3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                        <ItemsControl ItemsSource="{Binding TeamBStartingBenchPlayers}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Vertical" Height="360"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="{Binding DisplayName}"
+                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+                                                            Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="4" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
                         <!-- Substitution Panel -->
                         <Grid Visibility="{Binding SubstitutionPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center"
@@ -1497,6 +1598,7 @@ Margin="4" />
                         <Button Content="TURNOVER (R)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
                         <Button Content="TIME OUT" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
                         <Button Content="JUMP BALL" Style="{StaticResource JumpBall}" IsEnabled="False"/>
+                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}"/>
                             <Button Content="SUBSTITUTIONS" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}" IsEnabled="False"/>
                             <Button Content="FREE THROWS" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}" IsEnabled="False"/>
                             <Button Content="ASSIST" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}" IsEnabled="False"/>
