@@ -571,7 +571,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (lastRegular && Game.HomeTeam.Points != Game.AwayTeam.Points)
         {
-            GameClockService.SetState("Finalize Game", true);
+            GameClockService.SetState("FINALIZE GAME", true);
             return;
         }
 
