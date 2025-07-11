@@ -2420,6 +2420,7 @@ public class MainWindowViewModel : ViewModelBase
     private void AddPlayCard(IEnumerable<PlayActionViewModel> actions)
     {
         PlayLog.AddCard(
+            Game.GetCurrentPeriod().Name,
             GameClockService.TimeLeftString,
             GameState.TeamAScore,
             GameState.TeamBScore,

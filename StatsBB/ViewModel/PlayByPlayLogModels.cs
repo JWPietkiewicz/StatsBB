@@ -14,10 +14,18 @@ public class PlayActionViewModel
 
 public class PlayCardViewModel
 {
+    /// <summary>
+    /// Name of the period when the actions occurred (e.g. "Q1").
+    /// </summary>
+    public string PeriodName { get; set; } = string.Empty;
     public string Time { get; set; } = string.Empty;
     public int TeamAScore { get; set; }
     public int TeamBScore { get; set; }
     public ObservableCollection<PlayActionViewModel> Actions { get; } = new();
 
-    public string Header => $"{Time} {TeamAScore}:{TeamBScore}";
+    /// <summary>
+    /// Header displayed above play actions.
+    /// Formatted as "PERIOD TIME SCORE" (e.g. "Q1 09:58 10:8").
+    /// </summary>
+    public string Header => $"{PeriodName} {Time} {TeamAScore}:{TeamBScore}";
 }
