@@ -562,7 +562,7 @@
                                     <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <WrapPanel HorizontalAlignment="Center" />
+                                                <WrapPanel HorizontalAlignment="Center" Width="360"/>
                                             </ItemsPanelTemplate>
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
