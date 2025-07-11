@@ -5,6 +5,7 @@
     <UserControl.Resources>
         <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
         <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="TeamColorButtonStyle" TargetType="RadioButton">
             <Setter Property="Width" Value="50"/>
             <Setter Property="Height" Value="50"/>
