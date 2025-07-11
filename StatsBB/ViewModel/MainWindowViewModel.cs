@@ -847,7 +847,7 @@ public class MainWindowViewModel : ViewModelBase
     }
 
 
-    private void RegenerateTeamsFromInfo()
+    public void RegenerateTeamsFromInfo()
     {
         Players.Clear();
 
