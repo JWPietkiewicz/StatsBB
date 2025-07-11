@@ -611,7 +611,14 @@ public class MainWindowViewModel : ViewModelBase
 
     private void BeginRebound()
     {
+        var shooter = _pendingShooter;
         ResetSelectionState();
+
+        if (_pendingFreeThrowRebound)
+        {
+            _pendingShooter = shooter;
+        }
+
         IsReboundSelectionActive = true;
     }
 
@@ -952,7 +959,7 @@ public class MainWindowViewModel : ViewModelBase
         _pendingReboundSource = reboundSource;
         IsReboundSelectionActive = false;
 
-        if (_pendingShooter == null)
+        if (_pendingShooter == null && !_pendingFreeThrowRebound)
         {
             // Manual rebound flow – ask for offensive/defensive type
             IsReboundTypeSelectionActive = true;
