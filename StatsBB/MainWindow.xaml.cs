@@ -1,6 +1,7 @@
 ﻿// Cleaned and organized version of MainWindow.xaml.cs
 
 using System.Windows;
+using HandyControl.Controls;
 using System.Windows.Controls;
 using System.Windows.Input;
 using StatsBB.Model;
@@ -10,7 +11,7 @@ using StatsBB.ViewModel;
 
 namespace StatsBB
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : HandyControl.Controls.Window
     {
         public MainWindow()
         {
