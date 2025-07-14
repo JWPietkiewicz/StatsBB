@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows.Data;
 using StatsBB.MVVM;
 
 namespace StatsBB.ViewModel;
@@ -11,6 +14,80 @@ public class PlayByPlayLogViewModel : ViewModelBase
 {
     public ObservableCollection<PlayCardViewModel> Cards { get; } = new();
     public ObservableCollection<PlayActionEntryViewModel> Entries { get; } = new();
+
+    public ICollectionView EntryView { get; }
+
+    public ObservableCollection<string> PeriodOptions { get; } = new() { "All" };
+    public ObservableCollection<string> PlayerOptions { get; } = new() { "All" };
+    public ObservableCollection<string> ActionOptions { get; } = new() { "All" };
+
+    private string _selectedPeriod = "All";
+    public string SelectedPeriod
+    {
+        get => _selectedPeriod;
+        set
+        {
+            if (_selectedPeriod != value)
+            {
+                _selectedPeriod = value;
+                OnPropertyChanged();
+                EntryView.Refresh();
+            }
+        }
+    }
+
+    private string _selectedPlayer = "All";
+    public string SelectedPlayer
+    {
+        get => _selectedPlayer;
+        set
+        {
+            if (_selectedPlayer != value)
+            {
+                _selectedPlayer = value;
+                OnPropertyChanged();
+                EntryView.Refresh();
+            }
+        }
+    }
+
+    private string _selectedAction = "All";
+    public string SelectedAction
+    {
+        get => _selectedAction;
+        set
+        {
+            if (_selectedAction != value)
+            {
+                _selectedAction = value;
+                OnPropertyChanged();
+                EntryView.Refresh();
+            }
+        }
+    }
+
+    public PlayByPlayLogViewModel()
+    {
+        EntryView = CollectionViewSource.GetDefaultView(Entries);
+        EntryView.Filter = obj => FilterEntry(obj as PlayActionEntryViewModel);
+    }
+
+    private bool FilterEntry(PlayActionEntryViewModel? entry)
+    {
+        if (entry == null)
+            return false;
+
+        if (SelectedPeriod != "All" && entry.Period != SelectedPeriod)
+            return false;
+
+        if (SelectedPlayer != "All" && entry.LastName != SelectedPlayer)
+            return false;
+
+        if (SelectedAction != "All" && entry.Action != SelectedAction)
+            return false;
+
+        return true;
+    }
 
     /// <summary>
     /// Adds a new play card to the log.
@@ -44,7 +121,17 @@ public class PlayByPlayLogViewModel : ViewModelBase
                 Action = a.Action
             };
             Entries.Insert(0, entry);
+
+            if (!PeriodOptions.Contains(period))
+                PeriodOptions.Add(period);
+
+            if (!PlayerOptions.Contains(a.LastName))
+                PlayerOptions.Add(a.LastName);
+
+            if (!ActionOptions.Contains(a.Action))
+                ActionOptions.Add(a.Action);
         }
+        EntryView.Refresh();
         Cards.Insert(0, card);
     }
 }
