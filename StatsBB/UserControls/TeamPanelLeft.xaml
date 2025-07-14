@@ -4,53 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:sys="clr-namespace:System;assembly=mscorlib" Height="520">
-    <UserControl.Resources>
-        <SolidColorBrush x:Key="TeamBackground" Color="White"/>
-        <SolidColorBrush x:Key="TeamColor" Color="Orange"/>
-        <SolidColorBrush x:Key="CourtColor" Color="Orange"/>
-        <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
-        <Style x:Key="BaseButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-                <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="24"/>
-        </Style>
-        <Style x:Key="BasePlayerButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="64" />
-            <Setter Property="Height" Value="64" />
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="24"/>
-        </Style>
-        <Style x:Key="BenchPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource BenchColor}"/>
-        </Style>
-        <Style x:Key="Court" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource CourtColor}"/>
-        </Style>
-        <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
-        </Style>
-        <sys:String x:Key="C1">39</sys:String>
-        <sys:String x:Key="C2">12</sys:String>
-        <sys:String x:Key="C3">48</sys:String>
-        <sys:String x:Key="C4">23</sys:String>
-        <sys:String x:Key="C5">7</sys:String>
-
-        <sys:String x:Key="B1">51</sys:String>
-        <sys:String x:Key="B2">26</sys:String>
-        <sys:String x:Key="B3">11</sys:String>
-        <sys:String x:Key="B4">43</sys:String>
-        <sys:String x:Key="B5">10</sys:String>
-        <sys:String x:Key="B6">31</sys:String>
-        <sys:String x:Key="B7">55</sys:String>
-        <sys:String x:Key="B8">6</sys:String>
-        <sys:String x:Key="B9">19</sys:String>
-        <sys:String x:Key="B10">45</sys:String>
-        <sys:String x:Key="B11">00</sys:String>
-        <sys:String x:Key="B12">00</sys:String>
-
-    </UserControl.Resources>
+    
     <Border BorderThickness="2" Background="{StaticResource TeamBackground}" BorderBrush="#888" VerticalAlignment="Stretch" HorizontalAlignment="Right">
         <Grid VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
