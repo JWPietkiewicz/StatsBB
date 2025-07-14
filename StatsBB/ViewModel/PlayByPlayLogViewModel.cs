@@ -10,6 +10,7 @@ namespace StatsBB.ViewModel;
 public class PlayByPlayLogViewModel : ViewModelBase
 {
     public ObservableCollection<PlayCardViewModel> Cards { get; } = new();
+    public ObservableCollection<PlayActionEntryViewModel> Entries { get; } = new();
 
     /// <summary>
     /// Adds a new play card to the log.
@@ -30,7 +31,20 @@ public class PlayByPlayLogViewModel : ViewModelBase
             TeamBScore = teamBScore
         };
         foreach (var a in actions)
+        {
             card.Actions.Add(a);
+            var entry = new PlayActionEntryViewModel
+            {
+                Period = period,
+                Time = time,
+                TeamColor = a.TeamColor,
+                PlayerNumber = a.PlayerNumber,
+                FirstName = a.FirstName,
+                LastName = a.LastName,
+                Action = a.Action
+            };
+            Entries.Insert(0, entry);
+        }
         Cards.Insert(0, card);
     }
 }
