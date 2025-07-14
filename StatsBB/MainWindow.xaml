@@ -1881,5 +1881,8 @@ Margin="4" />
         <TabItem Header="STATS" IsEnabled="{Binding AreTeamsConfirmed}">
             <controls:StatsView DataContext="{Binding StatsVM}" />
         </TabItem>
+        <TabItem Header="PLAY BY PLAY" IsEnabled="{Binding AreTeamsConfirmed}">
+            <controls:PlayByPlayLog DataContext="{Binding PlayLog}" />
+        </TabItem>
     </TabControl>
 </Window>
