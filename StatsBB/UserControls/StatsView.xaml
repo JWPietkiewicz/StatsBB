@@ -31,9 +31,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="2">
-                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding HomePeriodScore}" />
-                                <TextBlock Style="{StaticResource PeriodResult}" Text=" : " />
-                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding AwayPeriodScore}" />
+                                <TextBlock Text="{Binding HomePeriodScore}" />
+                                <TextBlock Text=" : " />
+                                <TextBlock Text="{Binding AwayPeriodScore}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -15,9 +15,9 @@
             <ColumnDefinition Width="150"/>
             <ColumnDefinition Width="100"/>
         </Grid.ColumnDefinitions>
-        <Button Grid.Column="0" Style="{StaticResource JumpBall}" Content="JUMP BALL" />
-        <Button Grid.Column="1" Style="{StaticResource Sub}" Content="SUB" />
-        <Button Grid.Column="2" Style="{StaticResource TimeOut}" Content="TIME OUT" />
+        <Button Grid.Column="0" Content="JUMP BALL" />
+        <Button Grid.Column="1" Content="SUB" />
+        <Button Grid.Column="2" Content="TIME OUT" />
         
     </Grid>
 </UserControl>

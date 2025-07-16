@@ -26,7 +26,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                        <RadioButton Margin="2"
                                  Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamAColorGroup">
                             <RadioButton.Content>99</RadioButton.Content>
                             <RadioButton.IsChecked>
@@ -51,11 +51,11 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid x:Name="HomeGrid" ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="5" CanUserAddRows="False" SelectionUnit="Cell" Style="{StaticResource PlayerDataGridStyle}">
+            <DataGrid x:Name="HomeGrid" ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" Margin="5" CanUserAddRows="False" SelectionUnit="Cell">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
-                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="2*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElement/>
+                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElement/>
+                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="2*" EditingElement/>
                     <DataGridTemplateColumn Header="Play" Width="50">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -90,7 +90,7 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton Style="{StaticResource TeamColorButtonStyle}" Margin="2"
+                        <RadioButton Margin="2"
                                  Background="{Binding ColorBrush}" Foreground="{Binding TextBrush}" GroupName="TeamBColorGroup">
                             <RadioButton.Content>99</RadioButton.Content>
                             <RadioButton.IsChecked>
@@ -115,11 +115,11 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <DataGrid x:Name="AwayGrid" ItemsSource="{Binding AwayPlayers}"  AutoGenerateColumns="False" Margin="5" CanUserAddRows="False" SelectionUnit="Cell" Style="{StaticResource PlayerDataGridStyle}">
+            <DataGrid x:Name="AwayGrid" ItemsSource="{Binding AwayPlayers}"  AutoGenerateColumns="False" Margin="5" CanUserAddRows="False" SelectionUnit="Cell">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
-                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="2*" EditingElementStyle="{StaticResource PlayerEditTextStyle}"/>
+                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40" EditingElement/>
+                    <DataGridTextColumn Header="First" Binding="{Binding FirstName}" Width="*" EditingElement/>
+                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="2*" EditingElement/>
                     <DataGridTemplateColumn Header="Play" Width="50">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
