@@ -10,7 +10,7 @@
     <FileVersion>0.6.8</FileVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationFramework.Aero2" />
+    <!-- Fluent theme resources are part of PresentationFramework -->
   </ItemGroup>
 
 </Project>
