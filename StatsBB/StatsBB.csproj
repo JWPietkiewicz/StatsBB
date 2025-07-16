@@ -10,7 +10,8 @@
     <FileVersion>0.6.8</FileVersion>
   </PropertyGroup>
   <ItemGroup>
-    <!-- Fluent theme resources are part of PresentationFramework -->
+    <!-- Reference PresentationFramework.Aero2 for Fluent theme dictionaries -->
+    <Reference Include="PresentationFramework.Aero2" />
   </ItemGroup>
 
 </Project>
