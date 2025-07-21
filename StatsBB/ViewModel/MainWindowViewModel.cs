@@ -438,9 +438,9 @@ public class MainWindowViewModel : ViewModelBase
         ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
         ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
-    _ => EnterBlockerSelection(),
-    _ => IsReboundSelectionActive
-);
+            _ => EnterBlockerSelection(),
+            _ => IsReboundSelectionActive && !_wasBlocked
+        );
         ShotClockCommand = new RelayCommand(_ => CompleteReboundSelection("24"), _ => IsReboundSelectionActive);
         TurnoverTeamACommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamA"), _ => IsTurnoverSelectionActive);
         TurnoverTeamBCommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamB"), _ => IsTurnoverSelectionActive);
