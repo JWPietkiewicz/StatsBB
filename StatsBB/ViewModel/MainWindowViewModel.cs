@@ -94,11 +94,10 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamAColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryAColor"] is SolidColorBrush bA &&
-                _resources["SecondaryAColor"] is SolidColorBrush sA)
+            if (value != null)
             {
-                bA.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sA.Color = ((SolidColorBrush)value.TextBrush).Color;
+                _resources["PrimaryAColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
+                _resources["SecondaryAColor"] = new SolidColorBrush(((SolidColorBrush)value.TextBrush).Color);
             }
             if (TeamAInfo.Color != value)
                 TeamAInfo.Color = value;
@@ -116,11 +115,10 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamBColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryBColor"] is SolidColorBrush bB &&
-                _resources["SecondaryBColor"] is SolidColorBrush sB)
+            if (value != null)
             {
-                bB.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sB.Color = ((SolidColorBrush)value.TextBrush).Color;
+                _resources["PrimaryBColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
+                _resources["SecondaryBColor"] = new SolidColorBrush(((SolidColorBrush)value.TextBrush).Color);
             }
             if (TeamBInfo.Color != value)
                 TeamBInfo.Color = value;
@@ -2663,6 +2661,17 @@ public class MainWindowViewModel : ViewModelBase
         var colorTmp = TeamAColorOption;
         TeamAColorOption = TeamBColorOption;
         TeamBColorOption = colorTmp;
+
+        // notify in case other view models cache the current brushes so
+        // the updated colors propagate everywhere
+        OnPropertyChanged(nameof(TeamAColorOption));
+        OnPropertyChanged(nameof(TeamBColorOption));
+
+        // ensure team-specific stats follow the teams after swapping
+        (GameState.TeamAScore, GameState.TeamBScore) = (GameState.TeamBScore, GameState.TeamAScore);
+        (GameState.TeamATimeOutsLeft, GameState.TeamBTimeOutsLeft) = (GameState.TeamBTimeOutsLeft, GameState.TeamATimeOutsLeft);
+        (GameState.TeamATotalTimeouts, GameState.TeamBTotalTimeouts) = (GameState.TeamBTotalTimeouts, GameState.TeamATotalTimeouts);
+        (GameState.TeamAFouls, GameState.TeamBFouls) = (GameState.TeamBFouls, GameState.TeamAFouls);
 
         RegenerateTeamsFromInfo();
         StatsVM.Refresh();
