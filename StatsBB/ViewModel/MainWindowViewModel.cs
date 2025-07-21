@@ -1407,6 +1407,7 @@ public class MainWindowViewModel : ViewModelBase
             RecordPoints(_pendingShooter, _pendingIsThreePoint ? 3 : 2, assistPlayer, _pendingIsThreePoint);
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
+            GameClockService.SetPossession(!_pendingShooter.IsTeamA);
         }
         else if (assistPlayer != null)
         {
@@ -1444,6 +1445,7 @@ public class MainWindowViewModel : ViewModelBase
                 bool offensive = _pendingReboundOffensive ?? (rp.IsTeamA == _pendingShooter.IsTeamA);
                 _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
                 StatsVM.Refresh();
+                GameClockService.SetPossession(rp.IsTeamA);
             }
             else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
             {
@@ -1453,6 +1455,7 @@ public class MainWindowViewModel : ViewModelBase
                 var t = teamA ? Game.HomeTeam : Game.AwayTeam;
                 _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
                 StatsVM.Refresh();
+                GameClockService.SetPossession(teamA);
             }
             if (_pendingFreeThrowRebound)
             {
@@ -1478,6 +1481,7 @@ public class MainWindowViewModel : ViewModelBase
                 bool offensive = _pendingReboundOffensive ?? false;
                 _actionProcessor.Process(offensive ? ActionType.OffensiveRebound : ActionType.DefensiveRebound, rp);
                 StatsVM.Refresh();
+                GameClockService.SetPossession(rp.IsTeamA);
             }
             else if (reboundSource is string team && (team == "TeamA" || team == "TeamB"))
             {
@@ -1487,6 +1491,7 @@ public class MainWindowViewModel : ViewModelBase
                 var t = teamA ? Game.HomeTeam : Game.AwayTeam;
                 _actionProcessor.ProcessTeam(ActionType.TeamRebound, t, offensive);
                 StatsVM.Refresh();
+                GameClockService.SetPossession(teamA);
             }
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
@@ -1574,6 +1579,7 @@ public class MainWindowViewModel : ViewModelBase
                 _actionProcessor.ProcessTeam(ActionType.TeamTurnover, t);
                 StatsVM.Refresh();
             }
+            GameClockService.SetPossession(!teamA);
             ResetSelectionState();
         }
     }
@@ -1636,6 +1642,7 @@ public class MainWindowViewModel : ViewModelBase
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
             StatsVM.Refresh();
+            GameClockService.SetPossession(!_pendingShooter.IsTeamA);
             ResetSelectionState();
             return;
         }
@@ -1655,6 +1662,7 @@ public class MainWindowViewModel : ViewModelBase
         AddPlayCard(_currentPlayActions.ToList());
         _currentPlayActions.Clear();
         StatsVM.Refresh();
+        GameClockService.SetPossession(stealer.IsTeamA);
         ResetSelectionState();
     }
 
@@ -2530,6 +2538,9 @@ public class MainWindowViewModel : ViewModelBase
             CreateTeamAction(!teamAWon, "JUMP BALL LOST")
         });
 
+        GameClockService.SetPossession(teamAWon);
+        GameClockService.SetArrow(!teamAWon);
+
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
         IsJumpWinnerPanelVisible = false;
@@ -2571,6 +2582,7 @@ public class MainWindowViewModel : ViewModelBase
         GameState.TeamAScore = Game.HomeTeam.Points;
         GameState.TeamBScore = Game.AwayTeam.Points;
         StatsVM.Refresh();
+        GameClockService.SetPossession(!shooter.IsTeamA);
     }
 
     private void UseTimeout(bool teamA)
