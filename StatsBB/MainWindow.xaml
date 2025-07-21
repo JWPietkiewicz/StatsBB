@@ -478,7 +478,9 @@
                         <Grid Visibility="{Binding QuickShotPanelVisibility}"
       Background="#ccFFFFFF"
       Panel.ZIndex="10">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="380">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <Grid Height="380">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="180"/>
                                     <ColumnDefinition Width="100"/>
@@ -569,12 +571,14 @@
                                         </ItemsControl>
                                     </StackPanel>
                                 </Border>
-                            </Grid>
+                                </Grid>
+                            </StackPanel>
                         </Grid>
 
                         <!-- Assist Team Selection -->
                         <Grid Visibility="{Binding AssistTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -595,6 +599,7 @@
                         <Grid Visibility="{Binding NoAssistButtonVisibility}"
       Panel.ZIndex="10" Background="#ccFFFFFF">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
 
                                 <!-- COURT PLAYERS -->
                                 <Border Padding="10" Background="#cceeeeee" BorderThickness="1" BorderBrush="Black" Width="380">
@@ -654,7 +659,9 @@
                         <Grid Visibility="{Binding ReboundPanelVisibility}"
       Background="#ccFFFFFF"
       Panel.ZIndex="10" Height="500" Width="900">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="500">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <Grid Height="500">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="160"/>
                                     <!-- Team A Bench -->
@@ -770,7 +777,8 @@ Margin="4" />
                                         </ItemsControl>
                                     </StackPanel>
                                 </Border>
-                            </Grid>
+                                </Grid>
+                            </StackPanel>
                         </Grid>
 
                         <Grid Visibility="{Binding ReboundTypePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10" Width="400" Height="200">
@@ -789,6 +797,7 @@ Margin="4" />
 
                             <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <!-- COURT PLAYERS -->
                                 <Border Background="#cceeeeee" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black">
                                     <ItemsControl ItemsSource="{Binding EligibleBlockCourtPlayers}">
@@ -831,7 +840,9 @@ Margin="4" />
                         <Grid Visibility="{Binding TurnoverPanelVisibility}"
       Background="#ccFFFFFF"
       Panel.ZIndex="10" Height="500" Width="900">
-                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="160"/>
                                     <ColumnDefinition Width="100"/>
@@ -934,10 +945,12 @@ Margin="4" />
                                         </ItemsControl>
                                     </StackPanel>
                                 </Border>
-                            </Grid>
+                                </Grid>
+                            </StackPanel>
                         </Grid>
                         <Grid Visibility="{Binding StealTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -957,6 +970,7 @@ Margin="4" />
       Background="#33FFFFFF"
       Panel.ZIndex="10" Width="400">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding CurrentActionTitle}" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <!-- COURT PLAYERS -->
                                 <Border Padding="10" Background="#cceeeeee" BorderThickness="1" BorderBrush="Black" Width="380">
                                     <ItemsControl ItemsSource="{Binding EligibleStealCourtPlayers}">
