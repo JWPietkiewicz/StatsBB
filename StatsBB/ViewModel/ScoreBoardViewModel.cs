@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Media;
 using StatsBB.MVVM;
 
@@ -78,5 +79,10 @@ public class ScoreBoardViewModel : ViewModelBase
         get => _main.TeamBName;
         set => _main.TeamBName = value;
     }
+
+    /// <summary>
+    /// Command used to swap the home and away teams on the scoreboard.
+    /// </summary>
+    public ICommand SwapSidesCommand => _main.SwapSidesCommand;
 }
 
