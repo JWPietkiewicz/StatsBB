@@ -2611,6 +2611,11 @@ public class MainWindowViewModel : ViewModelBase
         TeamAColorOption = TeamBColorOption;
         TeamBColorOption = colorTmp;
 
+        // notify in case other view models cache the current brushes so
+        // the updated colors propagate everywhere
+        OnPropertyChanged(nameof(TeamAColorOption));
+        OnPropertyChanged(nameof(TeamBColorOption));
+
         // ensure team-specific stats follow the teams after swapping
         (GameState.TeamAScore, GameState.TeamBScore) = (GameState.TeamBScore, GameState.TeamAScore);
         (GameState.TeamATimeOutsLeft, GameState.TeamBTimeOutsLeft) = (GameState.TeamBTimeOutsLeft, GameState.TeamATimeOutsLeft);
