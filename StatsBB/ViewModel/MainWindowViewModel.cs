@@ -366,6 +366,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmStartingFiveCommand { get; }
     public ICommand ToggleSubInCommand { get; }
     public ICommand ToggleSubOutCommand { get; }
+    public ICommand SubOutAllTeamACommand { get; }
+    public ICommand SubOutAllTeamBCommand { get; }
     public ICommand ToggleStartingFiveCommand { get; }
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
@@ -452,6 +454,8 @@ public class MainWindowViewModel : ViewModelBase
         ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+        SubOutAllTeamACommand = new RelayCommand(_ => ToggleSubOutAll(true));
+        SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
@@ -2367,6 +2371,25 @@ public class MainWindowViewModel : ViewModelBase
             list.Remove(player);
         else if (list.Count < 5)
             list.Add(player);
+
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
+    }
+
+    private void ToggleSubOutAll(bool isTeamA)
+    {
+        var targetList = isTeamA ? TeamASubOut : TeamBSubOut;
+        var courtPlayers = isTeamA ? TeamACourtPlayers : TeamBCourtPlayers;
+
+        if (targetList.Count == courtPlayers.Count && courtPlayers.All(p => targetList.Contains(p)))
+        {
+            targetList.Clear();
+        }
+        else
+        {
+            targetList.Clear();
+            foreach (var p in courtPlayers)
+                targetList.Add(p);
+        }
 
         OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
     }
