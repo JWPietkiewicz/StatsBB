@@ -588,6 +588,14 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         period.Status = PeriodStatus.Ended;
 
+        var endActions = new List<PlayActionViewModel>
+        {
+            CreateGameAction("PERIOD END")
+        };
+        if (period.IsRegular && (period.PeriodNumber == 2 || period.PeriodNumber == Game.DefaultPeriods))
+            endActions.Add(CreateGameAction("HALF END"));
+        AddPlayCard(endActions);
+
         bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
         bool overtime = !period.IsRegular;
 
@@ -614,6 +622,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private void OnFinalizeGameRequested()
     {
+        AddPlayCard(new[] { CreateGameAction("GAME END") });
         GameClockService.SetState("FINALIZED", false);
         IsGameFinalized = true;
         SelectedTabIndex = 2; // switch to Stats tab
@@ -626,6 +635,18 @@ public class MainWindowViewModel : ViewModelBase
         {
             period.Status = PeriodStatus.Active;
             GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
+            var startActions = new List<PlayActionViewModel>();
+            if (period.PeriodNumber == 1)
+            {
+                startActions.Add(CreateGameAction("GAME START"));
+                startActions.Add(CreateGameAction("HALF START"));
+            }
+            else if (period.PeriodNumber == 3)
+            {
+                startActions.Add(CreateGameAction("HALF START"));
+            }
+            startActions.Add(CreateGameAction("PERIOD START"));
+            AddPlayCard(startActions);
         }
     }
 
@@ -2554,6 +2575,19 @@ public class MainWindowViewModel : ViewModelBase
             TeamColor = teamA ? (Brush)_resources["CourtAColor"] : (Brush)_resources["CourtBColor"],
             PlayerNumber = string.Empty,
             FirstName = name,
+            LastName = string.Empty,
+            Action = action
+        };
+    }
+
+    private PlayActionViewModel CreateGameAction(string action)
+    {
+        Debug.WriteLine($"CreateGameAction: {action}");
+        return new PlayActionViewModel
+        {
+            TeamColor = Brushes.Gray,
+            PlayerNumber = string.Empty,
+            FirstName = string.Empty,
             LastName = string.Empty,
             Action = action
         };
