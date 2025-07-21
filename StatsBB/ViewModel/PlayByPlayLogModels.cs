@@ -29,3 +29,17 @@ public class PlayCardViewModel
     /// </summary>
     public string Header => $"{PeriodName} {Time} {TeamAScore}:{TeamBScore}";
 }
+
+/// <summary>
+/// Flat representation of a single play action used by the sortable log.
+/// </summary>
+public class PlayActionEntryViewModel
+{
+    public string Period { get; set; } = string.Empty;
+    public string Time { get; set; } = string.Empty;
+    public Brush TeamColor { get; set; } = Brushes.Gray;
+    public string PlayerNumber { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty;
+}
