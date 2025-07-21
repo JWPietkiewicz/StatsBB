@@ -2611,6 +2611,12 @@ public class MainWindowViewModel : ViewModelBase
         TeamAColorOption = TeamBColorOption;
         TeamBColorOption = colorTmp;
 
+        // ensure team-specific stats follow the teams after swapping
+        (GameState.TeamAScore, GameState.TeamBScore) = (GameState.TeamBScore, GameState.TeamAScore);
+        (GameState.TeamATimeOutsLeft, GameState.TeamBTimeOutsLeft) = (GameState.TeamBTimeOutsLeft, GameState.TeamATimeOutsLeft);
+        (GameState.TeamATotalTimeouts, GameState.TeamBTotalTimeouts) = (GameState.TeamBTotalTimeouts, GameState.TeamATotalTimeouts);
+        (GameState.TeamAFouls, GameState.TeamBFouls) = (GameState.TeamBFouls, GameState.TeamAFouls);
+
         RegenerateTeamsFromInfo();
         StatsVM.Refresh();
     }
