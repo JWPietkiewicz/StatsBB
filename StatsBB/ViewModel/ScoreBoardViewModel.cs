@@ -65,8 +65,8 @@ public class ScoreBoardViewModel : ViewModelBase
     public int TeamAFouls => _main.GameState.TeamAFouls;
     public int TeamBFouls => _main.GameState.TeamBFouls;
 
-    public Brush TeamAColor => _main.TeamAColorOption?.ColorBrush ?? Brushes.Orange;
-    public Brush TeamBColor => _main.TeamBColorOption?.ColorBrush ?? Brushes.Green;
+    public Brush TeamAColor => _main.TeamAColorOption?.ColorBrush ?? new SolidColorBrush(Colors.Orange);
+    public Brush TeamBColor => _main.TeamBColorOption?.ColorBrush ?? new SolidColorBrush(Colors.Green);
 
     public string TeamAName
     {
