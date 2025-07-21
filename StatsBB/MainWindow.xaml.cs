@@ -16,7 +16,7 @@ namespace StatsBB
         {
             InitializeComponent();
 
-            var vm = new MainWindowViewModel(Resources);
+            var vm = new MainWindowViewModel();
 
             // 🔗 Connect view model to view
             vm.MarkerRequested += (pos, color, filled) => CourtControl.SetMarker(pos, color, filled);

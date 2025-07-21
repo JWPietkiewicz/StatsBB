@@ -4,10 +4,8 @@
              xmlns:converters="clr-namespace:StatsBB.Converters">
     <UserControl.Resources>
         <converters:BoolToXConverter x:Key="BoolToXConverter" />
-        <Style x:Key="PeriodResult" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="16"/>
-        </Style>
     </UserControl.Resources>
+    
     <StackPanel Margin="10">
         <Grid Width="1050">
             <Grid.ColumnDefinitions>
@@ -36,9 +34,9 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Margin="2">
-                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding HomePeriodScore}" />
-                                <TextBlock Style="{StaticResource PeriodResult}" Text=" : " />
-                                <TextBlock Style="{StaticResource PeriodResult}" Text="{Binding AwayPeriodScore}" />
+                                <TextBlock Text="{Binding HomePeriodScore}" />
+                                <TextBlock Text=" : " />
+                                <TextBlock Text="{Binding AwayPeriodScore}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -50,15 +48,6 @@
             <TextBlock Text="{Binding HomeTeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
 
             <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,1,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsActive}" Value="True">
-                                <Setter Property="FontWeight" Value="Bold"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
                 <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="20"/>
                 <DataGridTextColumn Header="FIRST NAME" Binding="{Binding FirstName}" Width="150"/>
@@ -97,11 +86,6 @@
                 </DataGrid.Columns>
         </DataGrid>
             <DataGrid ItemsSource="{Binding HomeTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
                     <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="40"/>
@@ -129,15 +113,6 @@
 
         <TextBlock Text="{Binding AwayTeamName}" FontWeight="Bold" Margin="10" FontSize="24"/>
             <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True"  Width="1050" BorderThickness="1,1,1,0">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsActive}" Value="True">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="20"/>
                     <DataGridTextColumn Header="FIRST NAME" Binding="{Binding FirstName}" Width="150"/>
@@ -176,11 +151,6 @@
                 </DataGrid.Columns>
             </DataGrid>
             <DataGrid ItemsSource="{Binding AwayTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
                     <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="40"/>

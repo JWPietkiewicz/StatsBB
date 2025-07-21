@@ -6,8 +6,7 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="125" d:DesignWidth="420">
-    <UserControl.Resources>
-    </UserControl.Resources>
+    
     <Border Background="White" BorderBrush="#888" CornerRadius="0" BorderThickness="2" Padding="10">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>

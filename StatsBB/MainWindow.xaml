@@ -7,375 +7,7 @@
         xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
         Title="Basketball Stats Map" Height="1080" Width="1920"
         PreviewKeyDown="Window_PreviewKeyDown">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
-        <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
-
-
-        <SolidColorBrush x:Key="PrimaryAColor" Color="Orange" po:Freeze="False"/>
-        <SolidColorBrush x:Key="SecondaryAColor" Color="White" po:Freeze="False"/>
-        <SolidColorBrush x:Key="PrimaryBColor" Color="Green" po:Freeze="False"/>
-        <SolidColorBrush x:Key="SecondaryBColor" Color="White" po:Freeze="False"/>
-        <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
-        <SolidColorBrush x:Key="DisabledColor" Color="LightGray"/>
-        <SolidColorBrush x:Key="HoverGrey" Color="#303030"/>
-        <SolidColorBrush x:Key="SelectedMadeColor" Color="Green"/>
-        <SolidColorBrush x:Key="SelectedMissedColor" Color="Red"/>
-        <SolidColorBrush x:Key="DarkGrey" Color="DarkGray"/>
-        <SolidColorBrush x:Key="Grey" Color="Gray"/>
-
-        <Style x:Key="BasePlayerButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="64" />
-            <Setter Property="Height" Value="64" />
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="24"/>
-        </Style>
-        <Style x:Key="BaseActionButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Margin" Value="5" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="2"
-                    Padding="{TemplateBinding Padding}">
-                            <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        RecognizesAccessKey="True"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource HoverGrey}"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ActionSelectableButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource DarkGrey}"/>
-        </Style>
-        <!-- Action: Cannot be selected -->
-        <Style x:Key="ActionDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource DisabledColor}"/>
-        </Style>
-
-        <!-- Action: Selected Made -->
-        <Style x:Key="ActionSelectedMadeStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource SelectedMadeColor}"/>
-        </Style>
-
-        <!-- Action: Selected Missed, Foul, Turnover -->
-        <Style x:Key="ActionSelectedFailedStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource SelectedMissedColor}"/>
-        </Style>
-        <!-- Court Player: Not Selectable -->
-        <Style x:Key="CourtPlayerDisabledStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <!--<Setter Property="Background" Value="{Binding TeamColorDimmed}" />-->
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-
-        <!-- Court Player: Selectable (Team-colored) -->
-        <Style x:Key="CourtPlayerSelectableStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{Binding TeamColor}" />
-            <!-- via VM -->
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Opacity" Value="0.8"/>
-                    <!-- hover effect -->
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <!-- Bench Player: Not Selectable -->
-        <Style x:Key="BenchPlayerDisabledStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{StaticResource Grey}"/>
-            <Setter Property="Foreground" Value="DarkGray"/>
-        </Style>
-
-        <!-- Bench Player: Selectable -->
-        <Style x:Key="BenchPlayerSelectableStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{StaticResource Grey}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="{Binding TeamColor}" />
-            <!-- via VM -->
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource HoverGrey}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="BaseButtonStyle" TargetType="Button">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="24"/>
-        </Style>
-
-        <Style x:Key="BenchPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}"  po:Freeze="False">
-            <Setter Property="Background" Value="{StaticResource BenchColor}"/>
-        </Style>
-        <Style x:Key="CourtAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}"/>
-        </Style>
-        <Style x:Key="BenchAPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-        <Style x:Key="BenchBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource SecondaryBColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
-        <Style x:Key="CourtBPlayerButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}"/>
-        </Style>
-        <Style x:Key="BenchButton" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}" po:Freeze="False">
-        </Style>
-
-        <Style x:Key="BottomPanelButton" BasedOn="{StaticResource BaseActionButtonStyle}" TargetType="Button">
-            <Setter Property="Padding" Value="15"/> 
-        </Style>
-        <Style x:Key="Made" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Missed" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Sub" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Foul" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Turnover" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="JumpBall" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="TimeOut" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="FreeThrows" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Assist" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Rebound" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <Style x:Key="Steal" TargetType="Button" BasedOn="{StaticResource BottomPanelButton}"/>
-        <!-- TEAM A TIMEOUT BUTTON -->
-        <Style x:Key="TeamATimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="120" />
-            <Setter Property="Height" Value="80" />
-        </Style>
-
-        <!-- TEAM B TIMEOUT BUTTON -->
-        <Style x:Key="TeamBTimeoutStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="120" />
-            <Setter Property="Height" Value="80" />
-        </Style>
-
-        <Style x:Key="SubButtonStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="Black"/>
-        </Style>
-        <!-- TEAM A REBOUND BUTTON -->
-        <Style x:Key="TeamAReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-
-
-        <!-- TEAM B REBOUND BUTTON -->
-        <Style x:Key="TeamBReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-
-        <!-- TEAM A TECHNICAL FOUL BUTTON STYLE-->
-        <Style x:Key="CoachTechnicalTeamAStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}"  />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryAColor}" />
-            <Setter Property="FontSize" Value="22" />
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-        <Style x:Key="BenchTechnicalTeamAStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource SecondaryAColor}"  />
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryAColor}" />
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="FontSize" Value="22" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-        <!-- TEAM B TECHNICAL FOUL BUTTON STYLE-->
-        <Style x:Key="CoachTechnicalTeamBStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}"  />
-            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBColor}"  />
-            <Setter Property="FontSize" Value="22" />
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-        <Style x:Key="BenchTechnicalTeamBStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource SecondaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryBColor}"  />
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="FontSize" Value="22" />
-            <Setter Property="BorderThickness" Value="3" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-        <!-- TEAM A TURNOVER BUTTON -->
-        <Style x:Key="TeamATurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryAColor}"  />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryAColor}" />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-
-        <!-- TEAM B TURNOVER BUTTON -->
-        <Style x:Key="TeamBTurnoverStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{DynamicResource PrimaryBColor}" />
-            <Setter Property="Foreground" Value="{DynamicResource SecondaryBColor}"  />
-            <Setter Property="FontWeight" Value="Bold" />
-        </Style>
-
-        <!-- BLOCK BUTTON -->
-        <Style x:Key="BlockStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="Gray" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="60" />
-            <Setter Property="Height" Value="40" />
-        </Style>
-
-        <!-- SHOT CLOCK VIOLATION BUTTON -->
-        <Style x:Key="ShotClockStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="Gray" />
-            <Setter Property="Foreground" Value="White" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Width" Value="60" />
-            <Setter Property="Height" Value="40" />
-        </Style>
-
-        <!-- FOUL TYPE BUTTON -->
-        <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Height" Value="60" />
-            <Setter Property="Width" Value="280" />
-        </Style>
-        <!-- REBOUND TYPE BUTTON -->
-        <Style x:Key="ReboundTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}"/>
-        <!-- FREE THROW COUNT BUTTON -->
-        <Style x:Key="FreeThrowCountButtonStyle" TargetType="Button" BasedOn="{StaticResource FoulTypeButtonStyle}">
-            <Setter Property="Width" Value="60" />
-            <Setter Property="Height" Value="60" />
-        </Style>
-        <Style x:Key="FreeThrowCountSelectedStyle" TargetType="Button" BasedOn="{StaticResource FreeThrowCountButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource SelectedMadeColor}" />
-        </Style>
-
-        <!-- FREE THROW RESULT BUTTON -->
-        <Style x:Key="FreeThrowResultButtonStyle" TargetType="Button" BasedOn="{StaticResource ActionSelectableButtonStyle}">
-            <Setter Property="Background"  Value="Gray" />
-            <Setter Property="Width" Value="120" />
-            <Setter Property="Height" Value="40" />
-        </Style>
-
-        <Style x:Key="ShooterCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}" po:Freeze="False">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
-                    <Setter Property="BorderThickness" Value="4"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="ShooterBenchPlayerStyle" TargetType="Button" BasedOn="{StaticResource BenchPlayerSelectableStyle}" po:Freeze="False">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelectedAsFreeThrowShooter}" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
-                    <Setter Property="BorderThickness" Value="4"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="AssistCourtPlayerStyle" TargetType="Button" BasedOn="{StaticResource CourtPlayerSelectableStyle}" po:Freeze="False">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelectedAsAssist}" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
-                    <Setter Property="BorderThickness" Value="4"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style x:Key="AssistBenchPlayerStyle" TargetType="Button" BasedOn="{StaticResource BenchPlayerSelectableStyle}" po:Freeze="False">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelectedAsAssist}" Value="True">
-                    <Setter Property="BorderBrush" Value="White"/>
-                    <Setter Property="BorderThickness" Value="4"/>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-
-        <converters:IsTeamAToCourtStyleConverter x:Key="CourtPlayerStyleConverter"
-                                     TeamAStyle="{StaticResource CourtAPlayerButtonStyle}"
-                                     TeamBStyle="{StaticResource CourtBPlayerButtonStyle}" po:Freeze="False" />
-
-        <converters:IsTeamAToBenchStyleConverter x:Key="BenchPlayerStyleConverter"
-                                     TeamAStyle="{StaticResource BenchAPlayerButtonStyle}"
-                                     TeamBStyle="{StaticResource BenchBPlayerButtonStyle}" po:Freeze="False" />
-        <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <StackPanel Orientation="Horizontal" Margin="10">
-                            <Border x:Name="Border"
-                                Width="24" Height="24"
-                                BorderBrush="Gray" BorderThickness="2"
-                                CornerRadius="4"
-                                Background="White"
-                                VerticalAlignment="Center"
-                                Margin="0,0,8,0">
-                                <Path x:Name="CheckMark"
-                                  Visibility="Collapsed"
-                                  Stroke="Green"
-                                  StrokeThickness="2"
-                                  Data="M 4 10 L 8 14 L 16 6" />
-                            </Border>
-                            <ContentPresenter VerticalAlignment="Center"
-                                          RecognizesAccessKey="True" />
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
-                                <Setter TargetName="Border" Property="Background" Value="#E0FFE0"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
-                                <Setter Property="Foreground" Value="Gray"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="Foreground" Value="#333"/>
-            <Setter Property="Cursor" Value="Hand"/>
-        </Style>
-    </Window.Resources>
+    
 
     <Window.InputBindings>
         <!-- Action: MADE (M) -->
@@ -498,7 +130,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource BenchAPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -519,7 +151,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -540,7 +172,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -561,7 +193,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource BenchBPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -582,10 +214,10 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Border Grid.Column="0">
-                                        <Button Content="{Binding TeamAName}" Command="{Binding AssistTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                        <Button Content="{Binding TeamAName}" Command="{Binding AssistTeamACommand}" Margin="5"/>
                                     </Border>
                                     <Border Grid.Column="1">
-                                        <Button Content="{Binding TeamBName}" Command="{Binding AssistTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                        <Button Content="{Binding TeamBName}" Command="{Binding AssistTeamBCommand}" Margin="5"/>
                                     </Border>
                                 </Grid>
                             </StackPanel>
@@ -607,7 +239,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                             </DataTemplate>
@@ -641,7 +273,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                             </DataTemplate>
@@ -683,7 +315,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-Style="{StaticResource BenchAPlayerButtonStyle}"
+
 Command="{Binding SelectPlayerCommand}"
 Margin="4" />
                                                 </DataTemplate>
@@ -704,7 +336,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-Style="{StaticResource CourtAPlayerButtonStyle}"
+
 Command="{Binding SelectPlayerCommand}"
 Margin="4" />
                                                 </DataTemplate>
@@ -715,19 +347,19 @@ Margin="4" />
                                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                                     <Button Content="{Binding TeamAName}"
 Command="{Binding ReboundTeamACommand}"
-Style="{StaticResource TeamAReboundStyle}"/>
+/>
                                 </Border>
                                 <Border Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
                                     <Button Content="{Binding TeamBName}"
 Command="{Binding ReboundTeamBCommand}"
-Style="{StaticResource TeamBReboundStyle}"/>
+/>
                                 </Border>
                                 <!-- CENTER REBOUND BUTTONS -->
                                 <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
-                                    <Button Content="Block" Command="{Binding BlockCommand}" Style="{StaticResource BlockStyle}" Width="100" Height="50"/>
+                                    <Button Content="Block" Command="{Binding BlockCommand}" Width="100" Height="50"/>
                                 </Border>
                                 <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-                                    <Button Content="24" Command="{Binding ShotClockCommand}" Style="{StaticResource ShotClockStyle}" Width="100" Height="50"/>
+                                    <Button Content="24" Command="{Binding ShotClockCommand}" Width="100" Height="50"/>
                                 </Border>
                                 <!-- TEAM B COURT -->
                                 <Border Background="#cceeeeee" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" BorderThickness="1" BorderBrush="Black">
@@ -741,7 +373,7 @@ Style="{StaticResource TeamBReboundStyle}"/>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-Style="{StaticResource CourtBPlayerButtonStyle}"
+
 Command="{Binding SelectPlayerCommand}"
 Margin="4" />
                                                 </DataTemplate>
@@ -762,7 +394,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-Style="{StaticResource BenchBPlayerButtonStyle}"
+
 Command="{Binding SelectPlayerCommand}"
 Margin="4" />
                                                 </DataTemplate>
@@ -777,8 +409,8 @@ Margin="4" />
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock Text="TYPE OF REBOUND" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
                                 <WrapPanel HorizontalAlignment="Center">
-                                    <Button Style="{StaticResource ReboundTypeButtonStyle}" Content="OFFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="offensive"/>
-                                    <Button Style="{StaticResource ReboundTypeButtonStyle}" Content="DEFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="defensive"/>
+                                    <Button Content="OFFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="offensive"/>
+                                    <Button Content="DEFENSIVE" Command="{Binding SelectReboundTypeCommand}" CommandParameter="defensive"/>
                                 </WrapPanel>
                             </StackPanel>
                         </Grid>
@@ -800,7 +432,7 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4"/>
                                             </DataTemplate>
@@ -818,7 +450,7 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4"/>
                                             </DataTemplate>
@@ -856,7 +488,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource BenchAPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -877,7 +509,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -887,10 +519,10 @@ Margin="4" />
                                 </Border>
 
                                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                                    <Button Content="{Binding TeamAName}" Command="{Binding TurnoverTeamACommand}" Style="{StaticResource TeamATurnoverStyle}" />
+                                    <Button Content="{Binding TeamAName}" Command="{Binding TurnoverTeamACommand}" />
                                 </Border>
                                 <Border Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
-                                    <Button Content="{Binding TeamBName}" Command="{Binding TurnoverTeamBCommand}" Style="{StaticResource TeamBTurnoverStyle}" />
+                                    <Button Content="{Binding TeamBName}" Command="{Binding TurnoverTeamBCommand}" />
                                 </Border>
 
                                 <!-- TEAM B COURT -->
@@ -905,7 +537,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -926,7 +558,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                            Style="{StaticResource BenchBPlayerButtonStyle}"
+
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4" />
                                                 </DataTemplate>
@@ -945,10 +577,10 @@ Margin="4" />
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <Border Grid.Column="0">
-                                        <Button Content="{Binding TeamAName}" Command="{Binding StealTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                        <Button Content="{Binding TeamAName}" Command="{Binding StealTeamACommand}" Margin="5"/>
                                     </Border>
                                     <Border Grid.Column="1">
-                                        <Button Content="{Binding TeamBName}" Command="{Binding StealTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                        <Button Content="{Binding TeamBName}" Command="{Binding StealTeamBCommand}" Margin="5"/>
                                     </Border>
                                 </Grid>
                             </StackPanel>
@@ -968,7 +600,7 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4"/>
                                             </DataTemplate>
@@ -1003,7 +635,7 @@ Margin="4" />
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Button Content="{Binding DisplayName}"
-                            Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}"
+                           
                             Command="{Binding SelectPlayerCommand}"
                             Margin="4"/>
                                             </DataTemplate>
@@ -1037,7 +669,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource BenchAPlayerButtonStyle}"
+
                                                     Command="{Binding SelectPlayerCommand}"
                                                     Margin="4" />
                                                 </DataTemplate>
@@ -1057,7 +689,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                                     Command="{Binding SelectPlayerCommand}"
                                                     Margin="4" />
                                                 </DataTemplate>
@@ -1066,16 +698,16 @@ Margin="4" />
                                     </StackPanel>
                                 </Border>
                                 <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Background="#ccd3d3d3" BorderThickness="1" BorderBrush="Black" Margin="2,0,8,0">
-                                    <Button Content="Coach" Command="{Binding CoachTechnicalTeamACommand}" Style="{StaticResource CoachTechnicalTeamAStyle}" />
+                                    <Button Content="Coach" Command="{Binding CoachTechnicalTeamACommand}" />
                                 </Border>
                                 <Border Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" Background="#ccd3d3d3" BorderThickness="1" BorderBrush="Black" Margin="8,0,2,0">
-                                    <Button Content="Coach" Command="{Binding CoachTechnicalTeamBCommand}" Style="{StaticResource CoachTechnicalTeamBStyle}" />
+                                    <Button Content="Coach" Command="{Binding CoachTechnicalTeamBCommand}" />
                                 </Border>
                                 <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="#ccd3d3d3" BorderThickness="1" BorderBrush="Black" Margin="2,0,8,0">
-                                    <Button Content="Bench" Command="{Binding BenchTechnicalTeamACommand}" Style="{StaticResource BenchTechnicalTeamAStyle}" />
+                                    <Button Content="Bench" Command="{Binding BenchTechnicalTeamACommand}" />
                                 </Border>
                                 <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Background="#ccd3d3d3" BorderThickness="1" BorderBrush="Black" Margin="8,0,2,0">
-                                    <Button Content="Bench" Command="{Binding BenchTechnicalTeamBCommand}" Style="{StaticResource BenchTechnicalTeamBStyle}" />
+                                    <Button Content="Bench" Command="{Binding BenchTechnicalTeamBCommand}" />
                                 </Border>
 
 
@@ -1090,7 +722,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                                     Command="{Binding SelectPlayerCommand}"
                                                     Margin="4" />
                                                 </DataTemplate>
@@ -1110,7 +742,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource BenchBPlayerButtonStyle}"
+
                                                     Command="{Binding SelectPlayerCommand}"
                                                     Margin="4" />
                                                 </DataTemplate>
@@ -1124,13 +756,13 @@ Margin="4" />
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <TextBlock Text="Foul Type" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="10"/>
                                 <WrapPanel HorizontalAlignment="Center" Width="900">
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="SHOOTING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="OFFENSIVE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="TECHNICAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DOUBLE PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal"/>
-                                    <Button Style="{StaticResource FoulTypeButtonStyle}" Content="UNSPORTSMANLIKE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike"/>
-                                <Button Style="{StaticResource FoulTypeButtonStyle}" Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
+                                    <Button Content="PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="personal"/>
+                                    <Button Content="SHOOTING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="shooting"/>
+                                    <Button Content="OFFENSIVE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="offensive"/>
+                                    <Button Content="TECHNICAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="technical"/>
+                                    <Button Content="DOUBLE PERSONAL" Command="{Binding SelectFoulTypeCommand}" CommandParameter="double personal"/>
+                                    <Button Content="UNSPORTSMANLIKE" Command="{Binding SelectFoulTypeCommand}" CommandParameter="unsportsmanlike"/>
+                                <Button Content="DISQUALIFYING" Command="{Binding SelectFoulTypeCommand}" CommandParameter="disqualifying"/>
                             </WrapPanel>
                         </StackPanel>
                     </Grid>
@@ -1143,10 +775,10 @@ Margin="4" />
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <Border Grid.Column="0">
-                                    <Button Content="{Binding TeamAName}" Command="{Binding FreeThrowTeamACommand}" Style="{StaticResource TeamAReboundStyle}" Margin="5"/>
+                                    <Button Content="{Binding TeamAName}" Command="{Binding FreeThrowTeamACommand}" Margin="5"/>
                                 </Border>
                                 <Border Grid.Column="1">
-                                    <Button Content="{Binding TeamBName}" Command="{Binding FreeThrowTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
+                                    <Button Content="{Binding TeamBName}" Command="{Binding FreeThrowTeamBCommand}" Margin="5"/>
                                 </Border>
                             </Grid>
                         </StackPanel>
@@ -1159,10 +791,10 @@ Margin="4" />
                                     <StackPanel>
                                         <TextBlock Text="Free Throws Awarded" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                         <WrapPanel HorizontalAlignment="Center" Margin="0 0 0 10">
-                                            <Button Content="0" Style="{Binding FreeThrowCount0Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
-                                            <Button Content="1" Style="{Binding FreeThrowCount1Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
-                                            <Button Content="2" Style="{Binding FreeThrowCount2Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
-                                            <Button Content="3" Style="{Binding FreeThrowCount3Style}" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
+                                            <Button Content="0" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="0" Margin="5" Padding="0"/>
+                                            <Button Content="1" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="1" Margin="5" Padding="0"/>
+                                            <Button Content="2" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="2" Margin="5" Padding="0"/>
+                                            <Button Content="3" Command="{Binding SelectFreeThrowCountCommand}" CommandParameter="3" Margin="5" Padding="0"/>
                                         </WrapPanel>
                                     </StackPanel>
                                 </Border>
@@ -1184,7 +816,7 @@ Margin="4" />
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource ShooterCourtPlayerStyle}"
+
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding Player}"
                                                     Margin="4" />
@@ -1202,7 +834,7 @@ Margin="4" />
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <Button Content="{Binding DisplayName}"
-                                                    Style="{StaticResource ShooterBenchPlayerStyle}"
+
                                                     Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding Player}"
                                                     Margin="4" />
@@ -1214,7 +846,7 @@ Margin="4" />
                                     </StackPanel>
                                 </Border>
                             </StackPanel>
-                                <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center" Style="{StaticResource FoulTypeButtonStyle}" />
+                                <Button Content="Confirm" Command="{Binding ConfirmFreeThrowsAwardedCommand}" Margin="10" HorizontalAlignment="Center" />
                             </StackPanel>
                         </Grid>
                         <Grid Visibility="{Binding IsFouledPlayerSelectionActive, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -1234,7 +866,7 @@ Margin="4" />
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button Content="{Binding DisplayName}" Style="{Binding IsTeamA, Converter={StaticResource CourtPlayerStyleConverter}}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
+                                                <Button Content="{Binding DisplayName}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -1249,7 +881,7 @@ Margin="4" />
                                         </ItemsControl.ItemsPanel>
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
-                                                <Button Content="{Binding DisplayName}" Style="{Binding IsTeamA, Converter={StaticResource BenchPlayerStyleConverter}}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
+                                                <Button Content="{Binding DisplayName}" Command="{Binding SelectPlayerCommand}" Margin="4"/>
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
@@ -1272,13 +904,13 @@ Margin="4" />
                                                     <TextBlock Text="{Binding Label}" FontSize="16" FontWeight="Bold" Margin="6 0 0 0"/>
                                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                         <Button Content="MADE"
-                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
+
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MADE"
                                                         Background="{Binding MadeButtonBackground}"
                                                         Margin="4"/>
                                                         <Button Content="MISSED"
-                                                        Style="{StaticResource FreeThrowResultButtonStyle}"
+
                                                         Command="{Binding SelectResultCommand}"
                                                         CommandParameter="MISSED"
                                                         Background="{Binding MissedButtonBackground}"
@@ -1289,7 +921,7 @@ Margin="4" />
                                         </ItemsControl.ItemTemplate>
                                     </ItemsControl>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox Content="Rebound?" IsChecked="{Binding IsRebound}" Style="{StaticResource ModernCheckBoxStyle}" Margin="5,0"/>
+                                        <CheckBox Content="Rebound?" IsChecked="{Binding IsRebound}" Margin="5,0"/>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Grid.Column="0">
@@ -1310,7 +942,7 @@ Margin="4" />
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Button Content="{Binding DisplayName}"
-                                                        Style="{StaticResource ShooterCourtPlayerStyle}"
+
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Player}"
                                                         Margin="2"/>
@@ -1328,7 +960,7 @@ Margin="4" />
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Button Content="{Binding DisplayName}"
-                                                        Style="{StaticResource ShooterBenchPlayerStyle}"
+
                                                         Command="{Binding DataContext.SelectFreeThrowShooterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Player}"
                                                         Margin="2"/>
@@ -1356,7 +988,7 @@ Margin="4" />
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Button Content="{Binding DisplayName}"
-                                                        Style="{StaticResource AssistCourtPlayerStyle}"
+
                                                         Command="{Binding DataContext.SelectFreeThrowAssistCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Player}"
                                                         IsEnabled="{Binding IsSelectableForAssist}"
@@ -1380,7 +1012,7 @@ Margin="4" />
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
                                                         <Button Content="{Binding DisplayName}"
-                                                        Style="{StaticResource AssistBenchPlayerStyle}"
+
                                                         Command="{Binding DataContext.SelectFreeThrowAssistCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                         CommandParameter="{Binding Player}"
                                                         IsEnabled="{Binding IsSelectableForAssist}"
@@ -1398,8 +1030,8 @@ Margin="4" />
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
                                 <TextBlock Text="Who called for time out?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Content="Team A" Style="{StaticResource TeamATimeoutStyle}" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
-                                    <Button Content="Team B" Style="{StaticResource TeamBTimeoutStyle}" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
+                                    <Button Content="Team A" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
+                                    <Button Content="Team B" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -1434,7 +1066,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1454,7 +1086,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1479,7 +1111,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1499,7 +1131,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleJumpPlayerCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1516,10 +1148,10 @@ Margin="4" />
                                 <TextBlock Text="WHO WON?" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
-                                        <Button Content="{Binding TeamAName}" Command="{Binding JumpTeamACommand}" Style="{StaticResource TeamAReboundStyle}"/>
+                                        <Button Content="{Binding TeamAName}" Command="{Binding JumpTeamACommand}"/>
                                     </Border>
                                     <Border Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
-                                        <Button Content="{Binding TeamBName}" Command="{Binding JumpTeamBCommand}" Style="{StaticResource TeamBReboundStyle}"/>
+                                        <Button Content="{Binding TeamBName}" Command="{Binding JumpTeamBCommand}"/>
                                     </Border>
                                 </StackPanel>
                             </StackPanel>
@@ -1554,7 +1186,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1572,7 +1204,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1595,7 +1227,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1614,7 +1246,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                                            Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                                             Command="{Binding DataContext.ToggleStartingFiveCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                             CommandParameter="{Binding}"
                                                             Margin="4" />
@@ -1665,7 +1297,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1685,7 +1317,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1705,7 +1337,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1724,7 +1356,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtAPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1748,7 +1380,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1767,7 +1399,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubOutCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1787,7 +1419,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1808,7 +1440,7 @@ Margin="4" />
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <Button Content="{Binding DisplayName}"
-                                Style="{StaticResource CourtBPlayerButtonStyle}"
+
                                 Command="{Binding DataContext.ToggleSubInCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                 CommandParameter="{Binding}"
                                 Margin="4" />
@@ -1834,7 +1466,7 @@ Margin="4" />
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-                                            Style="{Binding ButtonStyle}" Margin="2"/>
+ Margin="2"/>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
@@ -1849,7 +1481,7 @@ Margin="4" />
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Button Content="{Binding DisplayName}"
-                                            Style="{Binding ButtonStyle}" Margin="2" />
+ Margin="2" />
 
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -1857,18 +1489,18 @@ Margin="4" />
                     </Border>
                     <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="5" Margin="0,10">
                         <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5" Width="1000">
-                        <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="FOUL (F)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
-                        <Button Content="TURNOVER (T)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
-                        <Button Content="TIME OUT (C)" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
-                        <Button Content="JUMP BALL (B)" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
-                        <Button Content="SUBSTITUTIONS (S)" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
-                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveButtonEnabled}"/>
-                        <Button Content="FREE THROWS (V)" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
-                        <Button Content="ASSIST (A)" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
-                        <Button Content="REBOUND (R)" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
-                        <Button Content="STEAL (S)" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
+                        <Button Content="MADE" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
+                        <Button Content="MISSED" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
+                        <Button Content="FOUL (F)" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
+                        <Button Content="TURNOVER (T)" Command="{Binding StartTurnoverCommand}"/>
+                        <Button Content="TIME OUT (C)" Command="{Binding StartTimeoutCommand}"/>
+                        <Button Content="JUMP BALL (B)" Command="{Binding StartJumpBallCommand}"/>
+                        <Button Content="SUBSTITUTIONS (S)" Command="{Binding StartSubstitutionCommand}"/>
+                        <Button Content="S5" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveButtonEnabled}"/>
+                        <Button Content="FREE THROWS (V)" Command="{Binding StartFreeThrowsCommand}"/>
+                        <Button Content="ASSIST (A)" Command="{Binding StartAssistCommand}"/>
+                        <Button Content="REBOUND (R)" Command="{Binding StartReboundCommand}"/>
+                        <Button Content="STEAL (S)" Command="{Binding StartStealCommand}"/>
                     </WrapPanel>
                     </Border>
                 </Grid>

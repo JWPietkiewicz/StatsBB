@@ -37,7 +37,6 @@ public static class PlayerLayoutService
     */
     public static ObservableCollection<PlayerPositionViewModel> CreatePositionedPlayers(
         IEnumerable<Player> players,
-        ResourceDictionary resources,
         Action<Player> onSelect)
     {
         var list = new ObservableCollection<PlayerPositionViewModel>();
@@ -52,24 +51,13 @@ public static class PlayerLayoutService
 
         foreach (var player in sorted)
         {
-            // Choose styles
-            string courtStyleKey = player.IsTeamA
-                ? "CourtAPlayerButtonStyle"
-                : "CourtBPlayerButtonStyle";
-            string benchStyleKey = player.IsTeamA
-                ? "BenchAPlayerButtonStyle"
-                : "BenchBPlayerButtonStyle";
-
-            Style style = player.IsActive
-                ? (Style)resources[courtStyleKey]
-                : (Style)resources[benchStyleKey];
 
             // Court players
             if (player.IsActive && activeRow < 5)
             {
                 int courtColumn = player.IsTeamA ? 2 : 0;
                 int courtRow = activeRow;
-                list.Add(new PlayerPositionViewModel(player, courtRow, courtColumn, style, onSelect, resources));
+                list.Add(new PlayerPositionViewModel(player, courtRow, courtColumn, onSelect));
                 activeRow++;
             }
             else
@@ -85,7 +73,7 @@ public static class PlayerLayoutService
                         if (!usedSpots.Contains((col, row)))
                         {
                             usedSpots.Add((col, row));
-                            list.Add(new PlayerPositionViewModel(player, row, col, style, onSelect, resources));
+                            list.Add(new PlayerPositionViewModel(player, row, col, onSelect));
                             placed = true;
                             break;
                         }

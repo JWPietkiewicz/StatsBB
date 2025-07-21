@@ -94,12 +94,6 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamAColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryAColor"] is SolidColorBrush bA &&
-                _resources["SecondaryAColor"] is SolidColorBrush sA)
-            {
-                bA.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sA.Color = ((SolidColorBrush)value.TextBrush).Color;
-            }
             if (TeamAInfo.Color != value)
                 TeamAInfo.Color = value;
         }
@@ -116,12 +110,6 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamBColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryBColor"] is SolidColorBrush bB &&
-                _resources["SecondaryBColor"] is SolidColorBrush sB)
-            {
-                bB.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sB.Color = ((SolidColorBrush)value.TextBrush).Color;
-            }
             if (TeamBInfo.Color != value)
                 TeamBInfo.Color = value;
         }
@@ -335,7 +323,6 @@ public class MainWindowViewModel : ViewModelBase
     public bool IsJumpEnabled =>
         TeamAJumpingPlayers.Count == 1 && TeamBJumpingPlayers.Count == 1;
 
-    private readonly ResourceDictionary _resources;
 
     public ICommand SelectActionCommand { get; }
     public ICommand NoAssistCommand { get; }
@@ -396,9 +383,8 @@ public class MainWindowViewModel : ViewModelBase
     public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
 
-    public MainWindowViewModel(ResourceDictionary resources)
+    public MainWindowViewModel()
     {
-        _resources = resources;
         TeamInfoVM = new TeamInfoViewModel(this);
         ScoreBoardVM = new ScoreBoardViewModel(this);
         SelectedTabIndex = 0;
@@ -823,12 +809,10 @@ public class MainWindowViewModel : ViewModelBase
 
         var teamA = PlayerLayoutService.CreatePositionedPlayers(
             Players.Where(p => p.IsTeamA),
-            _resources,
             OnPlayerSelected
         );
         var teamB = PlayerLayoutService.CreatePositionedPlayers(
             Players.Where(p => !p.IsTeamA),
-            _resources,
             OnPlayerSelected
         );
 
@@ -1331,7 +1315,6 @@ public class MainWindowViewModel : ViewModelBase
         SelectedFreeThrowCount = _defaultFreeThrows;
         SelectedFreeThrowShooter = _fouledPlayer;
         UpdateFreeThrowPlayerStyles();
-        UpdateFreeThrowCountButtonStyles();
         IsFreeThrowsAwardedSelectionActive = true;
     }
 
@@ -1701,9 +1684,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private Brush GetTeamColorFromPlayer(Player player)
     {
-        return player.IsTeamA
-            ? (Brush)_resources["PrimaryAColor"]
-            : (Brush)_resources["PrimaryBColor"];
+        return player.IsTeamA ? Brushes.Orange : Brushes.Green;
     }
 
     private ActionButtonMode GetActionType(string action) => action.ToUpperInvariant() switch
@@ -1725,7 +1706,6 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsPlayerSelectionActive));
             OnPropertyChanged(nameof(IsActionSelectionActive));
             UpdatePlayerStyles();
-            UpdateActionButtonStyles();
             CommandManager.InvalidateRequerySuggested();
         }
     }
@@ -1740,7 +1720,6 @@ public class MainWindowViewModel : ViewModelBase
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsPlayerSelectionActive));
             UpdatePlayerStyles();
-            UpdateActionButtonStyles();
         }
     }
 
@@ -2167,7 +2146,6 @@ public class MainWindowViewModel : ViewModelBase
             if (value == 0)
                 SelectedFreeThrowShooter = null;
             OnPropertyChanged();
-            UpdateFreeThrowCountButtonStyles();
             OnPropertyChanged(nameof(FreeThrowShooterVisibility));
         }
     }
@@ -2325,68 +2303,13 @@ public class MainWindowViewModel : ViewModelBase
     {
         foreach (var vm in TeamAPlayers.Concat(TeamBPlayers))
         {
-            vm.UpdateButtonStyle(IsActionSelectionActive, IsPlayerSelectionActive, GetTeamColor(vm));
+            vm.UpdateButtonStyle(IsActionSelectionActive, IsPlayerSelectionActive);
         }
-    }
-
-    private void UpdateActionButtonStyles()
-    {
-        OnPropertyChanged(nameof(MadeButtonStyle));
-        OnPropertyChanged(nameof(MissedButtonStyle));
-        OnPropertyChanged(nameof(FoulButtonStyle));
-        OnPropertyChanged(nameof(TurnoverButtonStyle));
     }
 
     private Brush GetTeamColor(PlayerPositionViewModel vm)
     {
-        return vm.Player.IsTeamA
-            ? (Brush)_resources["PrimaryAColor"]
-            : (Brush)_resources["PrimaryBColor"];
-    }
-
-    private void UpdateFreeThrowCountButtonStyles()
-    {
-        OnPropertyChanged(nameof(FreeThrowCount0Style));
-        OnPropertyChanged(nameof(FreeThrowCount1Style));
-        OnPropertyChanged(nameof(FreeThrowCount2Style));
-        OnPropertyChanged(nameof(FreeThrowCount3Style));
-    }
-
-
-
-    // Action button styles
-    public Style MadeButtonStyle => GetActionStyle("MADE");
-    public Style MissedButtonStyle => GetActionStyle("MISSED");
-    public Style FoulButtonStyle => GetActionStyle("FOUL");
-    public Style TurnoverButtonStyle => GetActionStyle("TURNOVER");
-    public Style FreeThrowCount0Style => GetFreeThrowCountStyle(0);
-    public Style FreeThrowCount1Style => GetFreeThrowCountStyle(1);
-    public Style FreeThrowCount2Style => GetFreeThrowCountStyle(2);
-    public Style FreeThrowCount3Style => GetFreeThrowCountStyle(3);
-
-    private Style GetActionStyle(string action)
-    {
-        if (!IsActionSelectionActive && action != "FOUL")
-            return (Style)_resources["ActionDisabledButtonStyle"];
-
-        if (SelectedAction == action)
-        {
-            return action switch
-            {
-                "MADE" => (Style)_resources["ActionSelectedMadeStyle"],
-                "MISSED" or "FOUL" or "TURNOVER" => (Style)_resources["ActionSelectedFailedStyle"],
-                _ => (Style)_resources["ActionSelectableButtonStyle"]
-            };
-        }
-
-        return (Style)_resources["ActionSelectableButtonStyle"];
-    }
-
-    private Style GetFreeThrowCountStyle(int count)
-    {
-        return SelectedFreeThrowCount == count
-            ? (Style)_resources["FreeThrowCountSelectedStyle"]
-            : (Style)_resources["FreeThrowCountButtonStyle"];
+        return vm.Player.IsTeamA ? Brushes.Orange : Brushes.Green;
     }
 
     public Visibility NoAssistButtonVisibility =>
@@ -2601,7 +2524,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"CreateTeamAction: {name} {action}");
         return new PlayActionViewModel
         {
-            TeamColor = teamA ? (Brush)_resources["CourtAColor"] : (Brush)_resources["CourtBColor"],
+            TeamColor = teamA ? Brushes.Orange : Brushes.Green,
             PlayerNumber = string.Empty,
             FirstName = name,
             LastName = string.Empty,
