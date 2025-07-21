@@ -1469,6 +1469,15 @@ public class MainWindowViewModel : ViewModelBase
             var shot = FormatShotAction(_pendingIsThreePoint, _wasBlocked ? "BLOCKED" : "MISSED");
             _currentPlayActions.Insert(0, CreateAction(_pendingShooter, shot));
             _actionProcessor.Process(ActionType.ShotMissed, _pendingShooter, null, _pendingIsThreePoint);
+
+            if (reboundSource is string r && r == "24")
+            {
+                bool teamA = _pendingShooter.IsTeamA;
+                _currentPlayActions.Add(CreateTeamAction(teamA, "TURNOVER"));
+                var team = teamA ? Game.HomeTeam : Game.AwayTeam;
+                _actionProcessor.ProcessTeam(ActionType.TeamTurnover, team);
+            }
+
             StatsVM.Refresh();
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
