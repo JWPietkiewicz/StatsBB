@@ -967,11 +967,22 @@ public class MainWindowViewModel : ViewModelBase
             if (_foulCommiter != null)
                 GameState.AddFoul(_foulCommiter.IsTeamA);
 
+            bool offensive = _foulType?.ToLowerInvariant() == "offensive";
+            if (offensive && _foulCommiter != null)
+            {
+                _currentPlayActions.Add(CreateAction(_foulCommiter, "TURNOVER"));
+            }
+
             AddPlayCard(_currentPlayActions.ToList());
             _currentPlayActions.Clear();
 
-            if (_foulType?.ToLowerInvariant() == "offensive")
+            if (offensive)
             {
+                if (_foulCommiter != null)
+                {
+                    _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
+                    StatsVM.Refresh();
+                }
                 Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
             }
