@@ -120,5 +120,15 @@ public class GameStateViewModel : ViewModelBase
         else
             TeamBFouls++;
     }
+
+    /// <summary>
+    /// Reset the foul counts for both teams. This should be called whenever a
+    /// new period begins.
+    /// </summary>
+    public void ResetFouls()
+    {
+        TeamAFouls = 0;
+        TeamBFouls = 0;
+    }
 }
 
