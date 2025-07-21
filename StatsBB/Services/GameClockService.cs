@@ -18,6 +18,9 @@ public static class GameClockService
     public static string Period { get; private set; } = "Q1";
     public static bool IsRunning => _timer.IsEnabled;
 
+    public static bool TeamAPossession { get; private set; } = true;
+    public static bool TeamAArrow { get; private set; } = true;
+
     public static string StartStopLabel { get; private set; } = "START";
     public static bool StartStopEnabled { get; private set; } = true;
 
@@ -133,6 +136,37 @@ public static class GameClockService
         TimeLeft = _maxTime;
         StartStopLabel = label ?? "START";
         StartStopEnabled = true;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void SetPossession(bool teamA)
+    {
+        TeamAPossession = teamA;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void SwapPossession()
+    {
+        TeamAPossession = !TeamAPossession;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void SetArrow(bool teamA)
+    {
+        TeamAArrow = teamA;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void SwapArrow()
+    {
+        TeamAArrow = !TeamAArrow;
+        TimeUpdated?.Invoke();
+    }
+
+    public static void SwapPossessionAndArrow()
+    {
+        TeamAPossession = !TeamAPossession;
+        TeamAArrow = !TeamAArrow;
         TimeUpdated?.Invoke();
     }
 

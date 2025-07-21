@@ -387,6 +387,9 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectFreeThrowAssistCommand { get; }
     public ICommand NoAssistFreeThrowCommand { get; }
     public ICommand SwapSidesCommand { get; }
+    public ICommand SwapPossessionCommand { get; }
+    public ICommand SwapArrowCommand { get; }
+    public ICommand SwapPossessionArrowCommand { get; }
 
 
     public event Action<Point, Brush, bool>? MarkerRequested;
@@ -479,6 +482,9 @@ public class MainWindowViewModel : ViewModelBase
         NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
 
         SwapSidesCommand = new RelayCommand(_ => SwapSides());
+        SwapPossessionCommand = new RelayCommand(_ => GameClockService.SwapPossession());
+        SwapArrowCommand = new RelayCommand(_ => GameClockService.SwapArrow());
+        SwapPossessionArrowCommand = new RelayCommand(_ => GameClockService.SwapPossessionAndArrow());
 
         SelectTeamAColorCommand = new RelayCommand(p =>
         {
