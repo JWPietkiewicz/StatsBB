@@ -9,18 +9,20 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="40"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Orientation="Vertical" HorizontalAlignment="Left">
-                    <TextBlock x:Name="ArrowAText" Text="←" FontSize="14" Visibility="Collapsed"/>
-                    <TextBlock x:Name="PossessionAText" Text="●" FontSize="14" Visibility="Collapsed"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                    <TextBlock x:Name="ArrowAText" Text="←" FontSize="18" Visibility="Collapsed"/>
+                    
+                    <TextBlock x:Name="PossessionAText" Text="●" FontSize="18" Visibility="Collapsed"/>
                 </StackPanel>
                 <TextBlock x:Name="PeriodText" Grid.Column="1" Text="Q1 - In Progress" Foreground="Black" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center" Margin="5" />
-                <StackPanel Grid.Column="2" Orientation="Vertical" HorizontalAlignment="Right">
-                    <TextBlock x:Name="ArrowBText" Text="→" FontSize="14" Visibility="Collapsed"/>
-                    <TextBlock x:Name="PossessionBText" Text="●" FontSize="14" Visibility="Collapsed"/>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock x:Name="ArrowBText" Text="→" FontSize="18" Visibility="Collapsed"/>
+                    
+                    <TextBlock x:Name="PossessionBText" Text="●" FontSize="18" Visibility="Collapsed"/>
                 </StackPanel>
             </Grid>
             <Grid Grid.Row="1">

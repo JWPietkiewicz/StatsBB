@@ -268,6 +268,15 @@
             <Setter Property="Height" Value="40" />
         </Style>
 
+        <!-- SHOT CLOCK VIOLATION BUTTON -->
+        <Style x:Key="NoReboundStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+            <Setter Property="Background" Value="Gray" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Width" Value="60" />
+            <Setter Property="Height" Value="40" />
+        </Style>
+
         <!-- FOUL TYPE BUTTON -->
         <Style x:Key="FoulTypeButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             <Setter Property="FontSize" Value="18" />
@@ -653,7 +662,7 @@
                         <!-- Rebound Panel -->
                         <Grid Visibility="{Binding ReboundPanelVisibility}"
       Background="#ccFFFFFF"
-      Panel.ZIndex="10" Height="500" Width="900">
+      Panel.ZIndex="10" Height="600" Width="1080">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="500">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="160"/>
@@ -723,17 +732,12 @@ Command="{Binding ReboundTeamBCommand}"
 Style="{StaticResource TeamBReboundStyle}"/>
                                 </Border>
                                 <!-- CENTER REBOUND BUTTONS -->
-                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right">
-                                    <Button Content="Block" Command="{Binding BlockCommand}" Style="{StaticResource BlockStyle}" Width="100" Height="50"/>
-                                </Border>
-                                <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
-                                    <Button Content="24" Command="{Binding ShotClockCommand}" Style="{StaticResource ShotClockStyle}" Width="100" Height="50"/>
-                                </Border>
                                 <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center">
-                                    <Button Content="NO REBOUND" Command="{Binding NoReboundCommand}"
-                                            HorizontalAlignment="Center" Height="60" Width="380"
-                                            FontSize="24" FontWeight="Bold" Background="White" Foreground="Black"
-                                            BorderBrush="Black" BorderThickness="1" Margin="10" />
+                                    <StackPanel Orientation="Horizontal">
+                                    <Button Content="Block" Command="{Binding BlockCommand}" Style="{StaticResource BlockStyle}" Width="100" Height="50"/>
+                                    <Button Content="NO REBOUND" Command="{Binding NoReboundCommand}" Style="{StaticResource NoReboundStyle}" Width="150" Height="50"/>
+                                    <Button Content="24" Command="{Binding ShotClockCommand}" Style="{StaticResource ShotClockStyle}" Width="100" Height="50"/>
+                                    </StackPanel>
                                 </Border>
                                 <!-- TEAM B COURT -->
                                 <Border Background="#cceeeeee" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" BorderThickness="1" BorderBrush="Black">
