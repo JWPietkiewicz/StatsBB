@@ -1,4 +1,5 @@
 using StatsBB.MVVM;
+using System.Windows.Input;
 
 namespace StatsBB.ViewModel;
 
@@ -43,6 +44,7 @@ public class GameStateViewModel : ViewModelBase
             _teamATimeOutsLeft = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TeamATimeoutsText));
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -56,6 +58,7 @@ public class GameStateViewModel : ViewModelBase
             _teamATotalTimeouts = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TeamATimeoutsText));
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -71,6 +74,7 @@ public class GameStateViewModel : ViewModelBase
             _teamBTimeOutsLeft = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TeamBTimeoutsText));
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
@@ -84,6 +88,7 @@ public class GameStateViewModel : ViewModelBase
             _teamBTotalTimeouts = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(TeamBTimeoutsText));
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 
