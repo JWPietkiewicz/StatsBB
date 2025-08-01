@@ -581,6 +581,7 @@ public class MainWindowViewModel : ViewModelBase
         Game.InitializePeriods(Game.DefaultPeriods);
         Game.CurrentPeriod = 0;
         var period = Game.GetCurrentPeriod();
+        GameState.ResetFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
         IsGamePanelVisible = false;
         IsStartingFiveButtonEnabled = true;
@@ -613,6 +614,7 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         period.Status = PeriodStatus.Setup;
+        GameState.ResetFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Period");
     }
 
