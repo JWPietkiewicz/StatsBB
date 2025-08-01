@@ -1495,7 +1495,17 @@ public class MainWindowViewModel : ViewModelBase
             return;
 
         TempMarkerRemoved?.Invoke();
-        ResetSelectionState();
+
+        if (IsFoulCommiterSelectionActive || IsFoulTypeSelectionActive ||
+            IsFouledPlayerSelectionActive || IsFreeThrowTeamSelectionActive ||
+            IsFreeThrowsAwardedSelectionActive || IsFreeThrowsSelectionActive)
+        {
+            ResetFoulState();
+        }
+        else
+        {
+            ResetSelectionState();
+        }
     }
 
 
