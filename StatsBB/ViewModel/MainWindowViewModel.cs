@@ -460,8 +460,12 @@ public class MainWindowViewModel : ViewModelBase
         SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
-        TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
-        TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
+        TimeoutTeamACommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team A"),
+            _ => IsTimeOutSelectionActive && GameState.TeamATimeOutsLeft > 0);
+        TimeoutTeamBCommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team B"),
+            _ => IsTimeOutSelectionActive && GameState.TeamBTimeOutsLeft > 0);
         StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall(), _ => !IsActionInProgress);
         ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
         ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
@@ -2698,11 +2702,13 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         if (teamA)
         {
+            if (GameState.TeamATimeOutsLeft == 0) return;
             Game.HomeTeam.AddTimeout(period);
             GameState.TeamATimeOutsLeft = Math.Max(0, GameState.TeamATimeOutsLeft - 1);
         }
         else
         {
+            if (GameState.TeamBTimeOutsLeft == 0) return;
             Game.AwayTeam.AddTimeout(period);
             GameState.TeamBTimeOutsLeft = Math.Max(0, GameState.TeamBTimeOutsLeft - 1);
         }
