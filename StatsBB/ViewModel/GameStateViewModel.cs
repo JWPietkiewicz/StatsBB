@@ -89,6 +89,21 @@ public class GameStateViewModel : ViewModelBase
 
     public string TeamBTimeoutsText => $"{TeamBTimeOutsLeft}/{TeamBTotalTimeouts}";
 
+    private int _teamAPeriodFouls;
+    /// <summary>
+    /// Fouls committed by Team A in the current period.
+    /// </summary>
+    public int TeamAPeriodFouls
+    {
+        get => _teamAPeriodFouls;
+        set
+        {
+            if (_teamAPeriodFouls == value) return;
+            _teamAPeriodFouls = value;
+            OnPropertyChanged();
+        }
+    }
+
     private int _teamAFouls;
     public int TeamAFouls
     {
@@ -97,6 +112,21 @@ public class GameStateViewModel : ViewModelBase
         {
             if (_teamAFouls == value) return;
             _teamAFouls = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _teamBPeriodFouls;
+    /// <summary>
+    /// Fouls committed by Team B in the current period.
+    /// </summary>
+    public int TeamBPeriodFouls
+    {
+        get => _teamBPeriodFouls;
+        set
+        {
+            if (_teamBPeriodFouls == value) return;
+            _teamBPeriodFouls = value;
             OnPropertyChanged();
         }
     }
@@ -116,9 +146,25 @@ public class GameStateViewModel : ViewModelBase
     public void AddFoul(bool teamA)
     {
         if (teamA)
+        {
             TeamAFouls++;
+            TeamAPeriodFouls++;
+        }
         else
+        {
             TeamBFouls++;
+            TeamBPeriodFouls++;
+        }
+    }
+
+    /// <summary>
+    /// Reset the period foul counters to zero.
+    /// Call this when a new period begins.
+    /// </summary>
+    public void ResetPeriodFouls()
+    {
+        TeamAPeriodFouls = 0;
+        TeamBPeriodFouls = 0;
     }
 }
 

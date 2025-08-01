@@ -31,7 +31,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
                     <Border Background="#EEE" CornerRadius="0" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamAFouls}" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding TeamAPeriodFouls}" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
             </Grid>
