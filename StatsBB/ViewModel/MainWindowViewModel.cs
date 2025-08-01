@@ -1484,6 +1484,7 @@ public class MainWindowViewModel : ViewModelBase
         IsQuickShotSelectionActive = false;
         IsJumpBallChoicePanelVisible = false;
         IsJumpBallContestedPanelVisible = false;
+        IsTimeOutSelectionActive = false;
     }
 
     public void CancelCurrentAction()
