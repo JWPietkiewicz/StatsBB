@@ -315,6 +315,36 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility JumpBallPanelVisibility =>
         IsJumpBallPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isJumpBallChoicePanelVisible;
+    public bool IsJumpBallChoicePanelVisible
+    {
+        get => _isJumpBallChoicePanelVisible;
+        set
+        {
+            _isJumpBallChoicePanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallChoicePanelVisibility));
+            NotifyActionInProgressChanged();
+        }
+    }
+    public Visibility JumpBallChoicePanelVisibility =>
+        IsJumpBallChoicePanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isJumpBallContestedPanelVisible;
+    public bool IsJumpBallContestedPanelVisible
+    {
+        get => _isJumpBallContestedPanelVisible;
+        set
+        {
+            _isJumpBallContestedPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallContestedPanelVisibility));
+            NotifyActionInProgressChanged();
+        }
+    }
+    public Visibility JumpBallContestedPanelVisibility =>
+        IsJumpBallContestedPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
     private bool _isJumpWinnerPanelVisible;
     public bool IsJumpWinnerPanelVisible
     {
@@ -341,6 +371,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand AssistTeamBCommand { get; }
     public ICommand ReboundTeamACommand { get; }
     public ICommand ReboundTeamBCommand { get; }
+    public ICommand NoReboundCommand { get; }
     public ICommand BlockCommand { get; }
     public ICommand ShotClockCommand { get; }
     public ICommand TurnoverTeamACommand { get; }
@@ -376,6 +407,10 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmJumpBallCommand { get; }
     public ICommand JumpTeamACommand { get; }
     public ICommand JumpTeamBCommand { get; }
+    public ICommand JumpBallOptionCommand { get; }
+    public ICommand ContestOptionCommand { get; }
+    public ICommand ContestReboundCommand { get; }
+    public ICommand ContestTurnoverCommand { get; }
     public ICommand CoachTechnicalTeamACommand { get; }
     public ICommand CoachTechnicalTeamBCommand { get; }
     public ICommand BenchTechnicalTeamACommand { get; }
@@ -395,6 +430,7 @@ public class MainWindowViewModel : ViewModelBase
     public event Action<Point, Brush, bool>? MarkerRequested;
     public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
+    public event Action? ClearMarkersRequested;
 
     public MainWindowViewModel(ResourceDictionary resources)
     {
@@ -440,6 +476,7 @@ public class MainWindowViewModel : ViewModelBase
 
         ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
         ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
+        NoReboundCommand = new RelayCommand(_ => CompleteReboundSelection(null), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
             _ => EnterBlockerSelection(),
             _ => IsReboundSelectionActive && !_wasBlocked
@@ -459,13 +496,21 @@ public class MainWindowViewModel : ViewModelBase
         SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
-        TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
-        TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
-        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall(), _ => !IsActionInProgress);
+        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBallChoice(), _ => !IsActionInProgress);
+        TimeoutTeamACommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team A"),
+            _ => IsTimeOutSelectionActive && GameState.TeamATimeOutsLeft > 0);
+        TimeoutTeamBCommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team B"),
+            _ => IsTimeOutSelectionActive && GameState.TeamBTimeOutsLeft > 0);
         ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
         ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
         JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
         JumpTeamBCommand = new RelayCommand(_ => CompleteJumpBall(false));
+        JumpBallOptionCommand = new RelayCommand(_ => OnJumpBallSelected());
+        ContestOptionCommand = new RelayCommand(_ => OnContestSelected());
+        ContestReboundCommand = new RelayCommand(_ => CompleteContestedRebound());
+        ContestTurnoverCommand = new RelayCommand(_ => CompleteContestedTurnover());
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover(), _ => !IsActionInProgress);
         StartAssistCommand = new RelayCommand(_ => BeginAssist(), _ => !IsActionInProgress);
         StartReboundCommand = new RelayCommand(_ => BeginRebound(), _ => !IsActionInProgress);
@@ -585,7 +630,9 @@ public class MainWindowViewModel : ViewModelBase
         Game.InitializePeriods(Game.DefaultPeriods);
         Game.CurrentPeriod = 0;
         var period = Game.GetCurrentPeriod();
+        GameState.ResetPeriodFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
+        ClearMarkersRequested?.Invoke();
         IsGamePanelVisible = false;
         IsStartingFiveButtonEnabled = true;
         BeginStartingFive();
@@ -624,8 +671,10 @@ public class MainWindowViewModel : ViewModelBase
             period = Game.GetCurrentPeriod();
         }
 
+        GameState.ResetPeriodFouls();
         period.Status = PeriodStatus.Setup;
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Period");
+        ClearMarkersRequested?.Invoke();
     }
 
     private void OnFinalizeGameRequested()
@@ -943,6 +992,8 @@ public class MainWindowViewModel : ViewModelBase
         IsSubstitutionPanelVisible ||
         IsStartingFivePanelVisible ||
         IsTimeOutSelectionActive ||
+        IsJumpBallChoicePanelVisible ||
+        IsJumpBallContestedPanelVisible ||
         IsJumpBallPanelVisible ||
         IsJumpWinnerPanelVisible ||
         IsTurnoverSelectionActive ||
@@ -965,178 +1016,178 @@ public class MainWindowViewModel : ViewModelBase
         CommandManager.InvalidateRequerySuggested();
     }
 
-    private void OnPlayerSelected(Player player)
+   private void OnPlayerSelected(Player player)
+{
+    if (IsQuickShotSelectionActive)
     {
-        if (IsQuickShotSelectionActive)
+        IsQuickShotSelectionActive = false;
+    }
+    if (IsFoulCommiterSelectionActive)
+    {
+        _foulCommiter = player;
+        IsFoulCommiterSelectionActive = false;
+        IsFoulTypeSelectionActive = true;
+        return;
+    }
+
+    if (IsFouledPlayerSelectionActive)
+    {
+        if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
         {
-            IsQuickShotSelectionActive = false;
-        }
-        if (IsFoulCommiterSelectionActive)
-        {
-            _foulCommiter = player;
-            IsFoulCommiterSelectionActive = false;
-            IsFoulTypeSelectionActive = true;
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Fouled player must be on the opposing team.");
             return;
         }
 
-        if (IsFouledPlayerSelectionActive)
+        _fouledPlayer = player;
+        IsFouledPlayerSelectionActive = false;
+
+        if (_foulType?.ToLowerInvariant() == "double personal")
         {
-            if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
+            if (_fouledPlayer != null)
+                _currentPlayActions.Add(CreateAction(_fouledPlayer, $"FOUL {_foulType.ToUpperInvariant()}"));
+
+            if (_foulCommiter != null)
             {
-                Debug.WriteLine($"{GameClockService.TimeLeftString} Fouled player must be on the opposing team.");
-                return;
+                GameState.AddFoul(_foulCommiter.IsTeamA);
+                _actionProcessor.Process(ActionType.Foul, _foulCommiter);
+            }
+            if (_fouledPlayer != null)
+            {
+                GameState.AddFoul(_fouledPlayer.IsTeamA);
+                _actionProcessor.Process(ActionType.Foul, _fouledPlayer);
             }
 
-            _fouledPlayer = player;
-            IsFouledPlayerSelectionActive = false;
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+            StatsVM.Refresh();
+            ResetFoulState();
+        }
+        else
+        {
+            if (_fouledPlayer != null)
+                _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
 
-            if (_foulType?.ToLowerInvariant() == "double personal")
+            if (_foulCommiter != null)
+                GameState.AddFoul(_foulCommiter.IsTeamA);
+
+            bool offensive = _foulType?.ToLowerInvariant() == "offensive";
+            if (offensive && _foulCommiter != null)
             {
-                if (_fouledPlayer != null)
-                    _currentPlayActions.Add(CreateAction(_fouledPlayer, $"FOUL {_foulType.ToUpperInvariant()}"));
+                _currentPlayActions.Add(CreateAction(_foulCommiter, "TURNOVER"));
+            }
 
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+
+            if (offensive)
+            {
                 if (_foulCommiter != null)
                 {
-                    GameState.AddFoul(_foulCommiter.IsTeamA);
-                    _actionProcessor.Process(ActionType.Foul, _foulCommiter);
-                }
-                if (_fouledPlayer != null)
-                {
-                    GameState.AddFoul(_fouledPlayer.IsTeamA);
-                    _actionProcessor.Process(ActionType.Foul, _fouledPlayer);
+                    _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
+                    StatsVM.Refresh();
                 }
 
-                AddPlayCard(_currentPlayActions.ToList());
-                _currentPlayActions.Clear();
-                StatsVM.Refresh();
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
             }
             else
             {
-                if (_fouledPlayer != null)
-                    _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
-
-                if (_foulCommiter != null)
-                    GameState.AddFoul(_foulCommiter.IsTeamA);
-
-                bool offensive = _foulType?.ToLowerInvariant() == "offensive";
-                if (offensive && _foulCommiter != null)
-                {
-                    _currentPlayActions.Add(CreateAction(_foulCommiter, "TURNOVER"));
-                }
-
-                AddPlayCard(_currentPlayActions.ToList());
-                _currentPlayActions.Clear();
-
-                if (offensive)
-                {
-                    if (_foulCommiter != null)
-                    {
-                        _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
-                        StatsVM.Refresh();
-                    }
-                    Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
-                    ResetFoulState();
-                }
-                else
-                {
-                    BeginFreeThrowsAwardedSelection();
-                }
+                BeginFreeThrowsAwardedSelection();
             }
-
-            return;
         }
 
-        if (IsFreeThrowsAwardedSelectionActive)
-        {
-            SelectedFreeThrowShooter = player;
-            return;
-        }
-
-        if (IsFreeThrowsSelectionActive)
-        {
-            _pendingShooter = player;
-            UpdateAssistPlayerStyles();
-            return;
-        }
-
-        if (IsAssistSelectionActive)
-        {
-            CompleteAssistSelection(player);
-            return;
-        }
-
-        if (IsReboundSelectionActive)
-        {
-            OnReboundTargetSelected(player);
-            return;
-        }
-
-        if (IsBlockerSelectionActive)
-        {
-            CompleteBlockSelection(player);
-            return;
-        }
-
-        if (IsTurnoverSelectionActive)
-        {
-            CompleteTurnoverSelection(player);
-            return;
-        }
-        if (IsStealSelectionActive)
-        {
-            CompleteStealSelection(player);
-            return;
-        }
-
-        if (!IsPlayerSelectionActive || SelectedPoint == null || SelectedAction == null)
-            return;
-
-        var actionType = GetActionType(SelectedAction);
-        var position = SelectedPoint.Point;
-        TempMarkerRequested?.Invoke(position);
-
-
-
-        if (actionType == ActionButtonMode.Other)
-        {
-            MarkerRequested?.Invoke(position, Brushes.Transparent, false);
-        }
-        else
-        {
-            TempMarkerRemoved?.Invoke();
-            Brush teamColor = GetTeamColorFromPlayer(player);
-            bool isFilled = actionType == ActionButtonMode.Made;
-
-            MarkerRequested?.Invoke(position, teamColor, isFilled);
-        }
-
-        Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
-
-        _pendingShooter = player;
-        _pendingIsThreePoint = SelectedPoint.IsThreePoint;
-        _wasBlocked = false;
-        _blocker = null;
-        _currentPlayActions.Clear();
-
-        if (actionType == ActionButtonMode.Turnover)
-        {
-            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
-            IsTurnoverSelectionActive = true;
-        }
-        else if (actionType == ActionButtonMode.Made)
-        {
-            IsAssistSelectionActive = true;
-        }
-        else if (actionType == ActionButtonMode.Missed)
-        {
-            IsReboundSelectionActive = true;
-        }
-        else
-        {
-            ResetSelectionState();
-        }
+        return;
     }
+
+    if (IsFreeThrowsAwardedSelectionActive)
+    {
+        SelectedFreeThrowShooter = player;
+        return;
+    }
+
+    if (IsFreeThrowsSelectionActive)
+    {
+        _pendingShooter = player;
+        UpdateAssistPlayerStyles();
+        return;
+    }
+
+    if (IsAssistSelectionActive)
+    {
+        CompleteAssistSelection(player);
+        return;
+    }
+
+    if (IsReboundSelectionActive)
+    {
+        OnReboundTargetSelected(player);
+        return;
+    }
+
+    if (IsBlockerSelectionActive)
+    {
+        CompleteBlockSelection(player);
+        return;
+    }
+
+    if (IsTurnoverSelectionActive)
+    {
+        CompleteTurnoverSelection(player);
+        return;
+    }
+    if (IsStealSelectionActive)
+    {
+        CompleteStealSelection(player);
+        return;
+    }
+
+    if (!IsPlayerSelectionActive || SelectedPoint == null || SelectedAction == null)
+        return;
+
+    var actionType = GetActionType(SelectedAction);
+    var position = SelectedPoint.Point;
+    TempMarkerRequested?.Invoke(position);
+
+    if (actionType == ActionButtonMode.Other)
+    {
+        MarkerRequested?.Invoke(position, Brushes.Transparent, false);
+    }
+    else
+    {
+        TempMarkerRemoved?.Invoke();
+        Brush teamColor = GetTeamColorFromPlayer(player);
+        bool isFilled = actionType == ActionButtonMode.Made;
+
+        MarkerRequested?.Invoke(position, teamColor, isFilled);
+    }
+
+    Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
+
+    _pendingShooter = player;
+    _pendingIsThreePoint = SelectedPoint.IsThreePoint;
+    _wasBlocked = false;
+    _blocker = null;
+    _currentPlayActions.Clear();
+
+    if (actionType == ActionButtonMode.Turnover)
+    {
+        _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
+        IsTurnoverSelectionActive = true;
+    }
+    else if (actionType == ActionButtonMode.Made)
+    {
+        IsAssistSelectionActive = true;
+    }
+    else if (actionType == ActionButtonMode.Missed)
+    {
+        IsReboundSelectionActive = true;
+    }
+    else
+    {
+        ResetSelectionState();
+    }
+}
+
 
     private void OnReboundTargetSelected(object reboundSource)
     {
@@ -1228,6 +1279,11 @@ public class MainWindowViewModel : ViewModelBase
             case "technical":
                 Debug.WriteLine($"Technical foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
                 _defaultFreeThrows = 1;
+                if (_foulCommiter != null)
+                {
+                    // Technical fouls award free throws to the opposing team.
+                    _freeThrowTeamIsTeamA = !_foulCommiter.IsTeamA;
+                }
                 BeginFreeThrowsAwardedSelection();
                 break;
             default:
@@ -1426,6 +1482,8 @@ public class MainWindowViewModel : ViewModelBase
         IsStealTeamSelectionActive = false;
         IsBlockerSelectionActive = false;
         IsQuickShotSelectionActive = false;
+        IsJumpBallChoicePanelVisible = false;
+        IsJumpBallContestedPanelVisible = false;
     }
 
     public void CancelCurrentAction()
@@ -1493,6 +1551,7 @@ public class MainWindowViewModel : ViewModelBase
                 "TeamB" => "Team B rebound",
                 "Block" => "Shot was blocked",
                 "24" => "24-second violation",
+                null => "No rebound",
                 _ => "Unknown rebound result"
             };
 
@@ -2584,8 +2643,68 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(TeamBStartingBenchPlayers));
     }
 
-    private void BeginJumpBall()
+    private void BeginJumpBallChoice()
     {
+        ResetSelectionState();
+        IsJumpBallChoicePanelVisible = true;
+    }
+
+    private void OnJumpBallSelected()
+    {
+        IsJumpBallChoicePanelVisible = false;
+        BeginJumpBall(true);
+    }
+
+    private void OnContestSelected()
+    {
+        IsJumpBallChoicePanelVisible = false;
+        IsJumpBallContestedPanelVisible = true;
+    }
+
+    private void CompleteContestedRebound()
+    {
+        IsJumpBallContestedPanelVisible = false;
+        bool arrowA = GameClockService.TeamAArrow;
+        bool possA = GameClockService.TeamAPossession;
+
+        if (arrowA == possA)
+        {
+            GameClockService.SwapArrow();
+        }
+        else
+        {
+            GameClockService.SwapPossessionAndArrow();
+            var teamA = arrowA;
+            _actionProcessor.ProcessTeam(ActionType.TeamRebound, teamA ? Game.HomeTeam : Game.AwayTeam);
+            AddPlayCard(new[] { CreateTeamAction(teamA, "REBOUND") });
+            StatsVM.Refresh();
+        }
+    }
+
+    private void CompleteContestedTurnover()
+    {
+        IsJumpBallContestedPanelVisible = false;
+        bool arrowA = GameClockService.TeamAArrow;
+        bool possA = GameClockService.TeamAPossession;
+
+        if (arrowA == possA)
+        {
+            GameClockService.SwapArrow();
+        }
+        else
+        {
+            GameClockService.SwapPossessionAndArrow();
+            var teamA = possA;
+            _actionProcessor.ProcessTeam(ActionType.TeamTurnover, teamA ? Game.HomeTeam : Game.AwayTeam);
+            AddPlayCard(new[] { CreateTeamAction(teamA, "TURNOVER") });
+            StatsVM.Refresh();
+        }
+    }
+
+    private bool _inGameJumpBall;
+    private void BeginJumpBall(bool inGame = false)
+    {
+        _inGameJumpBall = inGame;
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
         IsJumpBallPanelVisible = true;
@@ -2618,11 +2737,46 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteJumpBall(bool teamAWon)
     {
-        AddPlayCard(new[]
+        var winner = teamAWon ? TeamAJumpingPlayers.FirstOrDefault() : TeamBJumpingPlayers.FirstOrDefault();
+        var loser = teamAWon ? TeamBJumpingPlayers.FirstOrDefault() : TeamAJumpingPlayers.FirstOrDefault();
+
+        if (_inGameJumpBall)
         {
-            CreateTeamAction(teamAWon, "JUMP BALL WON"),
-            CreateTeamAction(!teamAWon, "JUMP BALL LOST")
-        });
+            bool possessionTeamA = GameClockService.TeamAPossession;
+            if (possessionTeamA == teamAWon)
+            {
+                if (winner != null)
+                    AddPlayCard(new[] { CreateAction(winner, "JUMP BALL WON") });
+                GameClockService.SetArrow(!teamAWon);
+            }
+            else
+            {
+                if (loser != null)
+                {
+                    AddPlayCard(new[]
+                    {
+                        CreateAction(loser, "TURNOVER"),
+                        winner != null ? CreateAction(winner, "STEAL") : CreateTeamAction(teamAWon, "STEAL")
+                    });
+                    _actionProcessor.Process(ActionType.Turnover, loser);
+                    if (winner != null)
+                        _actionProcessor.Process(ActionType.Steal, winner);
+                    StatsVM.Refresh();
+                }
+                GameClockService.SetPossession(teamAWon);
+                GameClockService.SetArrow(!teamAWon);
+            }
+        }
+        else
+        {
+            AddPlayCard(new[]
+            {
+                CreateTeamAction(teamAWon, "JUMP BALL WON"),
+                CreateTeamAction(!teamAWon, "JUMP BALL LOST")
+            });
+            GameClockService.SetPossession(teamAWon);
+            GameClockService.SetArrow(!teamAWon);
+        }
 
         GameClockService.SetPossession(teamAWon);
         GameClockService.SetArrow(!teamAWon);
@@ -2630,6 +2784,7 @@ public class MainWindowViewModel : ViewModelBase
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
         IsJumpWinnerPanelVisible = false;
+        _inGameJumpBall = false;
         OnPropertyChanged(nameof(IsJumpEnabled));
     }
 
@@ -2699,11 +2854,13 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         if (teamA)
         {
+            if (GameState.TeamATimeOutsLeft == 0) return;
             Game.HomeTeam.AddTimeout(period);
             GameState.TeamATimeOutsLeft = Math.Max(0, GameState.TeamATimeOutsLeft - 1);
         }
         else
         {
+            if (GameState.TeamBTimeOutsLeft == 0) return;
             Game.AwayTeam.AddTimeout(period);
             GameState.TeamBTimeOutsLeft = Math.Max(0, GameState.TeamBTimeOutsLeft - 1);
         }

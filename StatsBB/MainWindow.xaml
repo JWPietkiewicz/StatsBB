@@ -729,6 +729,12 @@ Style="{StaticResource TeamBReboundStyle}"/>
                                 <Border Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalAlignment="Left">
                                     <Button Content="24" Command="{Binding ShotClockCommand}" Style="{StaticResource ShotClockStyle}" Width="100" Height="50"/>
                                 </Border>
+                                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" HorizontalAlignment="Center">
+                                    <Button Content="NO REBOUND" Command="{Binding NoReboundCommand}"
+                                            HorizontalAlignment="Center" Height="60" Width="380"
+                                            FontSize="24" FontWeight="Bold" Background="White" Foreground="Black"
+                                            BorderBrush="Black" BorderThickness="1" Margin="10" />
+                                </Border>
                                 <!-- TEAM B COURT -->
                                 <Border Background="#cceeeeee" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" BorderThickness="1" BorderBrush="Black">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -1400,6 +1406,26 @@ Margin="4" />
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                     <Button Content="Team A" Style="{StaticResource TeamATimeoutStyle}" Command="{Binding TimeoutTeamACommand}" Margin="5"/>
                                     <Button Content="Team B" Style="{StaticResource TeamBTimeoutStyle}" Command="{Binding TimeoutTeamBCommand}" Margin="5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <!-- Jump Ball Type Panel -->
+                        <Grid Visibility="{Binding JumpBallChoicePanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="JUMP BALL" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="JUMP BALL" Command="{Binding JumpBallOptionCommand}" Margin="5"/>
+                                    <Button Content="CONTESTED" Command="{Binding ContestOptionCommand}" Margin="5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <!-- Jump Ball Contested Panel -->
+                        <Grid Visibility="{Binding JumpBallContestedPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="CONTESTED" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="REBOUND" Command="{Binding ContestReboundCommand}" Margin="5"/>
+                                    <Button Content="TURNOVER" Command="{Binding ContestTurnoverCommand}" Margin="5"/>
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
