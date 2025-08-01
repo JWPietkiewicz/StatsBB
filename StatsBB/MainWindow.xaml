@@ -1645,6 +1645,7 @@ Margin="4" />
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="30" />
                                         <RowDefinition Height="400" />
+                                        <RowDefinition Height="60" />
                                     </Grid.RowDefinitions>
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="1" Text="IN"/>
                                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold" Grid.Row="0" Grid.Column="2" Text="OUT"/>
@@ -1816,6 +1817,10 @@ Margin="4" />
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </Border>
+
+                                    <!-- Sub Out All Buttons -->
+                                    <Button Grid.Row="2" Grid.Column="2" Content="5 OUT" Style="{StaticResource BlockStyle}" Command="{Binding SubOutAllTeamACommand}"/>
+                                    <Button Grid.Row="2" Grid.Column="6" Content="5 OUT" Style="{StaticResource BlockStyle}" Command="{Binding SubOutAllTeamBCommand}"/>
                                 </Grid>
                             </StackPanel>
                         </Grid>
