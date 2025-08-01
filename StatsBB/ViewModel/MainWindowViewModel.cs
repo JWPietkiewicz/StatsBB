@@ -1016,167 +1016,178 @@ public class MainWindowViewModel : ViewModelBase
         CommandManager.InvalidateRequerySuggested();
     }
 
-    private void OnPlayerSelected(Player player)
+   private void OnPlayerSelected(Player player)
+{
+    if (IsQuickShotSelectionActive)
     {
-        if (IsQuickShotSelectionActive)
+        IsQuickShotSelectionActive = false;
+    }
+    if (IsFoulCommiterSelectionActive)
+    {
+        _foulCommiter = player;
+        IsFoulCommiterSelectionActive = false;
+        IsFoulTypeSelectionActive = true;
+        return;
+    }
+
+    if (IsFouledPlayerSelectionActive)
+    {
+        if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
         {
-            IsQuickShotSelectionActive = false;
-        }
-        if (IsFoulCommiterSelectionActive)
-        {
-            _foulCommiter = player;
-            IsFoulCommiterSelectionActive = false;
-            IsFoulTypeSelectionActive = true;
+            Debug.WriteLine($"{GameClockService.TimeLeftString} Fouled player must be on the opposing team.");
             return;
         }
 
-        if (IsFouledPlayerSelectionActive)
+        _fouledPlayer = player;
+        IsFouledPlayerSelectionActive = false;
+
+        if (_foulType?.ToLowerInvariant() == "double personal")
         {
-            if (_foulCommiter != null && player.IsTeamA == _foulCommiter.IsTeamA)
+            if (_fouledPlayer != null)
+                _currentPlayActions.Add(CreateAction(_fouledPlayer, $"FOUL {_foulType.ToUpperInvariant()}"));
+
+            if (_foulCommiter != null)
             {
-                Debug.WriteLine($"{GameClockService.TimeLeftString} Fouled player must be on the opposing team.");
-                return;
+                GameState.AddFoul(_foulCommiter.IsTeamA);
+                _actionProcessor.Process(ActionType.Foul, _foulCommiter);
+            }
+            if (_fouledPlayer != null)
+            {
+                GameState.AddFoul(_fouledPlayer.IsTeamA);
+                _actionProcessor.Process(ActionType.Foul, _fouledPlayer);
             }
 
-            _fouledPlayer = player;
-            IsFouledPlayerSelectionActive = false;
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+            StatsVM.Refresh();
+            ResetFoulState();
+        }
+        else
+        {
+            if (_fouledPlayer != null)
+                _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
 
-            if (_foulType?.ToLowerInvariant() == "double personal")
+            if (_foulCommiter != null)
+                GameState.AddFoul(_foulCommiter.IsTeamA);
+
+            bool offensive = _foulType?.ToLowerInvariant() == "offensive";
+            if (offensive && _foulCommiter != null)
             {
-                if (_fouledPlayer != null)
-                    _currentPlayActions.Add(CreateAction(_fouledPlayer, $"FOUL {_foulType.ToUpperInvariant()}"));
+                _currentPlayActions.Add(CreateAction(_foulCommiter, "TURNOVER"));
+            }
 
+            AddPlayCard(_currentPlayActions.ToList());
+            _currentPlayActions.Clear();
+
+            if (offensive)
+            {
                 if (_foulCommiter != null)
                 {
-                    GameState.AddFoul(_foulCommiter.IsTeamA);
-                    _actionProcessor.Process(ActionType.Foul, _foulCommiter);
-                }
-                if (_fouledPlayer != null)
-                {
-                    GameState.AddFoul(_fouledPlayer.IsTeamA);
-                    _actionProcessor.Process(ActionType.Foul, _fouledPlayer);
+                    _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
+                    StatsVM.Refresh();
                 }
 
-                AddPlayCard(_currentPlayActions.ToList());
-                _currentPlayActions.Clear();
-                StatsVM.Refresh();
+                Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
                 ResetFoulState();
             }
             else
             {
-                if (_fouledPlayer != null)
-                    _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
-
-                if (_foulCommiter != null)
-                    GameState.AddFoul(_foulCommiter.IsTeamA);
-
-                AddPlayCard(_currentPlayActions.ToList());
-                _currentPlayActions.Clear();
-
-                if (_foulType?.ToLowerInvariant() == "offensive")
-                {
-                    Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
-                    ResetFoulState();
-                }
-                else
-                {
-                    BeginFreeThrowsAwardedSelection();
-                }
+                BeginFreeThrowsAwardedSelection();
             }
-
-            return;
         }
 
-        if (IsFreeThrowsAwardedSelectionActive)
-        {
-            SelectedFreeThrowShooter = player;
-            return;
-        }
-
-        if (IsFreeThrowsSelectionActive)
-        {
-            _pendingShooter = player;
-            UpdateAssistPlayerStyles();
-            return;
-        }
-
-        if (IsAssistSelectionActive)
-        {
-            CompleteAssistSelection(player);
-            return;
-        }
-
-        if (IsReboundSelectionActive)
-        {
-            OnReboundTargetSelected(player);
-            return;
-        }
-
-        if (IsBlockerSelectionActive)
-        {
-            CompleteBlockSelection(player);
-            return;
-        }
-
-        if (IsTurnoverSelectionActive)
-        {
-            CompleteTurnoverSelection(player);
-            return;
-        }
-        if (IsStealSelectionActive)
-        {
-            CompleteStealSelection(player);
-            return;
-        }
-
-        if (!IsPlayerSelectionActive || SelectedPoint == null || SelectedAction == null)
-            return;
-
-        var actionType = GetActionType(SelectedAction);
-        var position = SelectedPoint.Point;
-        TempMarkerRequested?.Invoke(position);
-
-
-
-        if (actionType == ActionButtonMode.Other)
-        {
-            MarkerRequested?.Invoke(position, Brushes.Transparent, false);
-        }
-        else
-        {
-            TempMarkerRemoved?.Invoke();
-            Brush teamColor = GetTeamColorFromPlayer(player);
-            bool isFilled = actionType == ActionButtonMode.Made;
-
-            MarkerRequested?.Invoke(position, teamColor, isFilled);
-        }
-
-        Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
-
-        _pendingShooter = player;
-        _pendingIsThreePoint = SelectedPoint.IsThreePoint;
-        _wasBlocked = false;
-        _blocker = null;
-        _currentPlayActions.Clear();
-
-        if (actionType == ActionButtonMode.Turnover)
-        {
-            _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
-            IsTurnoverSelectionActive = true;
-        }
-        else if (actionType == ActionButtonMode.Made)
-        {
-            IsAssistSelectionActive = true;
-        }
-        else if (actionType == ActionButtonMode.Missed)
-        {
-            IsReboundSelectionActive = true;
-        }
-        else
-        {
-            ResetSelectionState();
-        }
+        return;
     }
+
+    if (IsFreeThrowsAwardedSelectionActive)
+    {
+        SelectedFreeThrowShooter = player;
+        return;
+    }
+
+    if (IsFreeThrowsSelectionActive)
+    {
+        _pendingShooter = player;
+        UpdateAssistPlayerStyles();
+        return;
+    }
+
+    if (IsAssistSelectionActive)
+    {
+        CompleteAssistSelection(player);
+        return;
+    }
+
+    if (IsReboundSelectionActive)
+    {
+        OnReboundTargetSelected(player);
+        return;
+    }
+
+    if (IsBlockerSelectionActive)
+    {
+        CompleteBlockSelection(player);
+        return;
+    }
+
+    if (IsTurnoverSelectionActive)
+    {
+        CompleteTurnoverSelection(player);
+        return;
+    }
+    if (IsStealSelectionActive)
+    {
+        CompleteStealSelection(player);
+        return;
+    }
+
+    if (!IsPlayerSelectionActive || SelectedPoint == null || SelectedAction == null)
+        return;
+
+    var actionType = GetActionType(SelectedAction);
+    var position = SelectedPoint.Point;
+    TempMarkerRequested?.Invoke(position);
+
+    if (actionType == ActionButtonMode.Other)
+    {
+        MarkerRequested?.Invoke(position, Brushes.Transparent, false);
+    }
+    else
+    {
+        TempMarkerRemoved?.Invoke();
+        Brush teamColor = GetTeamColorFromPlayer(player);
+        bool isFilled = actionType == ActionButtonMode.Made;
+
+        MarkerRequested?.Invoke(position, teamColor, isFilled);
+    }
+
+    Debug.WriteLine($"{GameClockService.TimeLeftString} Action '{SelectedAction}' by {player.Number}.{player.Name} at {position} ({actionType})");
+
+    _pendingShooter = player;
+    _pendingIsThreePoint = SelectedPoint.IsThreePoint;
+    _wasBlocked = false;
+    _blocker = null;
+    _currentPlayActions.Clear();
+
+    if (actionType == ActionButtonMode.Turnover)
+    {
+        _currentPlayActions.Add(CreateAction(player, "TURNOVER"));
+        IsTurnoverSelectionActive = true;
+    }
+    else if (actionType == ActionButtonMode.Made)
+    {
+        IsAssistSelectionActive = true;
+    }
+    else if (actionType == ActionButtonMode.Missed)
+    {
+        IsReboundSelectionActive = true;
+    }
+    else
+    {
+        ResetSelectionState();
+    }
+}
+
 
     private void OnReboundTargetSelected(object reboundSource)
     {
@@ -2766,6 +2777,9 @@ public class MainWindowViewModel : ViewModelBase
             GameClockService.SetPossession(teamAWon);
             GameClockService.SetArrow(!teamAWon);
         }
+
+        GameClockService.SetPossession(teamAWon);
+        GameClockService.SetArrow(!teamAWon);
 
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
