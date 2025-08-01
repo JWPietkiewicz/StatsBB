@@ -394,6 +394,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmStartingFiveCommand { get; }
     public ICommand ToggleSubInCommand { get; }
     public ICommand ToggleSubOutCommand { get; }
+    public ICommand SubOutAllTeamACommand { get; }
+    public ICommand SubOutAllTeamBCommand { get; }
     public ICommand ToggleStartingFiveCommand { get; }
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
@@ -427,6 +429,7 @@ public class MainWindowViewModel : ViewModelBase
     public event Action<Point, Brush, bool>? MarkerRequested;
     public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
+    public event Action? ClearMarkersRequested;
 
     public MainWindowViewModel(ResourceDictionary resources)
     {
@@ -487,11 +490,17 @@ public class MainWindowViewModel : ViewModelBase
         ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+        SubOutAllTeamACommand = new RelayCommand(_ => ToggleSubOutAll(true));
+        SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
-        TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
-        TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
         StartJumpBallCommand = new RelayCommand(_ => BeginJumpBallChoice(), _ => !IsActionInProgress);
+        TimeoutTeamACommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team A"),
+            _ => IsTimeOutSelectionActive && GameState.TeamATimeOutsLeft > 0);
+        TimeoutTeamBCommand = new RelayCommand(
+            _ => CompleteTimeoutSelection("Team B"),
+            _ => IsTimeOutSelectionActive && GameState.TeamBTimeOutsLeft > 0);
         ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
         ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
         JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
@@ -619,7 +628,9 @@ public class MainWindowViewModel : ViewModelBase
         Game.InitializePeriods(Game.DefaultPeriods);
         Game.CurrentPeriod = 0;
         var period = Game.GetCurrentPeriod();
+        GameState.ResetPeriodFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
+        ClearMarkersRequested?.Invoke();
         IsGamePanelVisible = false;
         IsStartingFiveButtonEnabled = true;
         BeginStartingFive();
@@ -629,6 +640,14 @@ public class MainWindowViewModel : ViewModelBase
     {
         var period = Game.GetCurrentPeriod();
         period.Status = PeriodStatus.Ended;
+
+        var endActions = new List<PlayActionViewModel>
+        {
+            CreateGameAction(PlayType.PeriodEnd)
+        };
+        if (period.IsRegular && (period.PeriodNumber == 2 || period.PeriodNumber == Game.DefaultPeriods))
+            endActions.Add(CreateGameAction(PlayType.HalfEnd));
+        AddPlayCard(endActions);
 
         bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
         bool overtime = !period.IsRegular;
@@ -650,12 +669,15 @@ public class MainWindowViewModel : ViewModelBase
             period = Game.GetCurrentPeriod();
         }
 
+        GameState.ResetPeriodFouls();
         period.Status = PeriodStatus.Setup;
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Period");
+        ClearMarkersRequested?.Invoke();
     }
 
     private void OnFinalizeGameRequested()
     {
+        AddPlayCard(new[] { CreateGameAction(PlayType.GameEnd) });
         GameClockService.SetState("FINALIZED", false);
         IsGameFinalized = true;
         SelectedTabIndex = 2; // switch to Stats tab
@@ -668,6 +690,18 @@ public class MainWindowViewModel : ViewModelBase
         {
             period.Status = PeriodStatus.Active;
             GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
+            var startActions = new List<PlayActionViewModel>();
+            if (period.PeriodNumber == 1)
+            {
+                startActions.Add(CreateGameAction(PlayType.GameStart));
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            else if (period.PeriodNumber == 3)
+            {
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            startActions.Add(CreateGameAction(PlayType.PeriodStart));
+            AddPlayCard(startActions);
         }
     }
 
@@ -1232,6 +1266,11 @@ public class MainWindowViewModel : ViewModelBase
             case "technical":
                 Debug.WriteLine($"Technical foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
                 _defaultFreeThrows = 1;
+                if (_foulCommiter != null)
+                {
+                    // Technical fouls award free throws to the opposing team.
+                    _freeThrowTeamIsTeamA = !_foulCommiter.IsTeamA;
+                }
                 BeginFreeThrowsAwardedSelection();
                 break;
             default:
@@ -2458,6 +2497,25 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
     }
 
+    private void ToggleSubOutAll(bool isTeamA)
+    {
+        var targetList = isTeamA ? TeamASubOut : TeamBSubOut;
+        var courtPlayers = isTeamA ? TeamACourtPlayers : TeamBCourtPlayers;
+
+        if (targetList.Count == courtPlayers.Count && courtPlayers.All(p => targetList.Contains(p)))
+        {
+            targetList.Clear();
+        }
+        else
+        {
+            targetList.Clear();
+            foreach (var p in courtPlayers)
+                targetList.Add(p);
+        }
+
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
+    }
+
 
     public bool IsSubstitutionConfirmEnabled =>
     TeamASubIn.Count == TeamASubOut.Count && TeamASubIn.Count <= 5 &&
@@ -2742,6 +2800,29 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
+    private PlayActionViewModel CreateGameAction(PlayType action)
+    {
+        Debug.WriteLine($"CreateGameAction: {action}");
+        string text = action switch
+        {
+            PlayType.GameStart => "GAME START",
+            PlayType.GameEnd => "GAME END",
+            PlayType.PeriodStart => "PERIOD START",
+            PlayType.PeriodEnd => "PERIOD END",
+            PlayType.HalfStart => "HALF START",
+            PlayType.HalfEnd => "HALF END",
+            _ => action.ToString().ToUpperInvariant()
+        };
+        return new PlayActionViewModel
+        {
+            TeamColor = Brushes.Gray,
+            PlayerNumber = string.Empty,
+            FirstName = string.Empty,
+            LastName = string.Empty,
+            Action = text
+        };
+    }
+
     private void RecordPoints(Player shooter, int points, Player? assist = null, bool isThreePoint = false)
     {
         _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
@@ -2756,11 +2837,13 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         if (teamA)
         {
+            if (GameState.TeamATimeOutsLeft == 0) return;
             Game.HomeTeam.AddTimeout(period);
             GameState.TeamATimeOutsLeft = Math.Max(0, GameState.TeamATimeOutsLeft - 1);
         }
         else
         {
+            if (GameState.TeamBTimeOutsLeft == 0) return;
             Game.AwayTeam.AddTimeout(period);
             GameState.TeamBTimeOutsLeft = Math.Max(0, GameState.TeamBTimeOutsLeft - 1);
         }
