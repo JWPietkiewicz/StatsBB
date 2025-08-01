@@ -189,6 +189,19 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    private string _currentActionTitle = string.Empty;
+    public string CurrentActionTitle
+    {
+        get => _currentActionTitle;
+        set
+        {
+            if (_currentActionTitle == value)
+                return;
+            _currentActionTitle = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     public GameStateViewModel GameState { get; } = new();
 
@@ -676,11 +689,13 @@ public class MainWindowViewModel : ViewModelBase
         if (data.MouseButton == MouseButton.Left)
         {
             SelectedAction = "MADE";
+            CurrentActionTitle = "SHOT MADE";
             IsQuickShotSelectionActive = true;
         }
         else if (data.MouseButton == MouseButton.Right)
         {
             SelectedAction = "MISSED";
+            CurrentActionTitle = "SHOT MISSED";
             IsQuickShotSelectionActive = true;
         }
     }
@@ -688,12 +703,14 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginTurnover()
     {
         ResetSelectionState();
+        CurrentActionTitle = "TURNOVER";
         IsTurnoverSelectionActive = true;
     }
 
     private void BeginAssist()
     {
         ResetSelectionState();
+        CurrentActionTitle = "ASSIST";
         if (_pendingShooter == null)
         {
             IsAssistTeamSelectionActive = true;
@@ -728,6 +745,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         var shooter = _pendingShooter;
         ResetSelectionState();
+        CurrentActionTitle = "REBOUND";
 
         if (_pendingFreeThrowRebound)
         {
@@ -740,6 +758,7 @@ public class MainWindowViewModel : ViewModelBase
     private void BeginSteal()
     {
         ResetSelectionState();
+        CurrentActionTitle = "STEAL";
         if (_pendingShooter == null)
         {
             IsStealTeamSelectionActive = true;
@@ -1425,6 +1444,7 @@ public class MainWindowViewModel : ViewModelBase
         IsStealTeamSelectionActive = false;
         IsBlockerSelectionActive = false;
         IsQuickShotSelectionActive = false;
+        CurrentActionTitle = string.Empty;
     }
 
     public void CancelCurrentAction()
@@ -1617,6 +1637,7 @@ public class MainWindowViewModel : ViewModelBase
         IsAssistSelectionActive = false;
         IsReboundSelectionActive = false;
 
+        CurrentActionTitle = "BLOCK";
         IsBlockerSelectionActive = true;
 
         UpdateBlockerPlayerStyles();
