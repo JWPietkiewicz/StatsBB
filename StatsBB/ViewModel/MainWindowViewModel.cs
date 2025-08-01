@@ -315,6 +315,36 @@ public class MainWindowViewModel : ViewModelBase
     public Visibility JumpBallPanelVisibility =>
         IsJumpBallPanelVisible ? Visibility.Visible : Visibility.Collapsed;
 
+    private bool _isJumpBallChoicePanelVisible;
+    public bool IsJumpBallChoicePanelVisible
+    {
+        get => _isJumpBallChoicePanelVisible;
+        set
+        {
+            _isJumpBallChoicePanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallChoicePanelVisibility));
+            NotifyActionInProgressChanged();
+        }
+    }
+    public Visibility JumpBallChoicePanelVisibility =>
+        IsJumpBallChoicePanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    private bool _isJumpBallContestedPanelVisible;
+    public bool IsJumpBallContestedPanelVisible
+    {
+        get => _isJumpBallContestedPanelVisible;
+        set
+        {
+            _isJumpBallContestedPanelVisible = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(JumpBallContestedPanelVisibility));
+            NotifyActionInProgressChanged();
+        }
+    }
+    public Visibility JumpBallContestedPanelVisibility =>
+        IsJumpBallContestedPanelVisible ? Visibility.Visible : Visibility.Collapsed;
+
     private bool _isJumpWinnerPanelVisible;
     public bool IsJumpWinnerPanelVisible
     {
@@ -374,6 +404,10 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmJumpBallCommand { get; }
     public ICommand JumpTeamACommand { get; }
     public ICommand JumpTeamBCommand { get; }
+    public ICommand JumpBallOptionCommand { get; }
+    public ICommand ContestOptionCommand { get; }
+    public ICommand ContestReboundCommand { get; }
+    public ICommand ContestTurnoverCommand { get; }
     public ICommand CoachTechnicalTeamACommand { get; }
     public ICommand CoachTechnicalTeamBCommand { get; }
     public ICommand BenchTechnicalTeamACommand { get; }
@@ -457,11 +491,15 @@ public class MainWindowViewModel : ViewModelBase
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
         TimeoutTeamBCommand = new RelayCommand(_ => CompleteTimeoutSelection("Team B"), _ => IsTimeOutSelectionActive);
-        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBall(), _ => !IsActionInProgress);
+        StartJumpBallCommand = new RelayCommand(_ => BeginJumpBallChoice(), _ => !IsActionInProgress);
         ToggleJumpPlayerCommand = new RelayCommand(p => ToggleJumpPlayer(p as Player));
         ConfirmJumpBallCommand = new RelayCommand(_ => ConfirmJumpBall(), _ => IsJumpEnabled);
         JumpTeamACommand = new RelayCommand(_ => CompleteJumpBall(true));
         JumpTeamBCommand = new RelayCommand(_ => CompleteJumpBall(false));
+        JumpBallOptionCommand = new RelayCommand(_ => OnJumpBallSelected());
+        ContestOptionCommand = new RelayCommand(_ => OnContestSelected());
+        ContestReboundCommand = new RelayCommand(_ => CompleteContestedRebound());
+        ContestTurnoverCommand = new RelayCommand(_ => CompleteContestedTurnover());
         StartTurnoverCommand = new RelayCommand(_ => BeginTurnover(), _ => !IsActionInProgress);
         StartAssistCommand = new RelayCommand(_ => BeginAssist(), _ => !IsActionInProgress);
         StartReboundCommand = new RelayCommand(_ => BeginRebound(), _ => !IsActionInProgress);
@@ -918,6 +956,8 @@ public class MainWindowViewModel : ViewModelBase
         IsSubstitutionPanelVisible ||
         IsStartingFivePanelVisible ||
         IsTimeOutSelectionActive ||
+        IsJumpBallChoicePanelVisible ||
+        IsJumpBallContestedPanelVisible ||
         IsJumpBallPanelVisible ||
         IsJumpWinnerPanelVisible ||
         IsTurnoverSelectionActive ||
@@ -1390,6 +1430,8 @@ public class MainWindowViewModel : ViewModelBase
         IsStealTeamSelectionActive = false;
         IsBlockerSelectionActive = false;
         IsQuickShotSelectionActive = false;
+        IsJumpBallChoicePanelVisible = false;
+        IsJumpBallContestedPanelVisible = false;
     }
 
     public void CancelCurrentAction()
@@ -2529,8 +2571,68 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(TeamBStartingBenchPlayers));
     }
 
-    private void BeginJumpBall()
+    private void BeginJumpBallChoice()
     {
+        ResetSelectionState();
+        IsJumpBallChoicePanelVisible = true;
+    }
+
+    private void OnJumpBallSelected()
+    {
+        IsJumpBallChoicePanelVisible = false;
+        BeginJumpBall(true);
+    }
+
+    private void OnContestSelected()
+    {
+        IsJumpBallChoicePanelVisible = false;
+        IsJumpBallContestedPanelVisible = true;
+    }
+
+    private void CompleteContestedRebound()
+    {
+        IsJumpBallContestedPanelVisible = false;
+        bool arrowA = GameClockService.TeamAArrow;
+        bool possA = GameClockService.TeamAPossession;
+
+        if (arrowA == possA)
+        {
+            GameClockService.SwapArrow();
+        }
+        else
+        {
+            GameClockService.SwapPossessionAndArrow();
+            var teamA = arrowA;
+            _actionProcessor.ProcessTeam(ActionType.TeamRebound, teamA ? Game.HomeTeam : Game.AwayTeam);
+            AddPlayCard(new[] { CreateTeamAction(teamA, "REBOUND") });
+            StatsVM.Refresh();
+        }
+    }
+
+    private void CompleteContestedTurnover()
+    {
+        IsJumpBallContestedPanelVisible = false;
+        bool arrowA = GameClockService.TeamAArrow;
+        bool possA = GameClockService.TeamAPossession;
+
+        if (arrowA == possA)
+        {
+            GameClockService.SwapArrow();
+        }
+        else
+        {
+            GameClockService.SwapPossessionAndArrow();
+            var teamA = possA;
+            _actionProcessor.ProcessTeam(ActionType.TeamTurnover, teamA ? Game.HomeTeam : Game.AwayTeam);
+            AddPlayCard(new[] { CreateTeamAction(teamA, "TURNOVER") });
+            StatsVM.Refresh();
+        }
+    }
+
+    private bool _inGameJumpBall;
+    private void BeginJumpBall(bool inGame = false)
+    {
+        _inGameJumpBall = inGame;
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
         IsJumpBallPanelVisible = true;
@@ -2563,18 +2665,51 @@ public class MainWindowViewModel : ViewModelBase
 
     private void CompleteJumpBall(bool teamAWon)
     {
-        AddPlayCard(new[]
-        {
-            CreateTeamAction(teamAWon, "JUMP BALL WON"),
-            CreateTeamAction(!teamAWon, "JUMP BALL LOST")
-        });
+        var winner = teamAWon ? TeamAJumpingPlayers.FirstOrDefault() : TeamBJumpingPlayers.FirstOrDefault();
+        var loser = teamAWon ? TeamBJumpingPlayers.FirstOrDefault() : TeamAJumpingPlayers.FirstOrDefault();
 
-        GameClockService.SetPossession(teamAWon);
-        GameClockService.SetArrow(!teamAWon);
+        if (_inGameJumpBall)
+        {
+            bool possessionTeamA = GameClockService.TeamAPossession;
+            if (possessionTeamA == teamAWon)
+            {
+                if (winner != null)
+                    AddPlayCard(new[] { CreateAction(winner, "JUMP BALL WON") });
+                GameClockService.SetArrow(!teamAWon);
+            }
+            else
+            {
+                if (loser != null)
+                {
+                    AddPlayCard(new[]
+                    {
+                        CreateAction(loser, "TURNOVER"),
+                        winner != null ? CreateAction(winner, "STEAL") : CreateTeamAction(teamAWon, "STEAL")
+                    });
+                    _actionProcessor.Process(ActionType.Turnover, loser);
+                    if (winner != null)
+                        _actionProcessor.Process(ActionType.Steal, winner);
+                    StatsVM.Refresh();
+                }
+                GameClockService.SetPossession(teamAWon);
+                GameClockService.SetArrow(!teamAWon);
+            }
+        }
+        else
+        {
+            AddPlayCard(new[]
+            {
+                CreateTeamAction(teamAWon, "JUMP BALL WON"),
+                CreateTeamAction(!teamAWon, "JUMP BALL LOST")
+            });
+            GameClockService.SetPossession(teamAWon);
+            GameClockService.SetArrow(!teamAWon);
+        }
 
         TeamAJumpingPlayers.Clear();
         TeamBJumpingPlayers.Clear();
         IsJumpWinnerPanelVisible = false;
+        _inGameJumpBall = false;
         OnPropertyChanged(nameof(IsJumpEnabled));
     }
 

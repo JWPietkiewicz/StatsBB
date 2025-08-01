@@ -1403,6 +1403,26 @@ Margin="4" />
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
+                        <!-- Jump Ball Type Panel -->
+                        <Grid Visibility="{Binding JumpBallChoicePanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="JUMP BALL" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="JUMP BALL" Command="{Binding JumpBallOptionCommand}" Margin="5"/>
+                                    <Button Content="CONTESTED" Command="{Binding ContestOptionCommand}" Margin="5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
+                        <!-- Jump Ball Contested Panel -->
+                        <Grid Visibility="{Binding JumpBallContestedPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                                <TextBlock Text="CONTESTED" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="REBOUND" Command="{Binding ContestReboundCommand}" Margin="5"/>
+                                    <Button Content="TURNOVER" Command="{Binding ContestTurnoverCommand}" Margin="5"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Grid>
                         <!-- Jump Ball Panel -->
                         <Grid Visibility="{Binding JumpBallPanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto">
