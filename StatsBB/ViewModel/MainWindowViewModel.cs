@@ -596,6 +596,14 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         period.Status = PeriodStatus.Ended;
 
+        var endActions = new List<PlayActionViewModel>
+        {
+            CreateGameAction(PlayType.PeriodEnd)
+        };
+        if (period.IsRegular && (period.PeriodNumber == 2 || period.PeriodNumber == Game.DefaultPeriods))
+            endActions.Add(CreateGameAction(PlayType.HalfEnd));
+        AddPlayCard(endActions);
+
         bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
         bool overtime = !period.IsRegular;
 
@@ -622,6 +630,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private void OnFinalizeGameRequested()
     {
+        AddPlayCard(new[] { CreateGameAction(PlayType.GameEnd) });
         GameClockService.SetState("FINALIZED", false);
         IsGameFinalized = true;
         SelectedTabIndex = 2; // switch to Stats tab
@@ -634,6 +643,18 @@ public class MainWindowViewModel : ViewModelBase
         {
             period.Status = PeriodStatus.Active;
             GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
+            var startActions = new List<PlayActionViewModel>();
+            if (period.PeriodNumber == 1)
+            {
+                startActions.Add(CreateGameAction(PlayType.GameStart));
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            else if (period.PeriodNumber == 3)
+            {
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            startActions.Add(CreateGameAction(PlayType.PeriodStart));
+            AddPlayCard(startActions);
         }
     }
 
@@ -2627,6 +2648,29 @@ public class MainWindowViewModel : ViewModelBase
             FirstName = name,
             LastName = string.Empty,
             Action = action
+        };
+    }
+
+    private PlayActionViewModel CreateGameAction(PlayType action)
+    {
+        Debug.WriteLine($"CreateGameAction: {action}");
+        string text = action switch
+        {
+            PlayType.GameStart => "GAME START",
+            PlayType.GameEnd => "GAME END",
+            PlayType.PeriodStart => "PERIOD START",
+            PlayType.PeriodEnd => "PERIOD END",
+            PlayType.HalfStart => "HALF START",
+            PlayType.HalfEnd => "HALF END",
+            _ => action.ToString().ToUpperInvariant()
+        };
+        return new PlayActionViewModel
+        {
+            TeamColor = Brushes.Gray,
+            PlayerNumber = string.Empty,
+            FirstName = string.Empty,
+            LastName = string.Empty,
+            Action = text
         };
     }
 
