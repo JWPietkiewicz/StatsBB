@@ -794,6 +794,8 @@ public class MainWindowViewModel : ViewModelBase
             return;
         if (action.Equals("FOUL", StringComparison.InvariantCultureIgnoreCase))
         {
+            ResetSelectionState();
+            CurrentActionTitle = "FOUL";
             IsFoulCommiterSelectionActive = true;
         }
 
