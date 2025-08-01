@@ -630,6 +630,8 @@ public class MainWindowViewModel : ViewModelBase
         Game.InitializePeriods(Game.DefaultPeriods);
         Game.CurrentPeriod = 0;
         var period = Game.GetCurrentPeriod();
+        GameState.TeamATotalTimeouts = GameState.TeamATimeOutsLeft = 2;
+        GameState.TeamBTotalTimeouts = GameState.TeamBTimeOutsLeft = 2;
         GameState.ResetPeriodFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
         ClearMarkersRequested?.Invoke();
@@ -690,6 +692,16 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         if (period.Status != PeriodStatus.Active)
         {
+            if (period.PeriodNumber == 1)
+            {
+                GameState.TeamATotalTimeouts = GameState.TeamATimeOutsLeft = 2;
+                GameState.TeamBTotalTimeouts = GameState.TeamBTimeOutsLeft = 2;
+            }
+            else if (period.PeriodNumber == 3)
+            {
+                GameState.TeamATotalTimeouts = GameState.TeamATimeOutsLeft = 3;
+                GameState.TeamBTotalTimeouts = GameState.TeamBTimeOutsLeft = 3;
+            }
             period.Status = PeriodStatus.Active;
             GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
             var startActions = new List<PlayActionViewModel>();
