@@ -395,6 +395,7 @@ public class MainWindowViewModel : ViewModelBase
     public event Action<Point, Brush, bool>? MarkerRequested;
     public event Action<Point>? TempMarkerRequested;
     public event Action? TempMarkerRemoved;
+    public event Action? ClearMarkersRequested;
 
     public MainWindowViewModel(ResourceDictionary resources)
     {
@@ -587,6 +588,7 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         GameState.ResetPeriodFouls();
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Game");
+        ClearMarkersRequested?.Invoke();
         IsGamePanelVisible = false;
         IsStartingFiveButtonEnabled = true;
         BeginStartingFive();
@@ -628,6 +630,7 @@ public class MainWindowViewModel : ViewModelBase
         GameState.ResetPeriodFouls();
         period.Status = PeriodStatus.Setup;
         GameClockService.Reset(period.Length, $"{period.Name} - {period.Status}", "Start Period");
+        ClearMarkersRequested?.Invoke();
     }
 
     private void OnFinalizeGameRequested()
