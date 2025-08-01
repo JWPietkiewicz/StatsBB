@@ -479,7 +479,7 @@ public class MainWindowViewModel : ViewModelBase
         NoReboundCommand = new RelayCommand(_ => CompleteReboundSelection(null), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
             _ => EnterBlockerSelection(),
-            _ => IsReboundSelectionActive && !_wasBlocked
+            _ => IsReboundSelectionActive && !_wasBlocked && !_pendingFreeThrowRebound
         );
         ShotClockCommand = new RelayCommand(_ => CompleteReboundSelection("24"), _ => IsReboundSelectionActive);
         TurnoverTeamACommand = new RelayCommand(_ => CompleteTurnoverSelection("TeamA"), _ => IsTurnoverSelectionActive);
