@@ -34,6 +34,11 @@ public partial class GameClock : UserControl
         StartStopButton.Background = GameClockService.IsRunning
             ? Brushes.Green
             : GameClockService.StartStopEnabled ? Brushes.Red : Brushes.LightGray;
+
+        ArrowAText.Visibility = GameClockService.TeamAArrow ? Visibility.Visible : Visibility.Collapsed;
+        ArrowBText.Visibility = GameClockService.TeamAArrow ? Visibility.Collapsed : Visibility.Visible;
+        PossessionAText.Visibility = GameClockService.TeamAPossession ? Visibility.Visible : Visibility.Collapsed;
+        PossessionBText.Visibility = GameClockService.TeamAPossession ? Visibility.Collapsed : Visibility.Visible;
     }
 
     public void Toggle() => StartStop_Click(this, new RoutedEventArgs());
