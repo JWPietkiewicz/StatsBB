@@ -1219,6 +1219,11 @@ public class MainWindowViewModel : ViewModelBase
             case "technical":
                 Debug.WriteLine($"Technical foul by {_foulCommiter?.Number}.{_foulCommiter?.Name}");
                 _defaultFreeThrows = 1;
+                if (_foulCommiter != null)
+                {
+                    // Technical fouls award free throws to the opposing team.
+                    _freeThrowTeamIsTeamA = !_foulCommiter.IsTeamA;
+                }
                 BeginFreeThrowsAwardedSelection();
                 break;
             default:
