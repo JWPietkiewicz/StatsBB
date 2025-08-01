@@ -343,6 +343,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand AssistTeamBCommand { get; }
     public ICommand ReboundTeamACommand { get; }
     public ICommand ReboundTeamBCommand { get; }
+    public ICommand NoReboundCommand { get; }
     public ICommand BlockCommand { get; }
     public ICommand ShotClockCommand { get; }
     public ICommand TurnoverTeamACommand { get; }
@@ -440,6 +441,7 @@ public class MainWindowViewModel : ViewModelBase
 
         ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
         ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
+        NoReboundCommand = new RelayCommand(_ => CompleteReboundSelection(null), _ => IsReboundSelectionActive);
         BlockCommand = new RelayCommand(
             _ => EnterBlockerSelection(),
             _ => IsReboundSelectionActive && !_wasBlocked
@@ -1459,6 +1461,7 @@ public class MainWindowViewModel : ViewModelBase
                 "TeamB" => "Team B rebound",
                 "Block" => "Shot was blocked",
                 "24" => "24-second violation",
+                null => "No rebound",
                 _ => "Unknown rebound result"
             };
 
