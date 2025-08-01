@@ -94,11 +94,10 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamAColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryAColor"] is SolidColorBrush bA &&
-                _resources["SecondaryAColor"] is SolidColorBrush sA)
+            if (value != null)
             {
-                bA.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sA.Color = ((SolidColorBrush)value.TextBrush).Color;
+                _resources["PrimaryAColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
+                _resources["SecondaryAColor"] = new SolidColorBrush(((SolidColorBrush)value.TextBrush).Color);
             }
             if (TeamAInfo.Color != value)
                 TeamAInfo.Color = value;
@@ -116,11 +115,10 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamBColorOption = value;
             OnPropertyChanged();
-            if (value != null && _resources["PrimaryBColor"] is SolidColorBrush bB &&
-                _resources["SecondaryBColor"] is SolidColorBrush sB)
+            if (value != null)
             {
-                bB.Color = ((SolidColorBrush)value.ColorBrush).Color;
-                sB.Color = ((SolidColorBrush)value.TextBrush).Color;
+                _resources["PrimaryBColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
+                _resources["SecondaryBColor"] = new SolidColorBrush(((SolidColorBrush)value.TextBrush).Color);
             }
             if (TeamBInfo.Color != value)
                 TeamBInfo.Color = value;
@@ -366,6 +364,8 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand ConfirmStartingFiveCommand { get; }
     public ICommand ToggleSubInCommand { get; }
     public ICommand ToggleSubOutCommand { get; }
+    public ICommand SubOutAllTeamACommand { get; }
+    public ICommand SubOutAllTeamBCommand { get; }
     public ICommand ToggleStartingFiveCommand { get; }
     public ICommand StartTimeoutCommand { get; }
     public ICommand TimeoutTeamACommand { get; }
@@ -455,6 +455,8 @@ public class MainWindowViewModel : ViewModelBase
         ConfirmStartingFiveCommand = new RelayCommand(_ => ConfirmStartingFive(), _ => IsStartingFiveConfirmEnabled);
         ToggleSubInCommand = new RelayCommand(p => ToggleSubIn(p as Player));
         ToggleSubOutCommand = new RelayCommand(p => ToggleSubOut(p as Player));
+        SubOutAllTeamACommand = new RelayCommand(_ => ToggleSubOutAll(true));
+        SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
         StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(_ => CompleteTimeoutSelection("Team A"), _ => IsTimeOutSelectionActive);
@@ -594,6 +596,14 @@ public class MainWindowViewModel : ViewModelBase
         var period = Game.GetCurrentPeriod();
         period.Status = PeriodStatus.Ended;
 
+        var endActions = new List<PlayActionViewModel>
+        {
+            CreateGameAction(PlayType.PeriodEnd)
+        };
+        if (period.IsRegular && (period.PeriodNumber == 2 || period.PeriodNumber == Game.DefaultPeriods))
+            endActions.Add(CreateGameAction(PlayType.HalfEnd));
+        AddPlayCard(endActions);
+
         bool lastRegular = period.IsRegular && period.PeriodNumber == Game.DefaultPeriods;
         bool overtime = !period.IsRegular;
 
@@ -620,6 +630,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private void OnFinalizeGameRequested()
     {
+        AddPlayCard(new[] { CreateGameAction(PlayType.GameEnd) });
         GameClockService.SetState("FINALIZED", false);
         IsGameFinalized = true;
         SelectedTabIndex = 2; // switch to Stats tab
@@ -632,6 +643,18 @@ public class MainWindowViewModel : ViewModelBase
         {
             period.Status = PeriodStatus.Active;
             GameClockService.SetPeriodDisplay($"{period.Name} - {period.Status}");
+            var startActions = new List<PlayActionViewModel>();
+            if (period.PeriodNumber == 1)
+            {
+                startActions.Add(CreateGameAction(PlayType.GameStart));
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            else if (period.PeriodNumber == 3)
+            {
+                startActions.Add(CreateGameAction(PlayType.HalfStart));
+            }
+            startActions.Add(CreateGameAction(PlayType.PeriodStart));
+            AddPlayCard(startActions);
         }
     }
 
@@ -2429,6 +2452,25 @@ public class MainWindowViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
     }
 
+    private void ToggleSubOutAll(bool isTeamA)
+    {
+        var targetList = isTeamA ? TeamASubOut : TeamBSubOut;
+        var courtPlayers = isTeamA ? TeamACourtPlayers : TeamBCourtPlayers;
+
+        if (targetList.Count == courtPlayers.Count && courtPlayers.All(p => targetList.Contains(p)))
+        {
+            targetList.Clear();
+        }
+        else
+        {
+            targetList.Clear();
+            foreach (var p in courtPlayers)
+                targetList.Add(p);
+        }
+
+        OnPropertyChanged(nameof(IsSubstitutionConfirmEnabled));
+    }
+
 
     public bool IsSubstitutionConfirmEnabled =>
     TeamASubIn.Count == TeamASubOut.Count && TeamASubIn.Count <= 5 &&
@@ -2620,6 +2662,29 @@ public class MainWindowViewModel : ViewModelBase
         };
     }
 
+    private PlayActionViewModel CreateGameAction(PlayType action)
+    {
+        Debug.WriteLine($"CreateGameAction: {action}");
+        string text = action switch
+        {
+            PlayType.GameStart => "GAME START",
+            PlayType.GameEnd => "GAME END",
+            PlayType.PeriodStart => "PERIOD START",
+            PlayType.PeriodEnd => "PERIOD END",
+            PlayType.HalfStart => "HALF START",
+            PlayType.HalfEnd => "HALF END",
+            _ => action.ToString().ToUpperInvariant()
+        };
+        return new PlayActionViewModel
+        {
+            TeamColor = Brushes.Gray,
+            PlayerNumber = string.Empty,
+            FirstName = string.Empty,
+            LastName = string.Empty,
+            Action = text
+        };
+    }
+
     private void RecordPoints(Player shooter, int points, Player? assist = null, bool isThreePoint = false)
     {
         _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
@@ -2674,6 +2739,17 @@ public class MainWindowViewModel : ViewModelBase
         var colorTmp = TeamAColorOption;
         TeamAColorOption = TeamBColorOption;
         TeamBColorOption = colorTmp;
+
+        // notify in case other view models cache the current brushes so
+        // the updated colors propagate everywhere
+        OnPropertyChanged(nameof(TeamAColorOption));
+        OnPropertyChanged(nameof(TeamBColorOption));
+
+        // ensure team-specific stats follow the teams after swapping
+        (GameState.TeamAScore, GameState.TeamBScore) = (GameState.TeamBScore, GameState.TeamAScore);
+        (GameState.TeamATimeOutsLeft, GameState.TeamBTimeOutsLeft) = (GameState.TeamBTimeOutsLeft, GameState.TeamATimeOutsLeft);
+        (GameState.TeamATotalTimeouts, GameState.TeamBTotalTimeouts) = (GameState.TeamBTotalTimeouts, GameState.TeamATotalTimeouts);
+        (GameState.TeamAFouls, GameState.TeamBFouls) = (GameState.TeamBFouls, GameState.TeamAFouls);
 
         RegenerateTeamsFromInfo();
         StatsVM.Refresh();

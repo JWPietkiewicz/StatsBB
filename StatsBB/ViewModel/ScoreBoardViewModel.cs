@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Media;
 using StatsBB.MVVM;
 
@@ -64,8 +65,8 @@ public class ScoreBoardViewModel : ViewModelBase
     public int TeamAFouls => _main.GameState.TeamAFouls;
     public int TeamBFouls => _main.GameState.TeamBFouls;
 
-    public Brush TeamAColor => _main.TeamAColorOption?.ColorBrush ?? Brushes.Orange;
-    public Brush TeamBColor => _main.TeamBColorOption?.ColorBrush ?? Brushes.Green;
+    public Brush TeamAColor => _main.TeamAColorOption?.ColorBrush ?? new SolidColorBrush(Colors.Orange);
+    public Brush TeamBColor => _main.TeamBColorOption?.ColorBrush ?? new SolidColorBrush(Colors.Green);
 
     public string TeamAName
     {
@@ -78,5 +79,10 @@ public class ScoreBoardViewModel : ViewModelBase
         get => _main.TeamBName;
         set => _main.TeamBName = value;
     }
+
+    /// <summary>
+    /// Command used to swap the home and away teams on the scoreboard.
+    /// </summary>
+    public ICommand SwapSidesCommand => _main.SwapSidesCommand;
 }
 

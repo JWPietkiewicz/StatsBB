@@ -43,6 +43,8 @@
         SubstitutionOut = 26,
         Dunk = 27,
         Putback = 28,
-        Unknown = 29
+        Unknown = 29,
+        HalfStart = 30,
+        HalfEnd = 31
     }
 }
