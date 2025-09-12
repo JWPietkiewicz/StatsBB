@@ -10,4 +10,8 @@
     <FileVersion>0.6.8</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+  </ItemGroup>
+
 </Project>
