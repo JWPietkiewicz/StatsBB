@@ -476,7 +476,10 @@ public class MainWindowViewModel : ViewModelBase
 
         ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
         ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
-        NoReboundCommand = new RelayCommand(_ => CompleteReboundSelection(null), _ => IsReboundSelectionActive);
+        NoReboundCommand = new RelayCommand(
+            _ => CompleteReboundSelection(null),
+            _ => IsReboundSelectionActive && GameClockService.TimeLeft.TotalSeconds < 10
+        );
         BlockCommand = new RelayCommand(
             _ => EnterBlockerSelection(),
             _ => IsReboundSelectionActive && !_wasBlocked && !_pendingFreeThrowRebound
@@ -611,6 +614,7 @@ public class MainWindowViewModel : ViewModelBase
         GameClockService.EndPeriodRequested += OnEndPeriodRequested;
         GameClockService.FinalizeGameRequested += OnFinalizeGameRequested;
         GameClockService.ClockStarted += OnClockStarted;
+        GameClockService.TimeUpdated += OnTimeUpdated;
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -717,6 +721,11 @@ public class MainWindowViewModel : ViewModelBase
             startActions.Add(CreateGameAction(PlayType.PeriodStart));
             AddPlayCard(startActions);
         }
+    }
+
+    private void OnTimeUpdated()
+    {
+        CommandManager.InvalidateRequerySuggested();
     }
 
     private void BeginTimeout()
