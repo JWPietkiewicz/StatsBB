@@ -1080,7 +1080,21 @@ public class MainWindowViewModel : ViewModelBase
                 _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
 
             if (_foulCommiter != null)
+            {
                 GameState.AddFoul(_foulCommiter.IsTeamA);
+
+                if (_foulType?.ToLowerInvariant() == "personal")
+                {
+                    var teamFouls = _foulCommiter.IsTeamA
+                        ? GameState.TeamAPeriodFouls
+                        : GameState.TeamBPeriodFouls;
+
+                    if (teamFouls >= Domain.Game.PeriodFoulLimit)
+                    {
+                        _defaultFreeThrows = 2;
+                    }
+                }
+            }
 
             bool offensive = _foulType?.ToLowerInvariant() == "offensive";
             if (offensive && _foulCommiter != null)
