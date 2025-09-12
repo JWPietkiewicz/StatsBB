@@ -45,6 +45,23 @@ public class Player : INotifyPropertyChanged
             }
         }
     }
+
+    private bool _isCaptain;
+    /// <summary>
+    /// Indicates whether the player is the team's captain.
+    /// </summary>
+    public bool IsCaptain
+    {
+        get => _isCaptain;
+        set
+        {
+            if (_isCaptain != value)
+            {
+                _isCaptain = value;
+                OnPropertyChanged();
+            }
+        }
+    }
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
