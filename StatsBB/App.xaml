@@ -7,7 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources RequestedTheme="Dark" />
+                <ui:ThemeResources />
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
             
@@ -26,6 +26,78 @@
             <SolidColorBrush x:Key="SuccessColor" Color="#00B373"/>
             <SolidColorBrush x:Key="ErrorColor" Color="#D83B01"/>
             <SolidColorBrush x:Key="WarningColor" Color="#F7B801"/>
+            
+            <!-- FluentUI DataGrid Styles -->
+            <Style TargetType="DataGrid">
+                <Setter Property="Background" Value="{StaticResource SystemSurfaceColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+                <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="VerticalGridLinesBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="RowBackground" Value="Transparent"/>
+                <Setter Property="AlternatingRowBackground" Value="{StaticResource SystemControlBackgroundColor}"/>
+            </Style>
+            
+            <Style TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+            </Style>
+            
+            <Style TargetType="DataGridCell">
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="Transparent"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Style.Triggers>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                        <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- FluentUI ComboBox Styles -->
+            <Style TargetType="ComboBox">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- FluentUI Border Styles -->
+            <Style x:Key="FluentPanelBorder" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SystemSurfaceColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="4"/>
+            </Style>
+            
+            <Style x:Key="FluentCourtBorder" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="4"/>
+            </Style>
+            
+            <Style x:Key="FluentBenchBorder" TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SystemSurfaceColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="CornerRadius" Value="4"/>
+            </Style>
             
             <!-- Global Button Styles -->
             <Style x:Key="BaseActionButtonStyle" TargetType="Button">

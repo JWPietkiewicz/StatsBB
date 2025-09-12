@@ -1,0 +1,104 @@
+<UserControl x:Class="StatsBB.UserControls.ThemeToggle"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
+             xmlns:services="clr-namespace:StatsBB.Services">
+    <UserControl.Resources>
+        <!-- Theme Toggle Button Style -->
+        <Style x:Key="ThemeToggleButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="16"
+                                Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ui:FontIcon x:Name="ThemeIcon" 
+                                           FontSize="16" 
+                                           Margin="0,0,8,0"
+                                           Foreground="{TemplateBinding Foreground}"/>
+                                <TextBlock x:Name="ThemeText" 
+                                         Text="{TemplateBinding Content}"
+                                         VerticalAlignment="Center"
+                                         Foreground="{TemplateBinding Foreground}"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource SystemControlPressedColor}"/>
+                            </Trigger>
+                            <!-- Data triggers for theme icons -->
+                            <DataTrigger Binding="{Binding IsDarkTheme}" Value="True">
+                                <Setter TargetName="ThemeIcon" Property="Glyph" Value="&#xE706;"/> <!-- Sun icon -->
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDarkTheme}" Value="False">
+                                <Setter TargetName="ThemeIcon" Property="Glyph" Value="&#xE708;"/> <!-- Moon icon -->
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <Border Background="{StaticResource SystemSurfaceColor}" 
+            BorderBrush="{StaticResource SystemBorderColor}"
+            BorderThickness="0,0,0,1"
+            Padding="16,8">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- App Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <ui:FontIcon Glyph="&#xE7FC;" FontSize="20" Foreground="{StaticResource SystemTextColor}" Margin="0,0,12,0"/>
+                <TextBlock Text="Basketball Stats Map" 
+                           FontSize="18" 
+                           FontWeight="SemiBold" 
+                           Foreground="{StaticResource SystemTextColor}"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+            
+            <!-- Theme Controls -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Theme Toggle Button -->
+                <Button Style="{StaticResource ThemeToggleButtonStyle}"
+                        Command="{Binding ToggleThemeCommand}"
+                        Content="Toggle Theme"
+                        ToolTip="Toggle between light and dark theme"/>
+                
+                <!-- Theme Selection ComboBox (Alternative) -->
+                <ComboBox x:Name="ThemeComboBox"
+                          SelectedItem="{Binding CurrentTheme}"
+                          MinWidth="120"
+                          Margin="8,0,0,0"
+                          ToolTip="Select theme mode">
+                    <ComboBox.Items>
+                        <services:AppTheme>Light</services:AppTheme>
+                        <services:AppTheme>Dark</services:AppTheme>
+                        <services:AppTheme>System</services:AppTheme>
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

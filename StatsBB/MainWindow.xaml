@@ -408,7 +408,17 @@
                 Command="{Binding StartStealCommand}" />
     </Window.InputBindings>
 
-    <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Theme Toggle Header -->
+        <controls:ThemeToggle Grid.Row="0"/>
+        
+        <!-- Main Content -->
+        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}">
         <TabItem Header="TEAM INFO" IsEnabled="{Binding IsTeamInfoEnabled}">
 
             <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
@@ -449,16 +459,16 @@
                     HorizontalAlignment="Stretch" />
 
                         <!-- Game Setup Panel -->
-                        <Grid Visibility="{Binding GamePanelVisibility}" Background="#ccFFFFFF" Panel.ZIndex="10">
+                        <Grid Visibility="{Binding GamePanelVisibility}" Background="{StaticResource SystemSurfaceColor}" Opacity="0.95" Panel.ZIndex="10">
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <Button Content="SETUP GAME" FontSize="24" FontWeight="Bold" Padding="20"
-                                        Command="{Binding SetupGameCommand}"/>
+                                        Command="{Binding SetupGameCommand}" Style="{StaticResource BaseActionButtonStyle}"/>
                             </StackPanel>
                         </Grid>
 
                         <!-- Quick Shot Panel -->
                         <Grid Visibility="{Binding QuickShotPanelVisibility}"
-      Background="#ccFFFFFF"
+      Background="{StaticResource SystemSurfaceColor}" Opacity="0.95"
       Panel.ZIndex="10">
                             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Height="380">
                                 <Grid.ColumnDefinitions>
@@ -469,7 +479,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <!-- TEAM A BENCH -->
-                                <Border Background="#ccd3d3d3" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black">
+                                <Border Style="{StaticResource FluentBenchBorder}" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ItemsControl ItemsSource="{Binding EligibleTeamABenchShotPlayers}">
                                             <ItemsControl.ItemsPanel>
@@ -490,7 +500,7 @@
                                 </Border>
 
                                 <!-- TEAM A COURT -->
-                                <Border Background="#cceeeeee" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black">
+                                <Border Style="{StaticResource FluentCourtBorder}" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ItemsControl ItemsSource="{Binding EligibleTeamACourtShotPlayers}">
                                             <ItemsControl.ItemsPanel>
@@ -511,7 +521,7 @@
                                 </Border>
 
                                 <!-- TEAM B COURT -->
-                                <Border Background="#cceeeeee" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black">
+                                <Border Style="{StaticResource FluentCourtBorder}" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ItemsControl ItemsSource="{Binding EligibleTeamBCourtShotPlayers}">
                                             <ItemsControl.ItemsPanel>
@@ -532,7 +542,7 @@
                                 </Border>
 
                                 <!-- TEAM B BENCH -->
-                                <Border Background="#ccd3d3d3" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2" BorderThickness="1" BorderBrush="Black">
+                                <Border Style="{StaticResource FluentBenchBorder}" Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10" Margin="2">
                                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                         <ItemsControl ItemsSource="{Binding EligibleTeamBBenchShotPlayers}">
                                             <ItemsControl.ItemsPanel>
@@ -555,8 +565,10 @@
                         </Grid>
 
                         <!-- Assist Team Selection -->
-                        <Grid Visibility="{Binding AssistTeamPanelVisibility}" Background="#33FFFFFF" Panel.ZIndex="10">
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Background="White">
+                        <Grid Visibility="{Binding AssistTeamPanelVisibility}" Background="{StaticResource SystemBackgroundColor}" Opacity="0.95" Panel.ZIndex="10">
+                            <Border Background="{StaticResource SystemSurfaceColor}" Margin="20" Padding="20" CornerRadius="8" 
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel>
                                 <TextBlock Text="SELECT TEAM" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 0 0 10"/>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -570,7 +582,8 @@
                                         <Button Content="{Binding TeamBName}" Command="{Binding AssistTeamBCommand}" Style="{StaticResource TeamBReboundStyle}" Margin="5"/>
                                     </Border>
                                 </Grid>
-                            </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </Grid>
 
                         <!-- Assist Panel -->
@@ -579,7 +592,7 @@
                             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="400">
 
                                 <!-- COURT PLAYERS -->
-                                <Border Padding="10" Background="#cceeeeee" BorderThickness="1" BorderBrush="Black" Width="380">
+                                <Border Padding="10" Style="{StaticResource FluentCourtBorder}" Width="380">
                                     <ItemsControl ItemsSource="{Binding EligibleCourtAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -599,21 +612,18 @@
 
                                 <!-- NO ASSIST -->
                                 <Border>
-                                    <Button Content="NO ASSIST"
+                                <Button Content="NO ASSIST"
                 Command="{Binding NoAssistCommand}"
                 HorizontalAlignment="Center"
                 Height="60"
                 Width="380"
                 FontSize="24"
                 FontWeight="Bold"
-                Background="White"
-                Foreground="Black"
-                BorderBrush="Black"
-                BorderThickness="1"
+                Style="{StaticResource BaseActionButtonStyle}"
                 Margin="10" />
                                 </Border>
                                 <!-- BENCH PLAYERS -->
-                                <Border Background="#ccd3d3d3" Padding="10" BorderThickness="1" BorderBrush="Black" Width="380">
+                                <Border Style="{StaticResource FluentBenchBorder}" Padding="10" Width="380">
                                     <ItemsControl ItemsSource="{Binding EligibleBenchAssistPlayers}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
@@ -961,17 +971,14 @@ Margin="4" />
 
                                 <!-- NO STEAL -->
                                 <Border>
-                                    <Button Content="NO STEAL"
+                                <Button Content="NO STEAL"
                 Command="{Binding NoStealCommand}"
                 HorizontalAlignment="Center"
                 Height="60"
           Width="380"
           FontSize="24"
           FontWeight="Bold"
-          Background="White"
-          Foreground="Black"
-          BorderBrush="Black"
-          BorderThickness="1"
+          Style="{StaticResource BaseActionButtonStyle}"
           Margin="10" />
                                 </Border>
 
@@ -1881,7 +1888,7 @@ Margin="4" />
                     </Border>
                 </Grid>
                 <!-- Play‐by‐Play Log -->
-                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="#F9F9F9" BorderBrush="LightGray" BorderThickness="2">
+                <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="{StaticResource SystemSurfaceColor}" BorderBrush="{StaticResource SystemBorderColor}" BorderThickness="1" CornerRadius="8">
                     <controls:PlayByPlayLog DataContext="{Binding PlayLog}" />
                 </Border>
             </Grid>
@@ -1892,5 +1899,6 @@ Margin="4" />
         <TabItem Header="PLAY BY PLAY" IsEnabled="{Binding AreTeamsConfirmed}">
             <controls:PlayByPlayList DataContext="{Binding PlayLog}" />
         </TabItem>
-    </TabControl>
+        </TabControl>
+    </Grid>
 </Window>

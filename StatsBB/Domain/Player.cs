@@ -1,13 +1,28 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 namespace StatsBB.Domain;
 
-public class Player : INotifyPropertyChanged
+public class Player : INotifyPropertyChanged, IDataErrorInfo
 {
     public int Id { get; set; }
-    public int Number { get; set; }
+    
+    private int _number;
+    public int Number 
+    { 
+        get => _number;
+        set
+        {
+            if (_number != value)
+            {
+                _number = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(HasValidationErrors));
+            }
+        }
+    }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public bool IsActive { get; set; }
@@ -48,7 +63,7 @@ public class Player : INotifyPropertyChanged
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
-        get { return Number.ToString(); }
+        get { return Number == 0 ? "" : Number.ToString("00"); }
     }
     public string Name
     {
@@ -121,5 +136,36 @@ public class Player : INotifyPropertyChanged
     protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    // Validation support
+    public Team? ParentTeam { get; set; }
+    
+    public bool HasValidationErrors => !string.IsNullOrEmpty(this[nameof(Number)]);
+
+    public string Error => string.Empty;
+
+    public string this[string columnName]
+    {
+        get
+        {
+            switch (columnName)
+            {
+                case nameof(Number):
+                    // No validation for players with no number (0) - they are allowed
+                    if (Number == 0)
+                        return string.Empty;
+                        
+                    if (Number < 0)
+                        return "Player number cannot be negative";
+                    if (Number > 99)
+                        return "Player number must be 99 or less";
+                    if (ParentTeam != null && !ParentTeam.IsPlayerNumberAvailable(Number, this))
+                        return $"Number {Number:00} is already taken by another player";
+                    return string.Empty;
+                default:
+                    return string.Empty;
+            }
+        }
     }
 }

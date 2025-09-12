@@ -101,7 +101,35 @@ public class TeamInfoViewModel : ViewModelBase
     private static void EnsurePlayers(Team team)
     {
         while (team.Players.Count < 16)
-            team.Players.Add(new Player());
+        {
+            var player = new Player()
+            {
+                IsPlaying = false,  // Set as inactive by default
+                Number = 0          // No number assigned by default
+            };
+            player.ParentTeam = team;
+            team.Players.Add(player);
+        }
+        
+        // Ensure all existing players have their parent team set
+        foreach (var player in team.Players)
+        {
+            player.ParentTeam = team;
+            // Only assign numbers and validate for active players or players with names
+            bool hasContent = !string.IsNullOrWhiteSpace(player.FirstName) || !string.IsNullOrWhiteSpace(player.LastName);
+            
+            if (player.IsPlaying || hasContent)
+            {
+                if (player.Number <= 0)
+                {
+                    player.Number = team.GetNextAvailableNumber();
+                }
+                else
+                {
+                    team.EnsureUniquePlayerNumber(player);
+                }
+            }
+        }
     }
 
     public string HomeTeamName
@@ -175,6 +203,8 @@ public class TeamInfoViewModel : ViewModelBase
             }
         }
         EnsurePlayers(team);
+        
+        // Notify property changed for the sorted collection
         OnPropertyChanged(home ? nameof(HomePlayers) : nameof(AwayPlayers));
         if (home)
         {

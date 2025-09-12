@@ -9,34 +9,48 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         
         <!-- FluentUI Team Color Button Style -->
-        <Style x:Key="FluentTeamColorButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource DefaultRadioButtonStyle}">
-            <Setter Property="Width" Value="58"/>
-            <Setter Property="Height" Value="58"/>
+        <Style x:Key="FluentTeamColorButtonStyle" TargetType="RadioButton">
+            <Setter Property="Width" Value="64"/>
+            <Setter Property="Height" Value="64"/>
             <Setter Property="FontSize" Value="18"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="2"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <Grid>
                             <Border x:Name="ColorBorder"
-                                    Width="54" Height="54"
+                                    Width="58" Height="58"
                                     Background="{TemplateBinding Background}"
                                     CornerRadius="8"
                                     BorderThickness="2"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}">
+                                    BorderBrush="{StaticResource SystemBorderColor}">
                                 <ContentPresenter HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                TextElement.Foreground="{TemplateBinding Foreground}"/>
+                                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                                TextElement.FontWeight="Bold"
+                                                TextElement.FontSize="16"/>
                             </Border>
-                        </StackPanel>
+                            <!-- Selection Indicator -->
+                            <Border x:Name="SelectionRing"
+                                    Width="64" Height="64"
+                                    CornerRadius="10"
+                                    BorderThickness="3"
+                                    BorderBrush="{StaticResource SystemTextColor}"
+                                    Opacity="0"/>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="ColorBorder" Property="BorderThickness" Value="3"/>
-                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundAccentBrush}"/>
+                                <Setter TargetName="SelectionRing" Property="Opacity" Value="1"/>
+                                <Setter TargetName="ColorBorder" Property="BorderThickness" Value="1"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundAccentBrush}"/>
+                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{StaticResource SystemTextColor}"/>
+                                <Setter TargetName="ColorBorder" Property="BorderThickness" Value="2"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ColorBorder" Property="Opacity" Value="0.4"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -49,22 +63,66 @@
             <EventSetter Event="PreviewKeyDown" Handler="PlayerTextBox_PreviewKeyDown" />
             <Setter Property="Padding" Value="8,4"/>
         </Style>
-    </UserControl.Resources>
-    <StackPanel Orientation="Horizontal" Margin="16">
         
-        <!-- HOME TEAM CARD -->
-        <Border Width="600" VerticalAlignment="Stretch" CornerRadius="8" 
-                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                BorderThickness="1" Margin="0,0,8,0">
+        <!-- Player Number TextBox Style with Validation -->
+        <Style x:Key="PlayerNumberTextStyle" TargetType="TextBox" BasedOn="{StaticResource FluentPlayerEditTextStyle}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasValidationErrors}" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource SystemControlErrorTextBrush}"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- DataGrid Row Style with validation feedback -->
+        <Style x:Key="PlayerRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding HasValidationErrors}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ErrorColor}" />
+                    <Setter Property="Opacity" Value="0.2"/>
+                </DataTrigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+        <!-- Enhanced Team Name TextBox Style -->
+        <Style x:Key="TeamNameTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,12"/>
+            <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+        </Style>
+        
+        <!-- Section Header Style -->
+        <Style x:Key="SectionHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid Background="{StaticResource SystemBackgroundColor}">
+        <StackPanel Orientation="Horizontal" Margin="20">
+            
+            <!-- HOME TEAM CARD -->
+            <Border Width="620" VerticalAlignment="Stretch" CornerRadius="8" 
+                    Background="{StaticResource SystemSurfaceColor}"
+                    BorderBrush="{StaticResource SystemBorderColor}"
+                    BorderThickness="1" Margin="0,0,12,0">
             <StackPanel>
                 <!-- Header -->
-                <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" 
+                <Border Background="{StaticResource SystemControlBackgroundColor}" 
                         CornerRadius="8,8,0,0" Padding="16,12">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ui:FontIcon Glyph="&#xE80F;" FontSize="20" Foreground="White" Margin="0,0,8,0"/>
-                        <TextBlock Text="HOME TEAM" FontWeight="SemiBold" FontSize="20" Foreground="White"/>
-                        <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="White" Margin="8,0,0,0"
+                        <ui:FontIcon Glyph="&#xE80F;" FontSize="20" Foreground="{StaticResource SystemTextColor}" Margin="0,0,8,0"/>
+                        <TextBlock Text="HOME TEAM" FontWeight="SemiBold" FontSize="20" Foreground="{StaticResource SystemTextColor}"/>
+                        <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="{StaticResource SuccessColor}" Margin="8,0,0,0"
                                      Visibility="{Binding HomeTeamConfirmed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </StackPanel>
                 </Border>
@@ -73,19 +131,19 @@
                 <StackPanel Margin="24,16">
                 
                     <!-- Team Name Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Team Name" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Team Name" Style="{StaticResource SectionHeaderStyle}"/>
                         <TextBox Text="{Binding HomeTeamName, UpdateSourceTrigger=PropertyChanged}" 
-                                 FontSize="16" Padding="12,8"/>
+                                 Style="{StaticResource TeamNameTextBoxStyle}"/>
                     </StackPanel>
                     
                     <!-- Team Color Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Team Colors" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Team Colors" Style="{StaticResource SectionHeaderStyle}"/>
                         <ItemsControl ItemsSource="{Binding ColorOptions}" IsEnabled="{Binding HomeColorEnabled}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel ItemWidth="62" ItemHeight="62" Width="550"/>
+                                    <WrapPanel ItemWidth="72" ItemHeight="72" Width="580"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -119,23 +177,35 @@
                     </StackPanel>
                     
                     <!-- Players Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Players" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Players" Style="{StaticResource SectionHeaderStyle}"/>
                         <DataGrid x:Name="HomeGrid" ItemsSource="{Binding HomePlayers}" 
                                   AutoGenerateColumns="False" CanUserAddRows="False" SelectionUnit="Cell"
-                                  MaxHeight="300">
+                                  MaxHeight="300" RowStyle="{StaticResource PlayerRowStyle}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="50" 
+                            <DataGridTextColumn Header="#" Binding="{Binding Number, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Width="60" 
+                                                EditingElementStyle="{StaticResource PlayerNumberTextStyle}">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding HasValidationErrors}" Value="True">
+                                                <Setter Property="Background" Value="#FFEBEE"/>
+                                                <Setter Property="ToolTip" Value="{Binding [Number]}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="First Name" Binding="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Width="*" 
                                                 EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
-                            <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*" 
-                                                EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
-                            <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="2*" 
+                            <DataGridTextColumn Header="Last Name" Binding="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" Width="2*" 
                                                 EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
                             <DataGridTemplateColumn Header="Active" Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox IsChecked="{Binding IsPlaying, Mode=TwoWay}" 
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  ToolTip="Select to include player in game roster"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -159,12 +229,12 @@
                         </Button>
                         <Button Command="{Binding ConfirmHomeTeamCommand}" Margin="4" Padding="16,8"
                                 ui:ControlHelper.CornerRadius="4"
-                                Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-                                Foreground="White"
+                                Background="{StaticResource SuccessColor}"
+                                Foreground="{StaticResource SystemTextColor}"
                                 IsEnabled="{Binding HomeColorEnabled}">
                             <StackPanel Orientation="Horizontal">
-                                <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="White"/>
-                                <TextBlock Text="Confirm Team" Foreground="White"/>
+                                <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="{StaticResource SystemTextColor}"/>
+                                <TextBlock Text="Confirm Team" Foreground="{StaticResource SystemTextColor}"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -173,18 +243,18 @@
         </Border>
         
         <!-- AWAY TEAM CARD -->
-        <Border Width="600" VerticalAlignment="Stretch" CornerRadius="8" 
-                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
-                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
-                BorderThickness="1" Margin="8,0,0,0">
+        <Border Width="620" VerticalAlignment="Stretch" CornerRadius="8" 
+                Background="{StaticResource SystemSurfaceColor}"
+                BorderBrush="{StaticResource SystemBorderColor}"
+                BorderThickness="1" Margin="12,0,0,0">
             <StackPanel>
                 <!-- Header -->
-                <Border Background="{DynamicResource SystemControlBackgroundAccentBrush}" 
+                <Border Background="{StaticResource SystemControlBackgroundColor}" 
                         CornerRadius="8,8,0,0" Padding="16,12">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <ui:FontIcon Glyph="&#xE8F4;" FontSize="20" Foreground="White" Margin="0,0,8,0"/>
-                        <TextBlock Text="AWAY TEAM" FontWeight="SemiBold" FontSize="20" Foreground="White"/>
-                        <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="White" Margin="8,0,0,0"
+                        <ui:FontIcon Glyph="&#xE8F4;" FontSize="20" Foreground="{StaticResource SystemTextColor}" Margin="0,0,8,0"/>
+                        <TextBlock Text="AWAY TEAM" FontWeight="SemiBold" FontSize="20" Foreground="{StaticResource SystemTextColor}"/>
+                        <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Foreground="{StaticResource SuccessColor}" Margin="8,0,0,0"
                                      Visibility="{Binding AwayTeamConfirmed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                     </StackPanel>
                 </Border>
@@ -193,19 +263,19 @@
                 <StackPanel Margin="24,16">
                     
                     <!-- Team Name Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Team Name" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Team Name" Style="{StaticResource SectionHeaderStyle}"/>
                         <TextBox Text="{Binding AwayTeamName, UpdateSourceTrigger=PropertyChanged}" 
-                                 FontSize="16" Padding="12,8"/>
+                                 Style="{StaticResource TeamNameTextBoxStyle}"/>
                     </StackPanel>
                     
                     <!-- Team Color Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Team Colors" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Team Colors" Style="{StaticResource SectionHeaderStyle}"/>
                         <ItemsControl ItemsSource="{Binding ColorOptions}" IsEnabled="{Binding AwayColorEnabled}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel ItemWidth="62" ItemHeight="62" Width="550"/>
+                                    <WrapPanel ItemWidth="72" ItemHeight="72" Width="580"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -239,23 +309,36 @@
                     </StackPanel>
                     
                     <!-- Players Section -->
-                    <StackPanel Margin="0,0,0,16">
-                        <TextBlock Text="Players" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Players" Style="{StaticResource SectionHeaderStyle}"/>
                         <DataGrid x:Name="AwayGrid" ItemsSource="{Binding AwayPlayers}" 
                                   AutoGenerateColumns="False" CanUserAddRows="False" SelectionUnit="Cell"
-                                  MaxHeight="300">
+                                  MaxHeight="300" RowStyle="{StaticResource PlayerRowStyle}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="50" 
+                                <DataGridTextColumn Header="#" Binding="{Binding Number, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" Width="60" 
+                                                    EditingElementStyle="{StaticResource PlayerNumberTextStyle}">
+                                    <DataGridTextColumn.CellStyle>
+                                        <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasValidationErrors}" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource ErrorColor}"/>
+                                                    <Setter Property="Opacity" Value="0.2"/>
+                                                    <Setter Property="ToolTip" Value="{Binding [Number]}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </DataGridTextColumn.CellStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn Header="First Name" Binding="{Binding FirstName, UpdateSourceTrigger=PropertyChanged}" Width="*" 
                                                     EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
-                                <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*" 
-                                                    EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
-                                <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="2*" 
+                                <DataGridTextColumn Header="Last Name" Binding="{Binding LastName, UpdateSourceTrigger=PropertyChanged}" Width="2*" 
                                                     EditingElementStyle="{StaticResource FluentPlayerEditTextStyle}"/>
                                 <DataGridTemplateColumn Header="Active" Width="80">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding IsPlaying, Mode=TwoWay}" 
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                      ToolTip="Select to include player in game roster"/>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -279,12 +362,12 @@
                         </Button>
                         <Button Command="{Binding ConfirmAwayTeamCommand}" Margin="4" Padding="16,8"
                                 ui:ControlHelper.CornerRadius="4"
-                                Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-                                Foreground="White"
+                                Background="{StaticResource SuccessColor}"
+                                Foreground="{StaticResource SystemTextColor}"
                                 IsEnabled="{Binding AwayColorEnabled}">
                             <StackPanel Orientation="Horizontal">
-                                <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="White"/>
-                                <TextBlock Text="Confirm Team" Foreground="White"/>
+                                <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="{StaticResource SystemTextColor}"/>
+                                <TextBlock Text="Confirm Team" Foreground="{StaticResource SystemTextColor}"/>
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -292,5 +375,6 @@
             </StackPanel>
         </Border>
         
-    </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>
