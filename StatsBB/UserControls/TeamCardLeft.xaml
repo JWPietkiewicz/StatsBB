@@ -30,8 +30,32 @@
                     </Border>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
-                    <Border Background="#3F3F46" BorderBrush="#5A5A5A" BorderThickness="1" CornerRadius="4" Padding="6" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamAPeriodFouls}" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
+                    <Border CornerRadius="4" BorderThickness="1" BorderBrush="#5A5A5A" Padding="6" Margin="4,0,4,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#3F3F46"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TeamAPeriodFouls}" Value="4">
+                                        <Setter Property="Background" Value="#FFD580"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TeamAPeriodFouls}" Value="5">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding TeamAPeriodFouls}" FontSize="20" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TeamAPeriodFouls}" Value="4">
+                                            <Setter Property="Foreground" Value="Black"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
                     </Border>
                 </StackPanel>
             </Grid>

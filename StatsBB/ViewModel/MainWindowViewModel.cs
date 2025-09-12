@@ -476,7 +476,10 @@ public class MainWindowViewModel : ViewModelBase
 
         ReboundTeamACommand = new RelayCommand(_ => OnReboundTargetSelected("TeamA"), _ => IsReboundSelectionActive);
         ReboundTeamBCommand = new RelayCommand(_ => OnReboundTargetSelected("TeamB"), _ => IsReboundSelectionActive);
-        NoReboundCommand = new RelayCommand(_ => CompleteReboundSelection(null), _ => IsReboundSelectionActive);
+        NoReboundCommand = new RelayCommand(
+            _ => CompleteReboundSelection(null),
+            _ => IsReboundSelectionActive && GameClockService.TimeLeft.TotalSeconds < 10
+        );
         BlockCommand = new RelayCommand(
             _ => EnterBlockerSelection(),
             _ => IsReboundSelectionActive && !_wasBlocked && !_pendingFreeThrowRebound
@@ -495,7 +498,11 @@ public class MainWindowViewModel : ViewModelBase
         SubOutAllTeamACommand = new RelayCommand(_ => ToggleSubOutAll(true));
         SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
-        StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
+        StartTimeoutCommand = new RelayCommand(
+            _ => BeginTimeout(),
+            _ => (!IsActionInProgress || IsFreeThrowTeamSelectionActive ||
+                   IsFreeThrowsAwardedSelectionActive || IsFreeThrowsSelectionActive) &&
+                 !IsTimeOutSelectionActive);
         StartJumpBallCommand = new RelayCommand(_ => BeginJumpBallChoice(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(
             _ => CompleteTimeoutSelection("Team A"),
@@ -611,6 +618,7 @@ public class MainWindowViewModel : ViewModelBase
         GameClockService.EndPeriodRequested += OnEndPeriodRequested;
         GameClockService.FinalizeGameRequested += OnFinalizeGameRequested;
         GameClockService.ClockStarted += OnClockStarted;
+        GameClockService.TimeUpdated += OnTimeUpdated;
         // StatsVM = new StatsTabViewModel(Players);
 
         //GenerateSamplePlayByPlayData();
@@ -717,6 +725,11 @@ public class MainWindowViewModel : ViewModelBase
             startActions.Add(CreateGameAction(PlayType.PeriodStart));
             AddPlayCard(startActions);
         }
+    }
+
+    private void OnTimeUpdated()
+    {
+        CommandManager.InvalidateRequerySuggested();
     }
 
     private void BeginTimeout()
@@ -1080,7 +1093,21 @@ public class MainWindowViewModel : ViewModelBase
                 _currentPlayActions.Add(CreateAction(_fouledPlayer, "FOULED"));
 
             if (_foulCommiter != null)
+            {
                 GameState.AddFoul(_foulCommiter.IsTeamA);
+
+                if (_foulType?.ToLowerInvariant() == "personal")
+                {
+                    var teamFouls = _foulCommiter.IsTeamA
+                        ? GameState.TeamAPeriodFouls
+                        : GameState.TeamBPeriodFouls;
+
+                    if (teamFouls >= Domain.Game.PeriodFoulLimit)
+                    {
+                        _defaultFreeThrows = 2;
+                    }
+                }
+            }
 
             bool offensive = _foulType?.ToLowerInvariant() == "offensive";
             if (offensive && _foulCommiter != null)
@@ -1097,6 +1124,7 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
                     StatsVM.Refresh();
+                    GameClockService.SetPossession(!_foulCommiter.IsTeamA);
                 }
 
                 Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
@@ -2421,6 +2449,11 @@ public class MainWindowViewModel : ViewModelBase
 
             var lastResult = FreeThrowResultRows.Last().Result;
             AddPlayCard(actions);
+
+            if (_pendingShooter != null && IsRebound && lastResult == "MADE")
+            {
+                GameClockService.SetPossession(!_pendingShooter.IsTeamA);
+            }
 
             if (IsRebound && lastResult == "MISSED")
             {
