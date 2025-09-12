@@ -11,21 +11,21 @@
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
             
-            <!-- Global FluentUI System Colors -->
-            <SolidColorBrush x:Key="SystemBackgroundColor" Color="#1E1E1E"/>
-            <SolidColorBrush x:Key="SystemSurfaceColor" Color="#2D2D30"/>
-            <SolidColorBrush x:Key="SystemControlBackgroundColor" Color="#3F3F46"/>
-            <SolidColorBrush x:Key="SystemControlHoverColor" Color="#484848"/>
-            <SolidColorBrush x:Key="SystemControlPressedColor" Color="#525252"/>
-            <SolidColorBrush x:Key="SystemTextColor" Color="#FFFFFF"/>
-            <SolidColorBrush x:Key="SystemTextSecondaryColor" Color="#C8C8C8"/>
-            <SolidColorBrush x:Key="SystemBorderColor" Color="#5A5A5A"/>
-            <SolidColorBrush x:Key="DisabledColor" Color="#5A5A5A"/>
+            <!-- Global Light Theme System Colors -->
+            <SolidColorBrush x:Key="SystemBackgroundColor" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="SystemSurfaceColor" Color="#F9F9F9"/>
+            <SolidColorBrush x:Key="SystemControlBackgroundColor" Color="#F3F3F3"/>
+            <SolidColorBrush x:Key="SystemControlHoverColor" Color="#E1E1E1"/>
+            <SolidColorBrush x:Key="SystemControlPressedColor" Color="#CFCFCF"/>
+            <SolidColorBrush x:Key="SystemTextColor" Color="#323130"/>
+            <SolidColorBrush x:Key="SystemTextSecondaryColor" Color="#605E5C"/>
+            <SolidColorBrush x:Key="SystemBorderColor" Color="#D1D1D1"/>
+            <SolidColorBrush x:Key="DisabledColor" Color="#F3F2F1"/>
             
             <!-- Semantic Colors -->
-            <SolidColorBrush x:Key="SuccessColor" Color="#00B373"/>
-            <SolidColorBrush x:Key="ErrorColor" Color="#D83B01"/>
-            <SolidColorBrush x:Key="WarningColor" Color="#F7B801"/>
+            <SolidColorBrush x:Key="SuccessColor" Color="#107C10"/>
+            <SolidColorBrush x:Key="ErrorColor" Color="#A4262C"/>
+            <SolidColorBrush x:Key="WarningColor" Color="#FF8C00"/>
             
             <!-- FluentUI DataGrid Styles -->
             <Style TargetType="DataGrid">
@@ -38,6 +38,49 @@
                 <Setter Property="VerticalGridLinesBrush" Value="{StaticResource SystemBorderColor}"/>
                 <Setter Property="RowBackground" Value="Transparent"/>
                 <Setter Property="AlternatingRowBackground" Value="{StaticResource SystemControlBackgroundColor}"/>
+            </Style>
+            
+            <!-- Light Theme ScrollBar Styles -->
+            <Style TargetType="ScrollBar">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="Width" Value="16"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ScrollBar">
+                            <Grid>
+                                <Border Background="{TemplateBinding Background}" 
+                                        BorderBrush="{TemplateBinding BorderBrush}" 
+                                        BorderThickness="1"/>
+                                <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                    <Track.Thumb>
+                                        <Thumb>
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="Thumb">
+                                                    <Border Background="{StaticResource SystemBorderColor}" 
+                                                            CornerRadius="8" Margin="2"
+                                                            BorderBrush="{StaticResource SystemTextSecondaryColor}" 
+                                                            BorderThickness="1">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
             </Style>
             
             <Style TargetType="DataGridColumnHeader">
@@ -227,6 +270,81 @@
                     </Trigger>
                     <Trigger Property="IsMouseOver" Value="True">
                         <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            
+            <!-- TabControl Styles -->
+            <Style TargetType="TabControl">
+                <Setter Property="Background" Value="{StaticResource SystemBackgroundColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+            
+            <Style TargetType="TabItem">
+                <Setter Property="Background" Value="{StaticResource SystemSurfaceColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1,1,1,0"/>
+                <Setter Property="Padding" Value="16,8"/>
+                <Setter Property="Margin" Value="0,0,2,0"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
+                            <Border x:Name="Border" 
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    CornerRadius="6,6,0,0"
+                                    Margin="{TemplateBinding Margin}">
+                                <ContentPresenter x:Name="ContentSite"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                ContentSource="Header"
+                                                RecognizesAccessKey="True"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource SystemBackgroundColor}"/>
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                                    <Setter Property="Panel.ZIndex" Value="100"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="Border" Property="Background" Value="{StaticResource DisabledColor}"/>
+                                    <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
+                                    <Setter TargetName="Border" Property="Opacity" Value="0.6"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- Enhanced Button Styles -->
+            <Style TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource SystemTextColor}"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlPressedColor}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="{StaticResource DisabledColor}"/>
+                        <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
+                        <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                        <Setter Property="Opacity" Value="0.6"/>
                     </Trigger>
                 </Style.Triggers>
             </Style>

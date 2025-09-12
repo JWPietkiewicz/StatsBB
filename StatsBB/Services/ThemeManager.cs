@@ -19,7 +19,7 @@ public class ThemeManager : INotifyPropertyChanged
     private static ThemeManager? _instance;
     public static ThemeManager Instance => _instance ??= new ThemeManager();
 
-    private AppTheme _currentTheme = AppTheme.Dark;
+    private AppTheme _currentTheme = AppTheme.Light;
     
     public AppTheme CurrentTheme
     {
@@ -44,7 +44,7 @@ public class ThemeManager : INotifyPropertyChanged
 
     private ThemeManager()
     {
-        // Initialize with dark theme by default
+        // Initialize with light theme by default
         ApplyTheme(_currentTheme);
     }
 

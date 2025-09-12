@@ -21,9 +21,9 @@
         </Style>
     </UserControl.Resources>
     <Grid Background="{StaticResource SystemBackgroundColor}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="20">
             <StackPanel>
-                <Grid Width="1050">
+                <Grid MinWidth="1050" HorizontalAlignment="Center">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto" />
@@ -59,163 +59,432 @@
                 </ItemsControl>
             </Border>
                 </Grid>
-                <StackPanel Width="1070">
-        <Separator Margin="20,16" Background="{StaticResource SystemBorderColor}"/>
-            <TextBlock Text="{Binding HomeTeamName}" FontWeight="Bold" Margin="12" FontSize="24" Foreground="{StaticResource SystemTextColor}"/>
+                <StackPanel MinWidth="1070" HorizontalAlignment="Center">
+                    <Separator Margin="20,16" Background="{StaticResource SystemBorderColor}"/>
+                    <TextBlock Text="{Binding HomeTeamName}" FontWeight="Bold" Margin="12" FontSize="24" Foreground="{StaticResource SystemTextColor}"/>
 
-            <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,1,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                    <DataGrid ItemsSource="{Binding HomePlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" 
+                              CanUserAddRows="False" IsReadOnly="True" MinWidth="1050" 
+                              HorizontalAlignment="Stretch" BorderThickness="1" 
+                              Background="{StaticResource SystemSurfaceColor}"
+                              BorderBrush="{StaticResource SystemBorderColor}">
+                        <DataGrid.Resources>
+                            <!-- Professional DataGrid styling -->
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
                                 <Setter Property="FontWeight" Value="Bold"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="20"/>
-                <DataGridTextColumn Header="FIRST NAME" Binding="{Binding FirstName}" Width="150"/>
-                <DataGridTextColumn Header="LAST NAME" Binding="{Binding LastName}" Width="*"/>
-                <DataGridTextColumn Header="S5" Binding="{Binding S5, Converter={StaticResource BoolToXConverter}}" Width="30"/>
-                <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="40"/>
-                <DataGridTextColumn Header="A" Binding="{Binding Assists}" Width="40"/>
-                <DataGridTextColumn Header="RB" Binding="{Binding Rebounds}" Width="40"/>
-                <DataGridTextColumn Header="F" Binding="{Binding FoulsCommitted}" Width="40"/>
-                <DataGridTextColumn Header="B" Binding="{Binding Blocks}" Width="40"/>
-                <DataGridTextColumn Header="S" Binding="{Binding Steals}" Width="40"/>
-                <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="40"/>
-                <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="40"/>
-                <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="40"/>
-                <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="40"/>
-                <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="40"/>
-                <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="40"/>
-                <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="40"/>
-                <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="40"/>
-                <DataGridTextColumn Header="ORB" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                <DataGridTextColumn Header="DRB" Binding="{Binding DefensiveRebounds}" Width="40"/>
-            </DataGrid.Columns>
-        </DataGrid>
-            <DataGrid ItemsSource="{Binding HomeTeamStatsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-            <DataGrid.Columns>
-                    <DataGridTextColumn Header="" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="" Width="80" />
-                    <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="40"/>
-                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40"/>
-                    <DataGridTextColumn Header="" Width="80" />
-                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                    <DataGridTextColumn Header="" Width="320" />
-                    <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                    <DataGridTextColumn Header="DReb" Binding="{Binding DefensiveRebounds}" Width="40"/>
-                </DataGrid.Columns>
-        </DataGrid>
-            <DataGrid ItemsSource="{Binding HomeTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="40"/>
-                    <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="40"/>
-                    <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="40"/>
-                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40"/>
-                    <DataGridTextColumn Header="Blk" Binding="{Binding Blocks}" Width="40"/>
-                    <DataGridTextColumn Header="Stl" Binding="{Binding Steals}" Width="40"/>
-                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="40"/>
-                    <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="40"/>
-                    <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                    <DataGridTextColumn Header="DReb" Binding="{Binding DefensiveRebounds}" Width="40"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            
-            
-            <Separator Margin="20,16" Background="{StaticResource SystemBorderColor}"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="MinHeight" Value="32"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.Columns>
+                            <!-- Player number -->
+                            <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- First name -->
+                            <DataGridTextColumn Header="FIRST" Binding="{Binding FirstName}" Width="110">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Padding" Value="4,0"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Last name -->
+                            <DataGridTextColumn Header="LAST" Binding="{Binding LastName}" Width="130">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Padding" Value="4,0"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Points -->
+                            <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="50">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SuccessColor}"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Field goals (combined) -->
+                            <DataGridTextColumn Header="FG" Width="70">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="FieldGoalsMade"/>
+                                        <Binding Path="FieldGoalsAttempted"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- 2-point field goals -->
+                            <DataGridTextColumn Header="2FG" Width="70">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="ShotsMade2pt"/>
+                                        <Binding Path="ShotAttempts2pt"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- 3-point field goals -->
+                            <DataGridTextColumn Header="3FG" Width="70">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="ShotsMade3pt"/>
+                                        <Binding Path="ShotAttempts3pt"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Free throws -->
+                            <DataGridTextColumn Header="FT" Width="70">
+                                <DataGridTextColumn.Binding>
+                                    <MultiBinding StringFormat="{}{0}/{1}">
+                                        <Binding Path="FreeThrowsMade"/>
+                                        <Binding Path="FreeThrowsAttempted"/>
+                                    </MultiBinding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontFamily" Value="Consolas"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Offensive rebounds -->
+                            <DataGridTextColumn Header="OREB" Binding="{Binding OffensiveRebounds}" Width="50">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Defensive rebounds -->
+                            <DataGridTextColumn Header="DREB" Binding="{Binding DefensiveRebounds}" Width="50">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Total rebounds -->
+                            <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="45">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Assists -->
+                            <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="45">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Personal fouls -->
+                            <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Turnovers -->
+                            <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Steals -->
+                            <DataGridTextColumn Header="STL" Binding="{Binding Steals}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <!-- Blocks -->
+                            <DataGridTextColumn Header="BLK" Binding="{Binding Blocks}" Width="40">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    
+                    <Separator Margin="20,16" Background="{StaticResource SystemBorderColor}"/>
 
-        <TextBlock Text="{Binding AwayTeamName}" FontWeight="Bold" Margin="12" FontSize="24" Foreground="{StaticResource SystemTextColor}"/>
-            <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" CanUserAddRows="False" IsReadOnly="True"  Width="1050" BorderThickness="1,1,1,0">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsActive}" Value="True">
-                            <Setter Property="FontWeight" Value="Bold"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
+                    <TextBlock Text="{Binding AwayTeamName}" FontWeight="Bold" Margin="12" FontSize="24" Foreground="{StaticResource SystemTextColor}"/>
+                    <DataGrid ItemsSource="{Binding AwayPlayers}" AutoGenerateColumns="False" HeadersVisibility="Column" 
+                              CanUserAddRows="False" IsReadOnly="True" MinWidth="1050" 
+                              HorizontalAlignment="Stretch" BorderThickness="1" 
+                              Background="{StaticResource SystemSurfaceColor}"
+                              BorderBrush="{StaticResource SystemBorderColor}">
+                        <DataGrid.Resources>
+                            <!-- Professional DataGrid styling -->
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                        <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="FontSize" Value="12"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="MinHeight" Value="32"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                                    </DataTrigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="20"/>
-                    <DataGridTextColumn Header="FIRST NAME" Binding="{Binding FirstName}" Width="150"/>
-                    <DataGridTextColumn Header="LAST NAME" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="S5" Binding="{Binding S5, Converter={StaticResource BoolToXConverter}}" Width="30"/>
-                    <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="40"/>
-                    <DataGridTextColumn Header="A" Binding="{Binding Assists}" Width="40"/>
-                    <DataGridTextColumn Header="RB" Binding="{Binding Rebounds}" Width="40"/>
-                    <DataGridTextColumn Header="F" Binding="{Binding FoulsCommitted}" Width="40"/>
-                    <DataGridTextColumn Header="B" Binding="{Binding Blocks}" Width="40"/>
-                    <DataGridTextColumn Header="S" Binding="{Binding Steals}" Width="40"/>
-                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="40"/>
-                    <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="40"/>
-                    <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="ORB" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                    <DataGridTextColumn Header="DRB" Binding="{Binding DefensiveRebounds}" Width="40"/>
+                    <!-- Player number -->
+                    <DataGridTextColumn Header="#" Binding="{Binding Number}" Width="40">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- First name -->
+                    <DataGridTextColumn Header="FIRST" Binding="{Binding FirstName}" Width="110">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="4,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Last name -->
+                    <DataGridTextColumn Header="LAST" Binding="{Binding LastName}" Width="130">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Padding" Value="4,0"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Points -->
+                    <DataGridTextColumn Header="PTS" Binding="{Binding Points}" Width="50">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="{StaticResource SuccessColor}"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Field goals (combined) -->
+                    <DataGridTextColumn Header="FG" Width="70">
+                        <DataGridTextColumn.Binding>
+                            <MultiBinding StringFormat="{}{0}/{1}">
+                                <Binding Path="FieldGoalsMade"/>
+                                <Binding Path="FieldGoalsAttempted"/>
+                            </MultiBinding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- 2-point field goals -->
+                    <DataGridTextColumn Header="2FG" Width="70">
+                        <DataGridTextColumn.Binding>
+                            <MultiBinding StringFormat="{}{0}/{1}">
+                                <Binding Path="ShotsMade2pt"/>
+                                <Binding Path="ShotAttempts2pt"/>
+                            </MultiBinding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- 3-point field goals -->
+                    <DataGridTextColumn Header="3FG" Width="70">
+                        <DataGridTextColumn.Binding>
+                            <MultiBinding StringFormat="{}{0}/{1}">
+                                <Binding Path="ShotsMade3pt"/>
+                                <Binding Path="ShotAttempts3pt"/>
+                            </MultiBinding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Free throws -->
+                    <DataGridTextColumn Header="FT" Width="70">
+                        <DataGridTextColumn.Binding>
+                            <MultiBinding StringFormat="{}{0}/{1}">
+                                <Binding Path="FreeThrowsMade"/>
+                                <Binding Path="FreeThrowsAttempted"/>
+                            </MultiBinding>
+                        </DataGridTextColumn.Binding>
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Offensive rebounds -->
+                    <DataGridTextColumn Header="OREB" Binding="{Binding OffensiveRebounds}" Width="50">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Defensive rebounds -->
+                    <DataGridTextColumn Header="DREB" Binding="{Binding DefensiveRebounds}" Width="50">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Total rebounds -->
+                    <DataGridTextColumn Header="REB" Binding="{Binding Rebounds}" Width="45">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Assists -->
+                    <DataGridTextColumn Header="AST" Binding="{Binding Assists}" Width="45">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Personal fouls -->
+                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Turnovers -->
+                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Steals -->
+                    <DataGridTextColumn Header="STL" Binding="{Binding Steals}" Width="40">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <!-- Blocks -->
+                    <DataGridTextColumn Header="BLK" Binding="{Binding Blocks}" Width="40">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-        <DataGrid ItemsSource="{Binding AwayTeamStatsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="" Width="80" />
-                    <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="40"/>
-                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40"/>
-                    <DataGridTextColumn Header="" Width="80" />
-                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                    <DataGridTextColumn Header="" Width="320" />
-                    <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                    <DataGridTextColumn Header="DReb" Binding="{Binding DefensiveRebounds}" Width="40"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            <DataGrid ItemsSource="{Binding AwayTotalsCollection}" AutoGenerateColumns="False" HeadersVisibility="None" CanUserAddRows="False" IsReadOnly="True" Width="1050" BorderThickness="1,0,1,0">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="FontWeight" Value="Bold"/>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Last" Binding="{Binding LastName}" Width="*"/>
-                    <DataGridTextColumn Header="Pts" Binding="{Binding Points}" Width="40"/>
-                    <DataGridTextColumn Header="Ast" Binding="{Binding Assists}" Width="40"/>
-                    <DataGridTextColumn Header="Reb" Binding="{Binding Rebounds}" Width="40"/>
-                    <DataGridTextColumn Header="PF" Binding="{Binding FoulsCommitted}" Width="40"/>
-                    <DataGridTextColumn Header="Blk" Binding="{Binding Blocks}" Width="40"/>
-                    <DataGridTextColumn Header="Stl" Binding="{Binding Steals}" Width="40"/>
-                    <DataGridTextColumn Header="TO" Binding="{Binding Turnovers}" Width="40"/>
-                    <DataGridTextColumn Header="2PM" Binding="{Binding ShotsMade2pt}" Width="40"/>
-                    <DataGridTextColumn Header="2PA" Binding="{Binding ShotAttempts2pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PM" Binding="{Binding ShotsMade3pt}" Width="40"/>
-                    <DataGridTextColumn Header="3PA" Binding="{Binding ShotAttempts3pt}" Width="40"/>
-                    <DataGridTextColumn Header="FGM" Binding="{Binding FieldGoalsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FGA" Binding="{Binding FieldGoalsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="FTM" Binding="{Binding FreeThrowsMade}" Width="40"/>
-                    <DataGridTextColumn Header="FTA" Binding="{Binding FreeThrowsAttempted}" Width="40"/>
-                    <DataGridTextColumn Header="OReb" Binding="{Binding OffensiveRebounds}" Width="40"/>
-                    <DataGridTextColumn Header="DReb" Binding="{Binding DefensiveRebounds}" Width="40"/>
-                </DataGrid.Columns>
-        </DataGrid>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

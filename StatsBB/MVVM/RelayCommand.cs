@@ -35,5 +35,13 @@ namespace StatsBB.MVVM
         {
             _execute(parameter);
         }
+        
+        /// <summary>
+        /// Raises the CanExecuteChanged event to refresh the command's CanExecute status.
+        /// </summary>
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
+        }
     }
 }

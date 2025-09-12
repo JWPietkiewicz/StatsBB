@@ -46,7 +46,8 @@ public class StatsTabViewModel : ViewModelBase
     public int AwayP3 => GetAwayPeriod(2);
     public int AwayP4 => GetAwayPeriod(3);
 
-    public ObservableCollection<Period> PeriodResults => new(Game.Periods);
+    public ObservableCollection<Period> PeriodResults => 
+        new(Game.Periods.Where(p => p.Status == PeriodStatus.Active || p.Status == PeriodStatus.Ended));
 
     private Player CalculateTotals(bool home)
     {

@@ -52,6 +52,24 @@ public class Team
     public int TeamTurnovers { get; set; }
 
     public bool IsHomeTeam { get; set; }
+    
+    private Player? _captain;
+    public Player? Captain 
+    { 
+        get => _captain;
+        set
+        {
+            // Clear previous captain
+            if (_captain != null)
+                _captain.IsCaptain = false;
+                
+            _captain = value;
+            
+            // Set new captain
+            if (_captain != null)
+                _captain.IsCaptain = true;
+        }
+    }
 
     public void AddPoints(int points) => Points += points;
 

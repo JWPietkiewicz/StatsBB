@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
-    <Border Background="#2D2D30" BorderBrush="#5A5A5A" CornerRadius="6"  BorderThickness="1" Padding="12">
+    <Border Background="{StaticResource SystemSurfaceColor}" BorderBrush="{StaticResource SystemBorderColor}" CornerRadius="6"  BorderThickness="1" Padding="12">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>
@@ -17,7 +17,7 @@
             </Grid.RowDefinitions>
             <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="0"
                        Fill="{Binding TeamAColor}" RadiusX="0" RadiusY="0"/>
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TeamAName}" Foreground="#FFFFFF" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding TeamAName}" Foreground="{StaticResource SystemTextColor}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="8,0,0,0"/>
             <Grid Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -25,15 +25,15 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <Border Background="#3F3F46" BorderBrush="#5A5A5A" BorderThickness="1" CornerRadius="4" Padding="6" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamATimeoutsText}" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
+                    <Border Background="{StaticResource SystemControlBackgroundColor}" BorderBrush="{StaticResource SystemBorderColor}" BorderThickness="1" CornerRadius="4" Padding="6" Margin="4,0,4,0">
+                        <TextBlock Text="{Binding TeamATimeoutsText}" Foreground="{StaticResource SystemTextColor}" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0">
-                    <Border CornerRadius="4" BorderThickness="1" BorderBrush="#5A5A5A" Padding="6" Margin="4,0,4,0">
+                    <Border CornerRadius="4" BorderThickness="1" BorderBrush="{StaticResource SystemBorderColor}" Padding="6" Margin="4,0,4,0">
                         <Border.Style>
                             <Style TargetType="Border">
-                                <Setter Property="Background" Value="#3F3F46"/>
+                                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding TeamAPeriodFouls}" Value="4">
                                         <Setter Property="Background" Value="#FFD580"/>
@@ -47,10 +47,10 @@
                         <TextBlock Text="{Binding TeamAPeriodFouls}" FontSize="20" FontWeight="Bold">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="#FFFFFF"/>
+                                    <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding TeamAPeriodFouls}" Value="4">
-                                            <Setter Property="Foreground" Value="Black"/>
+                                            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -59,8 +59,8 @@
                     </Border>
                 </StackPanel>
             </Grid>
-            <Border Grid.RowSpan="2" Grid.Column="2" BorderBrush="#5A5A5A" CornerRadius="0"  BorderThickness="1,0,0,0">
-                <TextBlock Text="{Binding TeamAScore}" Foreground="#FFFFFF" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border Grid.RowSpan="2" Grid.Column="2" BorderBrush="{StaticResource SystemBorderColor}" CornerRadius="0"  BorderThickness="1,0,0,0">
+                <TextBlock Text="{Binding TeamAScore}" Foreground="{StaticResource SystemTextColor}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
         </Grid>
     </Border>

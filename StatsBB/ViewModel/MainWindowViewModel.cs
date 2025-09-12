@@ -94,6 +94,7 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamAColorOption = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamAColor)); // Notify color change
             if (value != null)
             {
                 _resources["PrimaryAColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
@@ -115,6 +116,7 @@ public class MainWindowViewModel : ViewModelBase
 
             _teamBColorOption = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(TeamBColor)); // Notify color change
             if (value != null)
             {
                 _resources["PrimaryBColor"] = new SolidColorBrush(((SolidColorBrush)value.ColorBrush).Color);
@@ -124,6 +126,16 @@ public class MainWindowViewModel : ViewModelBase
                 TeamBInfo.Color = value;
         }
     }
+    
+    /// <summary>
+    /// Gets the color brush for Team A.
+    /// </summary>
+    public Brush TeamAColor => TeamAColorOption?.ColorBrush ?? Brushes.Gray;
+    
+    /// <summary>
+    /// Gets the color brush for Team B.
+    /// </summary>
+    public Brush TeamBColor => TeamBColorOption?.ColorBrush ?? Brushes.Gray;
 
     private string _teamAName = "Team A";
     public string TeamAName
@@ -191,6 +203,19 @@ public class MainWindowViewModel : ViewModelBase
 
 
     public GameStateViewModel GameState { get; } = new();
+
+    // Team positioning: true if Team A is on the left side of court
+    private bool _teamAIsOnLeftSide = true;
+    public bool TeamAIsOnLeftSide
+    {
+        get => _teamAIsOnLeftSide;
+        set
+        {
+            if (_teamAIsOnLeftSide == value) return;
+            _teamAIsOnLeftSide = value;
+            OnPropertyChanged();
+        }
+    }
 
     private bool _isSubstitutionPanelVisible;
     public bool IsSubstitutionPanelVisible
@@ -422,6 +447,7 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SelectFreeThrowAssistCommand { get; }
     public ICommand NoAssistFreeThrowCommand { get; }
     public ICommand SwapSidesCommand { get; }
+    public ICommand SwitchTeamSidesCommand { get; }
     public ICommand SwapPossessionCommand { get; }
     public ICommand SwapArrowCommand { get; }
     public ICommand SwapPossessionArrowCommand { get; }
@@ -536,6 +562,7 @@ public class MainWindowViewModel : ViewModelBase
         NoAssistFreeThrowCommand = new RelayCommand(_ => SetNoFreeThrowAssist());
 
         SwapSidesCommand = new RelayCommand(_ => SwapSides());
+        SwitchTeamSidesCommand = new RelayCommand(_ => SwitchTeamSides());
         SwapPossessionCommand = new RelayCommand(_ => GameClockService.SwapPossession());
         SwapArrowCommand = new RelayCommand(_ => GameClockService.SwapArrow());
         SwapPossessionArrowCommand = new RelayCommand(_ => GameClockService.SwapPossessionAndArrow());
@@ -2852,7 +2879,7 @@ public class MainWindowViewModel : ViewModelBase
         return new PlayActionViewModel
         {
             TeamColor = GetTeamColorFromPlayer(player),
-            PlayerNumber = player.Number.ToString(),
+            PlayerNumber = player.Number == 0 ? string.Empty : player.Number.ToString(),
             FirstName = GetFirstName(player.Name),
             LastName = GetLastName(player.Name),
             Action = action
@@ -2865,7 +2892,7 @@ public class MainWindowViewModel : ViewModelBase
         Debug.WriteLine($"CreateTeamAction: {name} {action}");
         return new PlayActionViewModel
         {
-            TeamColor = teamA ? (Brush)_resources["CourtAColor"] : (Brush)_resources["CourtBColor"],
+            TeamColor = teamA ? (Brush)_resources["PrimaryAColor"] : (Brush)_resources["PrimaryBColor"],
             PlayerNumber = string.Empty,
             FirstName = name,
             LastName = string.Empty,
@@ -2898,11 +2925,80 @@ public class MainWindowViewModel : ViewModelBase
 
     private void RecordPoints(Player shooter, int points, Player? assist = null, bool isThreePoint = false)
     {
-        _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
+        // Check if player is shooting at correct basket
+        bool shootingAtCorrectBasket = IsShootingAtCorrectBasket(shooter, SelectedPoint?.IsLeftSide ?? false);
+        
+        if (!shootingAtCorrectBasket)
+        {
+            Debug.WriteLine($"{GameClockService.TimeLeftString} No points awarded - {shooter.Number}.{shooter.Name} shot at own basket!");
+            // Still process the shot for stats but don't award points
+            _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
+        }
+        else
+        {
+            _actionProcessor.Process(ActionType.ShotMade, shooter, assist, points == 3 || isThreePoint);
+        }
+        
         GameState.TeamAScore = Game.HomeTeam.Points;
         GameState.TeamBScore = Game.AwayTeam.Points;
         StatsVM.Refresh();
         GameClockService.SetPossession(!shooter.IsTeamA);
+    }
+
+    /// <summary>
+    /// Determines if a player is shooting at the correct (opponent's) basket
+    /// Based on court position: left basket is at x=0, right basket is at x=280
+    /// </summary>
+    private bool IsShootingAtCorrectBasket(Player shooter, bool shotFromLeftSide)
+    {
+        // Determine which basket the team should be attacking
+        bool teamAShouldAttackRightBasket = TeamAIsOnLeftSide; // Team A on left attacks right
+        
+        if (shooter.IsTeamA)
+        {
+            if (teamAShouldAttackRightBasket)
+            {
+                // Team A should attack right basket, so shots should be from left side toward right
+                // But we need to check if they're actually close to the correct basket
+                return IsShootingAtRightBasket(SelectedPoint?.Point.X ?? 0);
+            }
+            else
+            {
+                // Team A should attack left basket
+                return IsShootingAtLeftBasket(SelectedPoint?.Point.X ?? 0);
+            }
+        }
+        else // Team B
+        {
+            if (teamAShouldAttackRightBasket)
+            {
+                // Team A attacks right, so Team B attacks left
+                return IsShootingAtLeftBasket(SelectedPoint?.Point.X ?? 0);
+            }
+            else
+            {
+                // Team A attacks left, so Team B attacks right
+                return IsShootingAtRightBasket(SelectedPoint?.Point.X ?? 0);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Determines if a shot is being taken at the left basket (x closer to 0)
+    /// </summary>
+    private bool IsShootingAtLeftBasket(double shotX)
+    {
+        // Left basket is at x=0, consider shots from x=0 to x=140 as targeting left basket
+        return shotX < 140;
+    }
+
+    /// <summary>
+    /// Determines if a shot is being taken at the right basket (x closer to 280)
+    /// </summary>
+    private bool IsShootingAtRightBasket(double shotX)
+    {
+        // Right basket is at x=280, consider shots from x=140 to x=280 as targeting right basket
+        return shotX >= 140;
     }
 
     private void UseTimeout(bool teamA)
@@ -2930,6 +3026,16 @@ public class MainWindowViewModel : ViewModelBase
             GameState.TeamAScore,
             GameState.TeamBScore,
             actions);
+    }
+
+    /// <summary>
+    /// Switches which side of the court Team A is on (for halftime, etc.)
+    /// This affects which basket each team attacks but doesn't swap team identities
+    /// </summary>
+    private void SwitchTeamSides()
+    {
+        TeamAIsOnLeftSide = !TeamAIsOnLeftSide;
+        Debug.WriteLine($"{GameClockService.TimeLeftString} Team sides switched - Team A now on {(TeamAIsOnLeftSide ? "left" : "right")} side");
     }
 
     private void SwapSides()
@@ -2979,14 +3085,14 @@ public class MainWindowViewModel : ViewModelBase
     private static string GetFirstName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return string.Empty;
-        var parts = name.Split(' ');
+        var parts = name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         return parts.Length > 0 ? parts[0] : string.Empty;
     }
 
     private static string GetLastName(string name)
     {
         if (string.IsNullOrWhiteSpace(name)) return string.Empty;
-        var parts = name.Split(' ');
+        var parts = name.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         return parts.Length > 1 ? string.Join(" ", parts.Skip(1)) : string.Empty;
     }
 

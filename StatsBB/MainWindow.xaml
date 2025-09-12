@@ -10,7 +10,11 @@
         ui:WindowHelper.UseModernWindowStyle="True"
         Title="Basketball Stats App" Height="1080" Width="1920"
         Background="{StaticResource SystemBackgroundColor}"
-        PreviewKeyDown="Window_PreviewKeyDown">
+        PreviewKeyDown="Window_PreviewKeyDown"
+        KeyboardNavigation.TabNavigation="Cycle"
+        KeyboardNavigation.ControlTabNavigation="Cycle"
+        AutomationProperties.Name="Basketball Statistics Application"
+        AutomationProperties.HelpText="Main application window for tracking basketball game statistics">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <converters:ColorAvailabilityConverter x:Key="ColorAvailabilityConverter"/>
@@ -413,16 +417,8 @@
     </Window.InputBindings>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        
-        <!-- Theme Toggle Header -->
-        <controls:ThemeToggle Grid.Row="0"/>
-        
         <!-- Main Content -->
-        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}" 
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}"
                     Background="{StaticResource SystemBackgroundColor}"
                     BorderThickness="0">
             <TabItem IsEnabled="{Binding IsTeamInfoEnabled}">
@@ -1437,7 +1433,7 @@ Margin="4" />
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="160"/>
                                         <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="110"/>
                                         <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="160"/>
                                     </Grid.ColumnDefinitions>
@@ -1471,7 +1467,7 @@ Margin="4" />
                                     </Border>
 
                                     <!-- Team A Jumping -->
-                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                    <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="100" Margin="2">
                                         <ItemsControl ItemsSource="{Binding TeamAJumpingPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -1492,11 +1488,11 @@ Margin="4" />
 
                                     <!-- Jump Button -->
                                     <WrapPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <Button Content="JUMP" Width="60" Height="60" FontSize="16" FontWeight="Bold" Background="DarkGreen" Foreground="White" Command="{Binding ConfirmJumpBallCommand}" IsEnabled="{Binding IsJumpEnabled}"/>
+                                        <Button Content="JUMP" Width="80" Height="60" FontSize="16" FontWeight="Bold" Background="DarkGreen" Foreground="White" Command="{Binding ConfirmJumpBallCommand}" IsEnabled="{Binding IsJumpEnabled}"/>
                                     </WrapPanel>
 
                                     <!-- Team B Jumping -->
-                                    <Border Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="380" Margin="2">
+                                    <Border Grid.Row="1" Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="100" Margin="2">
                                         <ItemsControl ItemsSource="{Binding TeamBJumpingPlayers}"  VerticalAlignment="Center" HorizontalAlignment="Center">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -1855,54 +1851,43 @@ Margin="4" />
 
                     </Grid>
 
-                    <Border Grid.Column="0" Grid.Row="0" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Stretch" HorizontalAlignment="Left" Padding="5">
-                        <ItemsControl ItemsSource="{Binding TeamAPlayers}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Vertical" FlowDirection="RightToLeft" Height="340"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Content="{Binding DisplayName}"
-                                            Style="{Binding ButtonStyle}" Margin="2"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    <!-- Team A Color Indicator -->
+                    <Border Grid.Column="0" Grid.Row="0" Width="20" VerticalAlignment="Stretch" 
+                            HorizontalAlignment="Right" Margin="10,0,0,0"
+                            Background="{Binding TeamAColor}" 
+                            CornerRadius="10,0,0,10"
+                            ToolTip="{Binding TeamAName}">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{Binding TeamAColor}" BlurRadius="8" ShadowDepth="2" Opacity="0.6"/>
+                        </Border.Effect>
                     </Border>
-                    <Border Grid.Column="2" Grid.Row="0" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Stretch" HorizontalAlignment="Right" Padding="5">
-                        <ItemsControl ItemsSource="{Binding TeamBPlayers}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <WrapPanel Orientation="Vertical" Height="340"/>
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Button Content="{Binding DisplayName}"
-                                            Style="{Binding ButtonStyle}" Margin="2" />
-
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                    
+                    <!-- Team B Color Indicator -->
+                    <Border Grid.Column="2" Grid.Row="0" Width="20" VerticalAlignment="Stretch" 
+                            HorizontalAlignment="Left" Margin="0,0,10,0"
+                            Background="{Binding TeamBColor}" 
+                            CornerRadius="0,10,10,0"
+                            ToolTip="{Binding TeamBName}">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{Binding TeamBColor}" BlurRadius="8" ShadowDepth="2" Opacity="0.6"/>
+                        </Border.Effect>
                     </Border>
-                    <Border Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderThickness="2" BorderBrush="#888" VerticalAlignment="Top" HorizontalAlignment="Stretch" Padding="5" Margin="0,10">
-                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5" Width="1000">
-                        <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
-                        <Button Content="FOUL (F)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
-                        <Button Content="TURNOVER (T)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
-                        <Button Content="TIME OUT (C)" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
-                        <Button Content="JUMP BALL (B)" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
-                        <Button Content="SUBSTITUTIONS (S)" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
-                        <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveButtonEnabled}"/>
-                        <Button Content="FREE THROWS (V)" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
-                        <Button Content="ASSIST (A)" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
-                        <Button Content="REBOUND (R)" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
-                        <Button Content="STEAL (S)" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
-                    </WrapPanel>
-                    </Border>
+                    <StackPanel Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,10">
+                        <WrapPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5" MaxWidth="1000">
+                            <Button Content="MADE" Style="{StaticResource Made}" Command="{Binding SelectActionCommand}" CommandParameter="MADE" IsEnabled="{Binding IsActionSelectionActive}"/>
+                            <Button Content="MISSED" Style="{StaticResource Missed}" Command="{Binding SelectActionCommand}" CommandParameter="Missed" IsEnabled="{Binding IsActionSelectionActive}"/>
+                            <Button Content="FOUL (F)" Style="{StaticResource Foul}" Command="{Binding SelectActionCommand}" CommandParameter="Foul"/>
+                            <Button Content="TURNOVER (T)" Style="{StaticResource Turnover}" Command="{Binding StartTurnoverCommand}"/>
+                            <Button Content="TIME OUT (C)" Style="{StaticResource TimeOut}" Command="{Binding StartTimeoutCommand}"/>
+                            <Button Content="JUMP BALL (B)" Style="{StaticResource JumpBall}" Command="{Binding StartJumpBallCommand}"/>
+                            <Button Content="SUBSTITUTIONS (S)" Style="{StaticResource Sub}" Command="{Binding StartSubstitutionCommand}"/>
+                            <Button Content="S5" Style="{StaticResource Sub}" Command="{Binding StartStartingFiveCommand}" IsEnabled="{Binding IsStartingFiveButtonEnabled}"/>
+                            <Button Content="FREE THROWS (V)" Style="{StaticResource FreeThrows}" Command="{Binding StartFreeThrowsCommand}"/>
+                            <Button Content="ASSIST (A)" Style="{StaticResource Assist}" Command="{Binding StartAssistCommand}"/>
+                            <Button Content="REBOUND (R)" Style="{StaticResource Rebound}" Command="{Binding StartReboundCommand}"/>
+                            <Button Content="STEAL (S)" Style="{StaticResource Steal}" Command="{Binding StartStealCommand}"/>
+                        </WrapPanel>
+                    </StackPanel>
                 </Grid>
                 <!-- Play‐by‐Play Log -->
                 <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="5" Background="{StaticResource SystemSurfaceColor}" BorderBrush="{StaticResource SystemBorderColor}" BorderThickness="1" CornerRadius="8">

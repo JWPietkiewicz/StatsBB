@@ -209,6 +209,16 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Captain" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <RadioButton IsChecked="{Binding IsCaptain, Mode=TwoWay}" 
+                                                     GroupName="HomeCaptain" 
+                                                     HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                     ToolTip="Select team captain"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
@@ -231,7 +241,7 @@
                                 ui:ControlHelper.CornerRadius="4"
                                 Background="{StaticResource SuccessColor}"
                                 Foreground="{StaticResource SystemTextColor}"
-                                IsEnabled="{Binding HomeColorEnabled}">
+                                IsEnabled="{Binding CanConfirmHomeTeam}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="{StaticResource SystemTextColor}"/>
                                 <TextBlock Text="Confirm Team" Foreground="{StaticResource SystemTextColor}"/>
@@ -342,6 +352,16 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Captain" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <RadioButton IsChecked="{Binding IsCaptain, Mode=TwoWay}" 
+                                                         GroupName="AwayCaptain" 
+                                                         HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                         ToolTip="Select team captain"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </StackPanel>
@@ -364,7 +384,7 @@
                                 ui:ControlHelper.CornerRadius="4"
                                 Background="{StaticResource SuccessColor}"
                                 Foreground="{StaticResource SystemTextColor}"
-                                IsEnabled="{Binding AwayColorEnabled}">
+                                IsEnabled="{Binding CanConfirmAwayTeam}">
                             <StackPanel Orientation="Horizontal">
                                 <ui:FontIcon Glyph="&#xE73E;" FontSize="16" Margin="0,0,8,0" Foreground="{StaticResource SystemTextColor}"/>
                                 <TextBlock Text="Confirm Team" Foreground="{StaticResource SystemTextColor}"/>

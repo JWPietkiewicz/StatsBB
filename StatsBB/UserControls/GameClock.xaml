@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.modernwpf.com/2019">
     <Border CornerRadius="8" BorderBrush="{StaticResource SystemBorderColor}" BorderThickness="1" 
-            Background="{StaticResource SystemSurfaceColor}" Width="320" Padding="16">
+            Background="{StaticResource SystemSurfaceColor}" Width="400" Padding="16">
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -11,13 +11,13 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
                     <ui:FontIcon x:Name="ArrowAText" Glyph="&#xE0A6;" FontSize="18" Visibility="Collapsed" 
-                                 Foreground="{StaticResource SystemTextColor}"/>
+                                 Foreground="{StaticResource SystemTextColor}" Margin="2"/>
                     <ui:FontIcon x:Name="PossessionAText" Glyph="&#xE91F;" FontSize="18" Visibility="Collapsed" 
                                  Foreground="{StaticResource SystemTextColor}"/>
                 </StackPanel>
@@ -26,7 +26,7 @@
                           HorizontalAlignment="Center" Margin="5" />
                 <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
                     <ui:FontIcon x:Name="ArrowBText" Glyph="&#xE0AD;" FontSize="18" Visibility="Collapsed" 
-                                 Foreground="{StaticResource SystemTextColor}"/>
+                                 Foreground="{StaticResource SystemTextColor}" Margin="2"/>
                     <ui:FontIcon x:Name="PossessionBText" Glyph="&#xE91F;" FontSize="18" Visibility="Collapsed" 
                                  Foreground="{StaticResource SystemTextColor}"/>
                 </StackPanel>
@@ -39,15 +39,15 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Right">
-                    <Button x:Name="AddMinuteButton" Width="32" Height="32" Click="AddMinute_Click" 
+                    <Button x:Name="AddMinuteButton" Width="36" Height="36" Click="AddMinute_Click" 
                             Style="{StaticResource BaseActionButtonStyle}" 
-                            ui:ControlHelper.CornerRadius="4" Margin="0,2">
-                        <ui:FontIcon Glyph="&#xE70E;" FontSize="12"/>
+                            ui:ControlHelper.CornerRadius="4" Margin="0,2" Padding="4">
+                        <ui:FontIcon Glyph="&#xE70E;" FontSize="14"/>
                     </Button>
-                    <Button x:Name="SubtractMinuteButton" Width="32" Height="32" Click="SubtractMinute_Click" 
+                    <Button x:Name="SubtractMinuteButton" Width="36" Height="36" Click="SubtractMinute_Click" 
                             Style="{StaticResource BaseActionButtonStyle}" 
-                            ui:ControlHelper.CornerRadius="4" Margin="0,2">
-                        <ui:FontIcon Glyph="&#xE70D;" FontSize="12"/>
+                            ui:ControlHelper.CornerRadius="4" Margin="0,2" Padding="4">
+                        <ui:FontIcon Glyph="&#xE70D;" FontSize="14"/>
                     </Button>
                 </StackPanel>
                 <Border Grid.Column="1" Padding="8" Margin="8,0">
@@ -56,21 +56,22 @@
                               VerticalAlignment="Center" FontFamily="Consolas"/>
                 </Border>
                 <StackPanel Grid.Column="2" Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <Button x:Name="AddSecondButton" Width="32" Height="32" Click="AddSecond_Click" 
+                    <Button x:Name="AddSecondButton" Width="36" Height="36" Click="AddSecond_Click" 
                             Style="{StaticResource BaseActionButtonStyle}" 
-                            ui:ControlHelper.CornerRadius="4" Margin="0,2">
-                        <ui:FontIcon Glyph="&#xE70E;" FontSize="12"/>
+                            ui:ControlHelper.CornerRadius="4" Margin="0,2" Padding="4">
+                        <ui:FontIcon Glyph="&#xE70E;" FontSize="14"/>
                     </Button>
-                    <Button x:Name="SubtractSecondButton" Width="32" Height="32" Click="SubtractSecond_Click" 
+                    <Button x:Name="SubtractSecondButton" Width="36" Height="36" Click="SubtractSecond_Click" 
                             Style="{StaticResource BaseActionButtonStyle}" 
-                            ui:ControlHelper.CornerRadius="4" Margin="0,2">
-                        <ui:FontIcon Glyph="&#xE70D;" FontSize="12"/>
+                            ui:ControlHelper.CornerRadius="4" Margin="0,2" Padding="4">
+                        <ui:FontIcon Glyph="&#xE70D;" FontSize="14"/>
                     </Button>
                 </StackPanel>
-                <Button x:Name="StartStopButton" Grid.Column="3" Content="STOP" Width="80" Height="56" 
+                <Button x:Name="StartStopButton" Grid.Column="3" Content="STOP" Width="100" Height="60" 
                        Background="{StaticResource SuccessColor}" Foreground="{StaticResource SystemTextColor}" 
-                       FontWeight="Bold" ui:ControlHelper.CornerRadius="6" VerticalAlignment="Center" 
-                       Margin="12,0,0,0" Click="StartStop_Click" Style="{StaticResource BaseActionButtonStyle}"/>
+                       FontWeight="Bold" FontSize="14" ui:ControlHelper.CornerRadius="6" VerticalAlignment="Center" 
+                       Margin="12,0,0,0" Click="StartStop_Click" Style="{StaticResource BaseActionButtonStyle}"
+                       Padding="8,4"/>
             </Grid>
         </Grid>
     </Border>

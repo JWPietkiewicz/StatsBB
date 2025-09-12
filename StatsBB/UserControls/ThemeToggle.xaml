@@ -79,26 +79,12 @@
             </StackPanel>
             
             <!-- Theme Controls -->
-            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                <!-- Theme Toggle Button -->
-                <Button Style="{StaticResource ThemeToggleButtonStyle}"
-                        Command="{Binding ToggleThemeCommand}"
-                        Content="Toggle Theme"
-                        ToolTip="Toggle between light and dark theme"/>
-                
-                <!-- Theme Selection ComboBox (Alternative) -->
-                <ComboBox x:Name="ThemeComboBox"
-                          SelectedItem="{Binding CurrentTheme}"
-                          MinWidth="120"
-                          Margin="8,0,0,0"
-                          ToolTip="Select theme mode">
-                    <ComboBox.Items>
-                        <services:AppTheme>Light</services:AppTheme>
-                        <services:AppTheme>Dark</services:AppTheme>
-                        <services:AppTheme>System</services:AppTheme>
-                    </ComboBox.Items>
-                </ComboBox>
-            </StackPanel>
+            <Button Grid.Column="1" 
+                    Style="{StaticResource ThemeToggleButtonStyle}"
+                    Command="{Binding ToggleThemeCommand}"
+                    Content="Toggle Theme"
+                    ToolTip="Toggle between light and dark theme"
+                    VerticalAlignment="Center"/>
         </Grid>
     </Border>
 </UserControl>

@@ -5,6 +5,9 @@ using StatsBB.Model;
 using StatsBB.MVVM;
 using Microsoft.Win32;
 using System.IO;
+using System.ComponentModel;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace StatsBB.ViewModel;
 
@@ -13,6 +16,9 @@ public class TeamInfoViewModel : ViewModelBase
     private readonly MainWindowViewModel _main;
     public Game Game { get; } = new();
     public ObservableCollection<TeamColorOption> ColorOptions { get; } = new();
+    
+    // Flag to prevent circular updates during captain selection
+    private bool _updatingCaptain = false;
 
     public RelayCommand LoadHomeTeamCommand { get; }
     public RelayCommand SaveHomeTeamCommand { get; }
@@ -33,6 +39,7 @@ public class TeamInfoViewModel : ViewModelBase
             _homeTeamConfirmed = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(HomeColorEnabled));
+            OnPropertyChanged(nameof(CanConfirmHomeTeam));
             OnPropertyChanged(nameof(AreTeamsConfirmed));
         }
     }
@@ -47,6 +54,7 @@ public class TeamInfoViewModel : ViewModelBase
             _awayTeamConfirmed = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(AwayColorEnabled));
+            OnPropertyChanged(nameof(CanConfirmAwayTeam));
             OnPropertyChanged(nameof(AreTeamsConfirmed));
         }
     }
@@ -54,6 +62,10 @@ public class TeamInfoViewModel : ViewModelBase
     public bool AreTeamsConfirmed => HomeTeamConfirmed && AwayTeamConfirmed;
     public bool HomeColorEnabled => !HomeTeamConfirmed;
     public bool AwayColorEnabled => !AwayTeamConfirmed;
+    
+    // Computed properties for team confirmation enablement
+    public bool CanConfirmHomeTeam => !HomeTeamConfirmed && TeamAColorOption != null;
+    public bool CanConfirmAwayTeam => !AwayTeamConfirmed && TeamBColorOption != null;
     
     // Expose color options from main view model
     public TeamColorOption? TeamAColorOption => _main.TeamAColorOption;
@@ -68,6 +80,9 @@ public class TeamInfoViewModel : ViewModelBase
         HomeTeamName = _main.TeamAName;
         AwayTeamName = _main.TeamBName;
         ColorOptions = _main.ColorOptions;
+        
+        // Subscribe to player property changes to handle captain selection
+        SubscribeToPlayerChanges();
 
         LoadHomeTeamCommand = new RelayCommand(_ => LoadTeam(Game.HomeTeam, true));
         SaveHomeTeamCommand = new RelayCommand(_ => SaveTeam(Game.HomeTeam));
@@ -75,11 +90,21 @@ public class TeamInfoViewModel : ViewModelBase
         SaveAwayTeamCommand = new RelayCommand(_ => SaveTeam(Game.AwayTeam));
         ConfirmHomeTeamCommand = new RelayCommand(_ =>
         {
+            if (TeamAColorOption == null)
+            {
+                System.Windows.MessageBox.Show("Please select a team color before confirming.", "Color Required", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
             HomeTeamConfirmed = true;
             _main.RegenerateTeamsFromInfo();
         });
         ConfirmAwayTeamCommand = new RelayCommand(_ =>
         {
+            if (TeamBColorOption == null)
+            {
+                System.Windows.MessageBox.Show("Please select a team color before confirming.", "Color Required", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                return;
+            }
             AwayTeamConfirmed = true;
             _main.RegenerateTeamsFromInfo();
         });
@@ -92,9 +117,15 @@ public class TeamInfoViewModel : ViewModelBase
         _main.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(MainWindowViewModel.TeamAColorOption))
+            {
                 OnPropertyChanged(nameof(TeamAColorOption));
+                OnPropertyChanged(nameof(CanConfirmHomeTeam));
+            }
             if (e.PropertyName == nameof(MainWindowViewModel.TeamBColorOption))
+            {
                 OnPropertyChanged(nameof(TeamBColorOption));
+                OnPropertyChanged(nameof(CanConfirmAwayTeam));
+            }
         };
     }
 
@@ -156,6 +187,28 @@ public class TeamInfoViewModel : ViewModelBase
     
     public ObservableCollection<Player> HomePlayers => Game.HomeTeam.GetPlayers();
     public ObservableCollection<Player> AwayPlayers => Game.AwayTeam.GetPlayers();
+    
+    public Player? HomeCaptain
+    {
+        get => Game.HomeTeam.Captain;
+        set
+        {
+            Game.HomeTeam.Captain = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CanConfirmHomeTeam));
+        }
+    }
+    
+    public Player? AwayCaptain
+    {
+        get => Game.AwayTeam.Captain;
+        set
+        {
+            Game.AwayTeam.Captain = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(CanConfirmAwayTeam));
+        }
+    }
 
     private static void WriteTeam(string file, Team team)
     {
@@ -215,4 +268,188 @@ public class TeamInfoViewModel : ViewModelBase
             AwayTeamName = team.TeamName;
         }
     }
+    
+    private void SubscribeToPlayerChanges()
+    {
+        // Subscribe to changes for all existing players
+        foreach (var player in Game.HomeTeam.Players)
+        {
+            player.PropertyChanged += OnPlayerPropertyChanged;
+        }
+        foreach (var player in Game.AwayTeam.Players)
+        {
+            player.PropertyChanged += OnPlayerPropertyChanged;
+        }
+        
+        // Subscribe to collection changes to handle new players
+        Game.HomeTeam.Players.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Player player in e.NewItems)
+                {
+                    player.PropertyChanged += OnPlayerPropertyChanged;
+                }
+            }
+        };
+        
+        Game.AwayTeam.Players.CollectionChanged += (s, e) =>
+        {
+            if (e.NewItems != null)
+            {
+                foreach (Player player in e.NewItems)
+                {
+                    player.PropertyChanged += OnPlayerPropertyChanged;
+                }
+            }
+        };
+    }
+    
+    private void OnPlayerPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(Player.IsCaptain) && sender is Player player && !_updatingCaptain)
+        {
+            if (player.IsCaptain)
+            {
+                _updatingCaptain = true;
+                try
+                {
+                    // When a player becomes captain, set them as the team captain
+                    // The Team.Captain setter will handle deselecting other captains
+                    if (player.ParentTeam == Game.HomeTeam)
+                    {
+                        Game.HomeTeam.Captain = player;
+                        OnPropertyChanged(nameof(HomeCaptain));
+                        OnPropertyChanged(nameof(CanConfirmHomeTeam));
+                    }
+                    else if (player.ParentTeam == Game.AwayTeam)
+                    {
+                        Game.AwayTeam.Captain = player;
+                        OnPropertyChanged(nameof(AwayCaptain));
+                        OnPropertyChanged(nameof(CanConfirmAwayTeam));
+                    }
+                }
+                finally
+                {
+                    _updatingCaptain = false;
+                }
+            }
+        }
+    }
+    
+    #region Input Validation Methods
+    
+    /// <summary>
+    /// Validates player name input
+    /// </summary>
+    /// <param name="name">Name to validate</param>
+    /// <returns>True if valid, false otherwise</returns>
+    public static bool IsValidPlayerName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+            
+        // Check length (2-50 characters)
+        if (name.Trim().Length < 2 || name.Trim().Length > 50)
+            return false;
+            
+        // Allow letters, spaces, hyphens, apostrophes, and periods
+        var namePattern = @"^[a-zA-Z\s\-'.]+$";
+        return Regex.IsMatch(name.Trim(), namePattern);
+    }
+    
+    /// <summary>
+    /// Validates player jersey number
+    /// </summary>
+    /// <param name="number">Number to validate</param>
+    /// <param name="team">Team to check for duplicates</param>
+    /// <param name="excludePlayer">Player to exclude from duplicate check</param>
+    /// <returns>Validation result with message</returns>
+    public static (bool IsValid, string Message) ValidatePlayerNumber(int number, Team team, Player? excludePlayer = null)
+    {
+        // Check range (0-99 for basketball)
+        if (number < 0 || number > 99)
+            return (false, "Jersey number must be between 0 and 99.");
+        
+        // Check for duplicates
+        var duplicatePlayer = team.Players.FirstOrDefault(p => p.Number == number && p != excludePlayer);
+        if (duplicatePlayer != null)
+        {
+            var playerName = !string.IsNullOrWhiteSpace(duplicatePlayer.FirstName + duplicatePlayer.LastName) 
+                ? $"{duplicatePlayer.FirstName} {duplicatePlayer.LastName}".Trim()
+                : "Another player";
+            return (false, $"Jersey number {number} is already used by {playerName}.");
+        }
+        
+        return (true, string.Empty);
+    }
+    
+    /// <summary>
+    /// Validates team name input
+    /// </summary>
+    /// <param name="teamName">Team name to validate</param>
+    /// <returns>Validation result with message</returns>
+    public static (bool IsValid, string Message) ValidateTeamName(string? teamName)
+    {
+        if (string.IsNullOrWhiteSpace(teamName))
+            return (false, "Team name is required.");
+            
+        var trimmed = teamName.Trim();
+        
+        if (trimmed.Length < 2)
+            return (false, "Team name must be at least 2 characters long.");
+            
+        if (trimmed.Length > 50)
+            return (false, "Team name cannot exceed 50 characters.");
+            
+        // Allow letters, numbers, spaces, and common punctuation
+        var teamNamePattern = @"^[a-zA-Z0-9\s\-'.&]+$";
+        if (!Regex.IsMatch(trimmed, teamNamePattern))
+            return (false, "Team name contains invalid characters. Only letters, numbers, spaces, hyphens, apostrophes, periods, and ampersands are allowed.");
+            
+        return (true, string.Empty);
+    }
+    
+    /// <summary>
+    /// Validates that a team has the minimum required active players
+    /// </summary>
+    /// <param name="team">Team to validate</param>
+    /// <returns>Validation result with message</returns>
+    public static (bool IsValid, string Message) ValidateTeamComposition(Team team)
+    {
+        var activePlayers = team.Players.Where(p => p.IsPlaying).ToList();
+        
+        if (activePlayers.Count < 5)
+            return (false, $"Team must have at least 5 active players. Currently has {activePlayers.Count}.");
+            
+        // Check that all active players have valid names and numbers
+        var invalidPlayers = activePlayers.Where(p => 
+            string.IsNullOrWhiteSpace(p.FirstName) && string.IsNullOrWhiteSpace(p.LastName) ||
+            p.Number <= 0).ToList();
+            
+        if (invalidPlayers.Any())
+            return (false, "All active players must have valid names and jersey numbers.");
+            
+        // Check for captain
+        if (team.Captain == null)
+            return (false, "Team must have a designated captain.");
+            
+        return (true, string.Empty);
+    }
+    
+    /// <summary>
+    /// Shows a user-friendly validation error message
+    /// </summary>
+    /// <param name="message">Error message to display</param>
+    /// <param name="title">Dialog title</param>
+    public static void ShowValidationError(string message, string title = "Validation Error")
+    {
+        System.Windows.MessageBox.Show(
+            message,
+            title,
+            System.Windows.MessageBoxButton.OK,
+            System.Windows.MessageBoxImage.Warning);
+    }
+    
+    #endregion
 }

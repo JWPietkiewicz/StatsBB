@@ -84,7 +84,7 @@ public class Player : INotifyPropertyChanged, IDataErrorInfo
     }
     public string Name
     {
-        get { return FirstName + "" + LastName; }
+        get { return $"{FirstName} {LastName}".Trim(); }
     }
 
     public int Points { get; set; }
