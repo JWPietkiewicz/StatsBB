@@ -33,8 +33,33 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
-                    <Border Background="#EEE" CornerRadius="0" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamBPeriodFouls}" FontSize="20" FontWeight="Bold"/>
+                    <Border CornerRadius="0" Padding="4" Margin="4,0,4,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="#EEE"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding TeamBPeriodFouls}" Value="4">
+                                        <Setter Property="Background" Value="#FFD580"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding TeamBPeriodFouls}" Value="5">
+                                        <Setter Property="Background" Value="Red"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Text="{Binding TeamBPeriodFouls}" FontSize="20" FontWeight="Bold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TeamBPeriodFouls}" Value="5">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
                     </Border>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
