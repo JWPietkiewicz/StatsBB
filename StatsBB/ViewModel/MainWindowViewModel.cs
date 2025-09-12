@@ -2423,7 +2423,7 @@ public class MainWindowViewModel : ViewModelBase
             var lastResult = FreeThrowResultRows.Last().Result;
             AddPlayCard(actions);
 
-            if (_pendingShooter != null && lastResult == "MADE")
+            if (_pendingShooter != null && IsRebound && lastResult == "MADE")
             {
                 GameClockService.SetPossession(!_pendingShooter.IsTeamA);
             }
