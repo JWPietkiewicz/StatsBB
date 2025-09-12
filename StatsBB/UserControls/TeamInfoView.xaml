@@ -10,17 +10,17 @@
         
         <!-- FluentUI Team Color Button Style -->
         <Style x:Key="FluentTeamColorButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource DefaultRadioButtonStyle}">
-            <Setter Property="Width" Value="50"/>
-            <Setter Property="Height" Value="50"/>
+            <Setter Property="Width" Value="58"/>
+            <Setter Property="Height" Value="58"/>
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Margin" Value="2"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <Border x:Name="ColorBorder"
-                                    Width="50" Height="50"
+                                    Width="54" Height="54"
                                     Background="{TemplateBinding Background}"
                                     CornerRadius="8"
                                     BorderThickness="2"
@@ -85,7 +85,7 @@
                         <ItemsControl ItemsSource="{Binding ColorOptions}" IsEnabled="{Binding HomeColorEnabled}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel ItemWidth="54" ItemHeight="54" Width="550"/>
+                                    <WrapPanel ItemWidth="62" ItemHeight="62" Width="550"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -96,19 +96,19 @@
                                     <RadioButton.Content>99</RadioButton.Content>
                                     <RadioButton.IsChecked>
                                         <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsChecked>
                                     <RadioButton.Command>
-                                        <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                        <Binding Path="DataContext.SelectTeamAColorCommand" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
                                     </RadioButton.Command>
                                     <RadioButton.CommandParameter>
                                         <Binding />
                                     </RadioButton.CommandParameter>
                                     <RadioButton.IsEnabled>
                                         <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                            <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
                                             <Binding Mode="OneWay" />
                                         </MultiBinding>
                                     </RadioButton.IsEnabled>
@@ -205,7 +205,7 @@
                         <ItemsControl ItemsSource="{Binding ColorOptions}" IsEnabled="{Binding AwayColorEnabled}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <WrapPanel ItemWidth="54" ItemHeight="54" Width="550"/>
+                                    <WrapPanel ItemWidth="62" ItemHeight="62" Width="550"/>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
@@ -216,19 +216,19 @@
                                         <RadioButton.Content>99</RadioButton.Content>
                                         <RadioButton.IsChecked>
                                             <MultiBinding Converter="{StaticResource ColorSelectedConverter}" Mode="OneWay">
-                                                <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.TeamBColorOption" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
                                                 <Binding Mode="OneWay" />
                                             </MultiBinding>
                                         </RadioButton.IsChecked>
                                         <RadioButton.Command>
-                                            <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                            <Binding Path="DataContext.SelectTeamBColorCommand" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
                                         </RadioButton.Command>
                                         <RadioButton.CommandParameter>
                                             <Binding />
                                         </RadioButton.CommandParameter>
                                         <RadioButton.IsEnabled>
                                             <MultiBinding Converter="{StaticResource ColorAvailabilityConverter}" Mode="OneWay">
-                                                <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=Window}" Mode="OneWay"/>
+                                                <Binding Path="DataContext.TeamAColorOption" RelativeSource="{RelativeSource AncestorType=UserControl}" Mode="OneWay"/>
                                                 <Binding Mode="OneWay" />
                                             </MultiBinding>
                                         </RadioButton.IsEnabled>

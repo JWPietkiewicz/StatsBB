@@ -20,6 +20,8 @@ public class TeamInfoViewModel : ViewModelBase
     public RelayCommand SaveAwayTeamCommand { get; }
     public RelayCommand ConfirmHomeTeamCommand { get; }
     public RelayCommand ConfirmAwayTeamCommand { get; }
+    public RelayCommand SelectTeamAColorCommand { get; }
+    public RelayCommand SelectTeamBColorCommand { get; }
 
     private bool _homeTeamConfirmed;
     public bool HomeTeamConfirmed
@@ -52,6 +54,10 @@ public class TeamInfoViewModel : ViewModelBase
     public bool AreTeamsConfirmed => HomeTeamConfirmed && AwayTeamConfirmed;
     public bool HomeColorEnabled => !HomeTeamConfirmed;
     public bool AwayColorEnabled => !AwayTeamConfirmed;
+    
+    // Expose color options from main view model
+    public TeamColorOption? TeamAColorOption => _main.TeamAColorOption;
+    public TeamColorOption? TeamBColorOption => _main.TeamBColorOption;
     public TeamInfoViewModel(MainWindowViewModel main)
     {
         _main = main;
@@ -77,6 +83,19 @@ public class TeamInfoViewModel : ViewModelBase
             AwayTeamConfirmed = true;
             _main.RegenerateTeamsFromInfo();
         });
+        
+        // Forward color selection commands to main view model
+        SelectTeamAColorCommand = new RelayCommand(color => _main.SelectTeamAColorCommand.Execute(color));
+        SelectTeamBColorCommand = new RelayCommand(color => _main.SelectTeamBColorCommand.Execute(color));
+        
+        // Subscribe to main view model color changes to notify UI
+        _main.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(MainWindowViewModel.TeamAColorOption))
+                OnPropertyChanged(nameof(TeamAColorOption));
+            if (e.PropertyName == nameof(MainWindowViewModel.TeamBColorOption))
+                OnPropertyChanged(nameof(TeamBColorOption));
+        };
     }
 
     private static void EnsurePlayers(Team team)
