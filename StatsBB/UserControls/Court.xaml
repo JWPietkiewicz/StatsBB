@@ -1,17 +1,20 @@
 ﻿<UserControl
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.modernwpf.com/2019"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ViewModel="clr-namespace:StatsBB.ViewModel" x:Class="StatsBB.UserControls.Court"
              mc:Ignorable="d" 
-             d:DesignHeight="550              " d:DesignWidth="1008">
+             d:DesignHeight="550" d:DesignWidth="1008">
 
-    <Border BorderThickness="2" Background="#F5F5F5" BorderBrush="#5A5A5A" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20">
+    <Border BorderThickness="2" Background="{StaticResource SystemSurfaceColor}" 
+            BorderBrush="{StaticResource SystemBorderColor}" CornerRadius="8" 
+            VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20">
         <Viewbox Stretch="Uniform">
             <Canvas x:Name="CourtCanvas"
   Width="28" Height="15"
-  Background="#E8E8E8" MouseDown="CourtCanvas_MouseDown">
+  Background="{StaticResource SystemControlBackgroundColor}" MouseDown="CourtCanvas_MouseDown">
                 <Viewbox Width="28" Height="15"
      Stretch="Fill">
                     <Rectangle

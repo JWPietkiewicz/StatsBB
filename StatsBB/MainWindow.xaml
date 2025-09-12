@@ -1,11 +1,15 @@
 ﻿<Window x:Class="StatsBB.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="http://schemas.modernwpf.com/2019"
         xmlns:controls="clr-namespace:StatsBB.UserControls" 
         xmlns:viewmodel="clr-namespace:StatsBB.ViewModel" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:converters="clr-namespace:StatsBB.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:converters="clr-namespace:StatsBB.Converters"
         xmlns:po="http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"
-        Title="Basketball Stats Map" Height="1080" Width="1920"
+        ui:WindowHelper.UseModernWindowStyle="True"
+        Title="Basketball Stats App" Height="1080" Width="1920"
+        Background="{StaticResource SystemBackgroundColor}"
         PreviewKeyDown="Window_PreviewKeyDown">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -418,12 +422,25 @@
         <controls:ThemeToggle Grid.Row="0"/>
         
         <!-- Main Content -->
-        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}">
-        <TabItem Header="TEAM INFO" IsEnabled="{Binding IsTeamInfoEnabled}">
-
-            <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
-        </TabItem>
-        <TabItem Header="MAIN" IsEnabled="{Binding IsMainTabEnabled}">
+        <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTabIndex}" 
+                    Background="{StaticResource SystemBackgroundColor}"
+                    BorderThickness="0">
+            <TabItem IsEnabled="{Binding IsTeamInfoEnabled}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Glyph="&#xE716;" FontSize="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Team Setup"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
+            </TabItem>
+            <TabItem IsEnabled="{Binding IsMainTabEnabled}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Glyph="&#xE7FC;" FontSize="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Game View"/>
+                    </StackPanel>
+                </TabItem.Header>
             <Grid x:Name="___No_Name_" Background="{StaticResource SystemBackgroundColor}">
                 <!-- Layout: Header, Event Buttons, Main Content -->
                 <Grid.RowDefinitions>
@@ -1892,13 +1909,25 @@ Margin="4" />
                     <controls:PlayByPlayLog DataContext="{Binding PlayLog}" />
                 </Border>
             </Grid>
-        </TabItem>
-        <TabItem Header="STATS" IsEnabled="{Binding AreTeamsConfirmed}">
-            <controls:StatsView DataContext="{Binding StatsVM}" />
-        </TabItem>
-        <TabItem Header="PLAY BY PLAY" IsEnabled="{Binding AreTeamsConfirmed}">
-            <controls:PlayByPlayList DataContext="{Binding PlayLog}" />
-        </TabItem>
+            </TabItem>
+            <TabItem IsEnabled="{Binding AreTeamsConfirmed}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Glyph="&#xE9D9;" FontSize="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Statistics"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <controls:StatsView DataContext="{Binding StatsVM}" />
+            </TabItem>
+            <TabItem IsEnabled="{Binding AreTeamsConfirmed}">
+                <TabItem.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <ui:FontIcon Glyph="&#xE8F3;" FontSize="16" Margin="0,0,8,0"/>
+                        <TextBlock Text="Play Log"/>
+                    </StackPanel>
+                </TabItem.Header>
+                <controls:PlayByPlayList DataContext="{Binding PlayLog}" />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

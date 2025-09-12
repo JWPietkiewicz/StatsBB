@@ -143,6 +143,93 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
+            
+            <!-- FluentUI CheckBox Style -->
+            <Style TargetType="CheckBox">
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="CheckBox">
+                            <StackPanel Orientation="Horizontal">
+                                <Border x:Name="CheckBorder" Width="20" Height="20" 
+                                        Background="{StaticResource SystemControlBackgroundColor}"
+                                        BorderBrush="{StaticResource SystemBorderColor}"
+                                        BorderThickness="2" CornerRadius="3" Margin="0,0,8,0">
+                                    <ui:FontIcon x:Name="CheckIcon" Glyph="&#xE73E;" FontSize="12" 
+                                                Foreground="{StaticResource SuccessColor}" 
+                                                Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="CheckIcon" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="CheckBorder" Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource SystemTextColor}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- FluentUI RadioButton Style -->
+            <Style TargetType="RadioButton">
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="FontWeight" Value="Normal"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="4"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="RadioButton">
+                            <StackPanel Orientation="Horizontal">
+                                <Border x:Name="RadioBorder" Width="20" Height="20" 
+                                        Background="{StaticResource SystemControlBackgroundColor}"
+                                        BorderBrush="{StaticResource SystemBorderColor}"
+                                        BorderThickness="2" CornerRadius="10" Margin="0,0,8,0">
+                                    <Ellipse x:Name="RadioDot" Width="10" Height="10" 
+                                            Fill="{StaticResource SuccessColor}" 
+                                            Visibility="Collapsed" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ContentPresenter VerticalAlignment="Center" RecognizesAccessKey="True"/>
+                            </StackPanel>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="RadioDot" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="RadioBorder" Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="RadioBorder" Property="BorderBrush" Value="{StaticResource SystemTextColor}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            
+            <!-- FluentUI TextBox Style -->
+            <Style x:Key="DefaultTextBoxStyle" TargetType="TextBox">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Padding" Value="8,4"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Style.Triggers>
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="BorderBrush" Value="{StaticResource SuccessColor}"/>
+                        <Setter Property="BorderThickness" Value="2"/>
+                    </Trigger>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
