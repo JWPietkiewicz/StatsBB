@@ -18,25 +18,25 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
-                        <ui:SimpleStackPanel Orientation="Vertical" HorizontalAlignment="Center">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
                             <Border x:Name="ColorBorder"
                                     Width="50" Height="50"
                                     Background="{TemplateBinding Background}"
                                     CornerRadius="8"
                                     BorderThickness="2"
-                                    BorderBrush="{DynamicResource SystemControlForegroundBaseHighBrush}">
+                                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}">
                                 <ContentPresenter HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 TextElement.Foreground="{TemplateBinding Foreground}"/>
                             </Border>
-                        </ui:SimpleStackPanel>
+                        </StackPanel>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter TargetName="ColorBorder" Property="BorderThickness" Value="3"/>
-                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
+                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundAccentBrush}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemAccentColorLight1}"/>
+                                <Setter TargetName="ColorBorder" Property="BorderBrush" Value="{DynamicResource SystemControlBackgroundAccentBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
