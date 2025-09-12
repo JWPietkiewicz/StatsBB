@@ -498,7 +498,11 @@ public class MainWindowViewModel : ViewModelBase
         SubOutAllTeamACommand = new RelayCommand(_ => ToggleSubOutAll(true));
         SubOutAllTeamBCommand = new RelayCommand(_ => ToggleSubOutAll(false));
         ToggleStartingFiveCommand = new RelayCommand(p => ToggleStartingFive(p as Player));
-        StartTimeoutCommand = new RelayCommand(_ => BeginTimeout(), _ => !IsActionInProgress);
+        StartTimeoutCommand = new RelayCommand(
+            _ => BeginTimeout(),
+            _ => (!IsActionInProgress || IsFreeThrowTeamSelectionActive ||
+                   IsFreeThrowsAwardedSelectionActive || IsFreeThrowsSelectionActive) &&
+                 !IsTimeOutSelectionActive);
         StartJumpBallCommand = new RelayCommand(_ => BeginJumpBallChoice(), _ => !IsActionInProgress);
         TimeoutTeamACommand = new RelayCommand(
             _ => CompleteTimeoutSelection("Team A"),
