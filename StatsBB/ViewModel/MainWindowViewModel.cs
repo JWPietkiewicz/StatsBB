@@ -1097,6 +1097,7 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     _actionProcessor.Process(ActionType.Turnover, _foulCommiter);
                     StatsVM.Refresh();
+                    GameClockService.SetPossession(!_foulCommiter.IsTeamA);
                 }
 
                 Debug.WriteLine($"{GameClockService.TimeLeftString} Offensive foul by {_foulCommiter?.Number}.{_foulCommiter?.Name} on {_fouledPlayer?.Number}.{_fouledPlayer?.Name} — no free throws");
@@ -2421,6 +2422,11 @@ public class MainWindowViewModel : ViewModelBase
 
             var lastResult = FreeThrowResultRows.Last().Result;
             AddPlayCard(actions);
+
+            if (_pendingShooter != null && lastResult == "MADE")
+            {
+                GameClockService.SetPossession(!_pendingShooter.IsTeamA);
+            }
 
             if (IsRebound && lastResult == "MISSED")
             {
