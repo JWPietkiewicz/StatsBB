@@ -7,9 +7,70 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
+                <ui:ThemeResources RequestedTheme="Dark" />
                 <ui:XamlControlsResources />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Global FluentUI System Colors -->
+            <SolidColorBrush x:Key="SystemBackgroundColor" Color="#1E1E1E"/>
+            <SolidColorBrush x:Key="SystemSurfaceColor" Color="#2D2D30"/>
+            <SolidColorBrush x:Key="SystemControlBackgroundColor" Color="#3F3F46"/>
+            <SolidColorBrush x:Key="SystemControlHoverColor" Color="#484848"/>
+            <SolidColorBrush x:Key="SystemControlPressedColor" Color="#525252"/>
+            <SolidColorBrush x:Key="SystemTextColor" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="SystemTextSecondaryColor" Color="#C8C8C8"/>
+            <SolidColorBrush x:Key="SystemBorderColor" Color="#5A5A5A"/>
+            <SolidColorBrush x:Key="DisabledColor" Color="#5A5A5A"/>
+            
+            <!-- Semantic Colors -->
+            <SolidColorBrush x:Key="SuccessColor" Color="#00B373"/>
+            <SolidColorBrush x:Key="ErrorColor" Color="#D83B01"/>
+            <SolidColorBrush x:Key="WarningColor" Color="#F7B801"/>
+            
+            <!-- Global Button Styles -->
+            <Style x:Key="BaseActionButtonStyle" TargetType="Button">
+                <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
+                <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="{StaticResource SystemBorderColor}"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Margin" Value="4" />
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="MinHeight" Value="32"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4"
+                        Padding="{TemplateBinding Padding}">
+                                <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
+                        <Setter Property="Cursor" Value="Hand"/>
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{StaticResource SystemControlPressedColor}"/>
+                    </Trigger>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background" Value="{StaticResource DisabledColor}"/>
+                        <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
+                        <Setter Property="Opacity" Value="0.6"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

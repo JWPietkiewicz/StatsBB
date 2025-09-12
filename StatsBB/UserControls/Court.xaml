@@ -7,11 +7,11 @@
              mc:Ignorable="d" 
              d:DesignHeight="550              " d:DesignWidth="1008">
 
-    <Border BorderThickness="2" Background="White" BorderBrush="#888" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20">
+    <Border BorderThickness="2" Background="#F5F5F5" BorderBrush="#5A5A5A" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="20">
         <Viewbox Stretch="Uniform">
             <Canvas x:Name="CourtCanvas"
   Width="28" Height="15"
-  Background="#EEE" MouseDown="CourtCanvas_MouseDown">
+  Background="#E8E8E8" MouseDown="CourtCanvas_MouseDown">
                 <Viewbox Width="28" Height="15"
      Stretch="Fill">
                     <Rectangle

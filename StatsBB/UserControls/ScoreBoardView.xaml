@@ -16,9 +16,8 @@
             <controls:GameClock />
             <Button Content="SWITCH SIDES"
                     Command="{Binding SwapSidesCommand}"
-                    FontWeight="Bold"
-                    Margin="0,5,0,0"
-                    Padding="10"/>
+                    Style="{StaticResource BaseActionButtonStyle}"
+                    Margin="0,8,0,0"/>
         </StackPanel>
         <controls:TeamCardRight Grid.Column="2"/>
     </Grid>

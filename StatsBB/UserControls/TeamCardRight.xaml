@@ -8,7 +8,7 @@
              d:DesignHeight="125" d:DesignWidth="420">
     <UserControl.Resources>
     </UserControl.Resources>
-    <Border Background="White" BorderBrush="#888" CornerRadius="0" BorderThickness="2" Padding="10">
+    <Border Background="#2D2D30" BorderBrush="#5A5A5A" CornerRadius="6" BorderThickness="1" Padding="12">
         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"/>
@@ -19,10 +19,10 @@
                 <RowDefinition Height="3*"/>
                 <RowDefinition Height="2*"/>
             </Grid.RowDefinitions>
-            <Border Grid.RowSpan="2" Grid.Column="0" BorderBrush="#888" CornerRadius="0" BorderThickness="0,0,1,0">
-                <TextBlock Text="{Binding TeamBScore}" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <Border Grid.RowSpan="2" Grid.Column="0" BorderBrush="#5A5A5A" CornerRadius="0" BorderThickness="0,0,1,0">
+                <TextBlock Text="{Binding TeamBScore}" Foreground="#FFFFFF" FontSize="52" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </Border>
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding TeamBName}" Foreground="#FFFFFF" FontWeight="Bold" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,8,0"/>
             <Rectangle Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
                        Fill="{Binding TeamBColor}" RadiusX="0" RadiusY="0"/>
 
@@ -33,13 +33,13 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,8,0">
-                    <Border Background="#EEE" CornerRadius="0" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamBPeriodFouls}" FontSize="20" FontWeight="Bold"/>
+                    <Border Background="#3F3F46" BorderBrush="#5A5A5A" BorderThickness="1" CornerRadius="4" Padding="6" Margin="4,0,4,0">
+                        <TextBlock Text="{Binding TeamBPeriodFouls}" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
-                    <Border Background="#EEE" CornerRadius="0" Padding="4" Margin="4,0,4,0">
-                        <TextBlock Text="{Binding TeamBTimeoutsText}" FontSize="20" FontWeight="Bold"/>
+                    <Border Background="#3F3F46" BorderBrush="#5A5A5A" BorderThickness="1" CornerRadius="4" Padding="6" Margin="4,0,4,0">
+                        <TextBlock Text="{Binding TeamBTimeoutsText}" Foreground="#FFFFFF" FontSize="20" FontWeight="Bold"/>
                     </Border>
                 </StackPanel>
             </Grid>

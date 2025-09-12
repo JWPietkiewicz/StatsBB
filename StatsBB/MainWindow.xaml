@@ -13,17 +13,19 @@
         <converters:ColorSelectedConverter x:Key="ColorSelectedConverter"/>
 
 
+        <!-- FluentUI Semantic Colors -->
         <SolidColorBrush x:Key="PrimaryAColor" Color="Orange" po:Freeze="False"/>
         <SolidColorBrush x:Key="SecondaryAColor" Color="White" po:Freeze="False"/>
         <SolidColorBrush x:Key="PrimaryBColor" Color="Green" po:Freeze="False"/>
         <SolidColorBrush x:Key="SecondaryBColor" Color="White" po:Freeze="False"/>
-        <SolidColorBrush x:Key="BenchColor" Color="LightGray"/>
-        <SolidColorBrush x:Key="DisabledColor" Color="LightGray"/>
-        <SolidColorBrush x:Key="HoverGrey" Color="#303030"/>
-        <SolidColorBrush x:Key="SelectedMadeColor" Color="Green"/>
-        <SolidColorBrush x:Key="SelectedMissedColor" Color="Red"/>
-        <SolidColorBrush x:Key="DarkGrey" Color="DarkGray"/>
-        <SolidColorBrush x:Key="Grey" Color="Gray"/>
+        
+        <!-- Legacy colors updated for better contrast -->
+        <SolidColorBrush x:Key="BenchColor" Color="#3F3F46"/>
+        <SolidColorBrush x:Key="HoverGrey" Color="#484848"/>
+        <SolidColorBrush x:Key="SelectedMadeColor" Color="#00B373"/>
+        <SolidColorBrush x:Key="SelectedMissedColor" Color="#D83B01"/>
+        <SolidColorBrush x:Key="DarkGrey" Color="#3F3F46"/>
+        <SolidColorBrush x:Key="Grey" Color="#5A5A5A"/>
 
         <Style x:Key="BasePlayerButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="64" />
@@ -33,44 +35,13 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="24"/>
         </Style>
-        <Style x:Key="BaseActionButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Margin" Value="5" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                    Background="{TemplateBinding Background}"
-                    BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}"
-                    CornerRadius="2"
-                    Padding="{TemplateBinding Padding}">
-                            <ContentPresenter
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        RecognizesAccessKey="True"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource HoverGrey}"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
         <Style x:Key="ActionSelectableButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
-            <Setter Property="Background" Value="{StaticResource DarkGrey}"/>
+            <Setter Property="Background" Value="{StaticResource SystemControlBackgroundColor}"/>
         </Style>
         <!-- Action: Cannot be selected -->
         <Style x:Key="ActionDisabledButtonStyle" TargetType="Button" BasedOn="{StaticResource BaseActionButtonStyle}">
             <Setter Property="Background" Value="{StaticResource DisabledColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
         </Style>
 
         <!-- Action: Selected Made -->
@@ -84,9 +55,9 @@
         </Style>
         <!-- Court Player: Not Selectable -->
         <Style x:Key="CourtPlayerDisabledStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <!--<Setter Property="Background" Value="{Binding TeamColorDimmed}" />-->
-            <Setter Property="Background" Value="Gray"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource DisabledColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
+            <Setter Property="Opacity" Value="0.6"/>
         </Style>
 
         <!-- Court Player: Selectable (Team-colored) -->
@@ -102,19 +73,21 @@
         </Style>
         <!-- Bench Player: Not Selectable -->
         <Style x:Key="BenchPlayerDisabledStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{StaticResource Grey}"/>
-            <Setter Property="Foreground" Value="DarkGray"/>
+            <Setter Property="Background" Value="{StaticResource BenchColor}"/>
+            <Setter Property="Foreground" Value="{StaticResource SystemTextSecondaryColor}"/>
+            <Setter Property="Opacity" Value="0.6"/>
         </Style>
 
         <!-- Bench Player: Selectable -->
         <Style x:Key="BenchPlayerSelectableStyle" TargetType="Button" BasedOn="{StaticResource BasePlayerButtonStyle}" po:Freeze="False">
-            <Setter Property="Background" Value="{StaticResource Grey}"/>
+            <Setter Property="Background" Value="{StaticResource BenchColor}"/>
             <Setter Property="BorderThickness" Value="2"/>
             <Setter Property="BorderBrush" Value="{Binding TeamColor}" />
+            <Setter Property="Foreground" Value="{StaticResource SystemTextColor}"/>
             <!-- via VM -->
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{StaticResource HoverGrey}"/>
+                    <Setter Property="Background" Value="{StaticResource SystemControlHoverColor}"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -441,7 +414,7 @@
             <controls:TeamInfoView DataContext="{Binding TeamInfoVM}" />
         </TabItem>
         <TabItem Header="MAIN" IsEnabled="{Binding IsMainTabEnabled}">
-            <Grid x:Name="___No_Name_" Background="#F9F9F9">
+            <Grid x:Name="___No_Name_" Background="{StaticResource SystemBackgroundColor}">
                 <!-- Layout: Header, Event Buttons, Main Content -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
