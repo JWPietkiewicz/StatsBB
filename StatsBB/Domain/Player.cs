@@ -80,7 +80,7 @@ public class Player : INotifyPropertyChanged, IDataErrorInfo
     public bool IsTeamA { get; set; }
     public string DisplayName
     {
-        get { return Number == 0 ? "" : Number.ToString("00"); }
+        get { return Number == 0 ? "" : Number.ToString(); }
     }
     public string Name
     {
@@ -178,7 +178,7 @@ public class Player : INotifyPropertyChanged, IDataErrorInfo
                     if (Number > 99)
                         return "Player number must be 99 or less";
                     if (ParentTeam != null && !ParentTeam.IsPlayerNumberAvailable(Number, this))
-                        return $"Number {Number:00} is already taken by another player";
+                        return $"Number {Number} is already taken by another player";
                     return string.Empty;
                 default:
                     return string.Empty;
